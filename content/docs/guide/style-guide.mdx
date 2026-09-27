@@ -5,7 +5,7 @@ order: 90
 section: Internal
 ---
 
-<Callout variant="warning">
+<Callout type="warning">
   This page is for OFFER-HUB contributors working on the documentation site itself. It is not part of
   the public marketplace-integration guidance for teams consuming the Orchestrator API or SDK.
 </Callout>
@@ -199,6 +199,29 @@ font-family: var(--font-inter), Roboto, Outfit, sans-serif;
   placeholder="Enter text..."
 />
 ```
+
+### API Endpoint Components
+
+Use `MethodBadge`, `Endpoint`, `Steps`, and `LinkCard` for API reference pages. The patterns below mirror the orchestrator controller route and DTO contract docs so request methods, auth scope, and action flow stay consistent.
+
+<Endpoint method="GET" path="/api/v1/orders/{id}" scope="orders:read" idempotent>
+  Returns the order summary for a single marketplace order.
+</Endpoint>
+
+<Steps
+  items={[
+    "Review the route, auth scope, and body contract before drafting the request.",
+    "Validate the DTO or request schema to confirm required fields, defaults, and validation rules.",
+    "Document the success response and any idempotency handling for retries or duplicate requests."
+  ]}
+/>
+
+<LinkCard
+  href="/docs/getting-started"
+  title="Authentication guide"
+  description="Review how API keys and scopes are issued, rotated, and restricted for each integration."
+  eyebrow="Reference"
+/>
 
 ---
 

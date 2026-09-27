@@ -4,6 +4,10 @@ import { CodeBlock } from "./CodeBlock";
 import { Callout } from "./Callout";
 import { CommandLine } from "./CommandLine";
 import { Badge } from "./Badge";
+import { MethodBadge } from "./MethodBadge";
+import { Endpoint } from "./Endpoint";
+import { Steps } from "./Steps";
+import { LinkCard } from "./LinkCard";
 import { MermaidDiagram } from "@/components/shared/MermaidDiagram";
 import { OrderStateMachineDiagram } from "./OrderStateMachineDiagram";
 import { EscrowStateMachineDiagram } from "./EscrowStateMachineDiagram";
@@ -17,6 +21,10 @@ export const MDX_COMPONENTS: MDXComponents = {
   Callout,
   CommandLine,
   Badge,
+  MethodBadge,
+  Endpoint,
+  Steps,
+  LinkCard,
   MermaidDiagram,
   OrderStateMachineDiagram,
   EscrowStateMachineDiagram,
