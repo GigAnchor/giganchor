@@ -1,7 +1,7 @@
 ---
 title: Build Your First Marketplace
 description: End-to-end tutorial — scaffold a project, run the Orchestrator, wire the SDK, and ship a minimal marketplace with buyer/seller signup, listings, checkout with escrow, and fund release.
-order: 0
+order: 10
 section: Guides
 ---
 
@@ -848,7 +848,9 @@ async function safeCreateOrder(buyerId: string, sellerId: string, amount: string
 
 ```typescript
 // Attach a stable, deterministic key to each state-changing operation
-const idempotentSdk = sdk.withIdempotencyKey(`fund-${orderId}-v1`);
+const idempotentSdk = sdk.withIdempotencyKey(
+  '550e8400-e29b-41d4-a716-446655440005'
+);
 
 // Safe to retry — same key returns the cached result
  await idempotentSdk.orders.fundEscrow(orderId);
