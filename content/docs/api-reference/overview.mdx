@@ -1,0 +1,597 @@
+---
+title: API Reference
+description: Complete REST API reference for OFFER-HUB — endpoints, parameters, and response schemas.
+order: 40
+section: API Reference
+---
+
+The OFFER-HUB Orchestrator exposes a RESTful JSON API. All endpoints are prefixed with `/api/v1`.
+
+## Base URL
+
+```
+https://{your-orchestrator-domain}/api/v1
+```
+
+For local development:
+
+```
+http://localhost:4000/api/v1
+```
+
+## Authentication
+
+All requests require authentication via a Bearer token (API Key).
+
+### Request Header
+
+```http
+Authorization: Bearer ohk_live_xxxxxxxxxxxxxxxxxxxxxxxx
+```
+
+### Getting an API Key
+
+Create an API key using your master key:
+
+```bash
+curl -X POST http://localhost:4000/api/v1/auth/api-keys \
+  -H "Authorization: Bearer YOUR_OFFERHUB_MASTER_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"name": "My Marketplace", "scopes": ["read", "write"]}'
+```
+
+Response:
+
+```json
+{
+  "id": "key_abc123",
+  "api_key": "ohk_live_xxxxxxxxxxxx",
+  "name": "My Marketplace",
+  "scopes": ["read", "write"],
+  "created_at": "2026-01-12T10:00:00.000Z"
+}
+```
+
+<Callout type="danger">
+  Save the `api_key` value immediately - it's only shown once!
+</Callout>
+
+### API Key Scopes
+
+| Scope | Permissions |
+|-------|-------------|
+| `read` | All GET endpoints |
+| `write` | POST to create/modify resources |
+| `support` | Resolve disputes, add comments |
+
+## Common Headers
+
+### Request Headers
+
+| Header | Required | Description |
+|--------|----------|-------------|
+| `Authorization` | Yes | `Bearer {api_key}` |
+| `Content-Type` | Yes (POST/PUT/PATCH) | `application/json` |
+| `Idempotency-Key` | Optional | UUID v4 for POST, PUT, and PATCH requests |
+| `X-Request-ID` | No | UUID for correlation/debugging |
+
+### Response Headers
+
+| Header | Description |
+|--------|-------------|
+| `X-Request-ID` | Echo of request ID or auto-generated |
+| `X-Idempotency-Key` | Echo of key if applied |
+| `X-RateLimit-Limit` | Request limit |
+| `X-RateLimit-Remaining` | Remaining requests |
+| `X-RateLimit-Reset` | Reset timestamp |
+
+## Response Format
+
+### Success Response
+
+```json
+{
+  "id": "ord_abc123",
+  "status": "ORDER_CREATED",
+  "amount": "100.00",
+  "currency": "USD",
+  "created_at": "2026-01-12T10:00:00.000Z",
+  "updated_at": "2026-01-12T10:00:00.000Z"
+}
+```
+
+### List Response
+
+```json
+{
+  "data": ["..."],
+  "pagination": {
+    "has_more": true,
+    "next_cursor": "ord_abc123"
+  }
+}
+```
+
+### Error Response
+
+```json
+{
+  "error": {
+    "code": "INSUFFICIENT_FUNDS",
+    "message": "Available balance is less than requested amount",
+    "details": {
+      "available": "50.00",
+      "requested": "100.00"
+    }
+  }
+}
+```
+
+## Error Codes
+
+| Code | HTTP | When to Use |
+|------|------|-------------|
+| `VALIDATION_ERROR` | 400 | Invalid fields in request |
+| `UNAUTHORIZED` | 401 | Missing or invalid API key |
+| `INSUFFICIENT_SCOPE` | 403 | API key lacks required scope |
+| `USER_NOT_FOUND` | 404 | User does not exist |
+| `ORDER_NOT_FOUND` | 404 | Order does not exist |
+| `INVALID_STATE` | 409 | Invalid state transition |
+| `IDEMPOTENCY_KEY_REUSED` | 409 | Same key with different body |
+| `INSUFFICIENT_FUNDS` | 422 | Balance too low |
+| `RATE_LIMITED` | 429 | Too many requests |
+| `PROVIDER_TIMEOUT` | 504 | External provider timeout |
+
+---
+
+## Escrows
+
+Escrow contracts hold funds securely between buyers and sellers until project completion.
+
+### Initialize an Escrow
+
+<Badge variant="primary">POST</Badge> `/api/v1/orders/{id}/escrow`
+
+Creates a new escrow contract between buyer and seller. Funds are held until release.
+
+**Request Body**
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `amount` | string | Yes | Amount to escrow |
+| `currency` | string | Yes | Currency code (USD, XLM, USDC) |
+
+```json
+{
+  "amount": "2500.00",
+  "currency": "USD"
+}
+```
+
+**Response**
+
+```json
+{
+  "data": {
+    "escrow_id": "esc_01JKL",
+    "order_id": "ord_abc123",
+    "buyer_id": "usr_01ABC",
+    "seller_id": "usr_02ABC",
+    "amount": "2500.00",
+    "currency": "USD",
+    "status": "PENDING",
+    "created_at": "2026-02-01T14:00:00.000Z"
+  }
+}
+```
+
+### Fund Escrow
+
+<Badge variant="primary">POST</Badge> `/api/v1/orders/{id}/escrow/fund`
+
+Funds an existing escrow contract.
+
+<Callout type="warning">
+  Returns `422 INSUFFICIENT_FUNDS` if the buyer has insufficient balance.
+</Callout>
+
+### Release Escrow
+
+<Badge variant="primary">POST</Badge> `/api/v1/orders/{id}/resolution/release`
+
+Releases held funds from an escrow to the seller upon project completion.
+
+**Response**
+
+```json
+{
+  "data": {
+    "escrow_id": "esc_01JKL",
+    "status": "RELEASED",
+    "released_amount": "2500.00",
+    "released_at": "2026-02-10T16:00:00.000Z"
+  }
+}
+```
+
+### Refund Escrow
+
+<Badge variant="primary">POST</Badge> `/api/v1/orders/{id}/resolution/refund`
+
+Refunds escrowed funds back to the buyer.
+
+### Open Dispute
+
+<Badge variant="primary">POST</Badge> `/api/v1/orders/{id}/resolution/dispute`
+
+Opens a dispute on an escrow for resolution.
+
+---
+
+## Transactions
+
+Retrieve user transaction and balance history.
+
+### Get User Balance
+
+<Badge variant="success">GET</Badge> `/api/v1/users/{id}/balance`
+
+Returns the user's current balance across all currencies.
+
+<CommandLine>curl -X GET http://localhost:4000/api/v1/users/usr_abc/balance -H "Authorization: Bearer TOKEN"</CommandLine>
+
+**Response**
+
+```json
+{
+  "data": {
+    "user_id": "usr_abc123",
+    "balances": [
+      { "currency": "USD", "available": "1250.00", "held": "200.00" },
+      { "currency": "XLM", "available": "5000.00", "held": "0.00" }
+    ]
+  }
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `currency` | string | Currency code |
+| `available` | string | Spendable balance |
+| `held` | string | Balance locked in escrows |
+
+### Get Deposit Address
+
+<Badge variant="success">GET</Badge> `/api/v1/users/{id}/wallet/deposit`
+
+Returns a deposit address for the user to fund their account.
+
+---
+
+## Real-Time Events
+
+Subscribers consume real-time domain events over the [SSE event stream](/docs/api-reference/events) at `GET /api/v1/events`. Separately, the Orchestrator receives inbound webhooks from external providers (Airtm, Trustless Work) to process payment and escrow lifecycle events — see the [Inbound Webhooks](/docs/api-reference/webhooks) reference for signature verification and deduplication behavior.
+
+---
+
+## Assets
+
+### Create Withdrawal
+
+<Badge variant="primary">POST</Badge> `/api/v1/withdrawals`
+
+Initiate a withdrawal from user balance.
+
+**Request Body**
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `user_id` | string | Yes | User requesting withdrawal |
+| `amount` | string | Yes | Amount to withdraw |
+| `currency` | string | Yes | Currency code |
+| `destination` | object | Yes | Withdrawal destination |
+
+```json
+{
+  "user_id": "usr_abc123",
+  "amount": "100.00",
+  "currency": "USD",
+  "destination": {
+    "type": "stellar",
+    "address": "GBCG42WTVWPO4Q6N..."
+  }
+}
+```
+
+### Get Withdrawal
+
+<Badge variant="success">GET</Badge> `/api/v1/withdrawals/{id}`
+
+Returns withdrawal status and details.
+
+---
+
+## Pagination
+
+List endpoints support cursor-based pagination:
+
+### Request
+
+```
+GET /orders?limit=20&cursor=ord_xyz789
+```
+
+| Param | Default | Max | Description |
+|-------|---------|-----|-------------|
+| `limit` | 20 | 100 | Items per page |
+| `cursor` | - | - | ID of last item from previous page |
+
+### Response
+
+```json
+{
+  "data": ["..."],
+  "pagination": {
+    "has_more": true,
+    "next_cursor": "ord_abc123"
+  }
+}
+```
+
+## Filters
+
+List endpoints accept query parameter filters:
+
+```
+GET /orders?status=IN_PROGRESS&buyer_id=usr_abc&created_after=2026-01-01
+```
+
+| Filter | Type | Example |
+|--------|------|---------|
+| `status` | string | `IN_PROGRESS` |
+| `buyer_id` | string | `usr_abc123` |
+| `seller_id` | string | `usr_xyz789` |
+| `created_after` | ISO date | `2026-01-01T00:00:00Z` |
+| `created_before` | ISO date | `2026-01-31T23:59:59Z` |
+
+## Idempotency
+
+`Idempotency-Key` is optional and is processed on `POST`, `PUT`, and `PATCH`
+requests. When supplied, it must be a UUID v4 and is scoped to the API key and
+request body. The guard and response lifecycle are implemented in the
+[orchestrator `IdempotencyGuard`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/common/guards/idempotency.guard.ts)
+and
+[`IdempotencyInterceptor`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/common/interceptors/idempotency.interceptor.ts).
+
+Use a real UUID v4 for every request key:
+
+```http
+POST /orders
+Idempotency-Key: 550e8400-e29b-41d4-a716-446655440000
+Content-Type: application/json
+
+{ "order_data": "..." }
+```
+
+### Behavior
+
+1. **Invalid key**: Returns `400 VALIDATION_ERROR`; the key must be a UUID v4.
+2. **First request**: Processed normally and stored for replay.
+3. **Repeated request with the same key and body**: Returns the original response
+   and sets `Idempotency-Replay: true`.
+4. **Different body with the same key**: Returns `409 IDEMPOTENCY_KEY_REUSED`.
+5. **Original request still processing**: Returns `409
+   IDEMPOTENCY_KEY_IN_PROGRESS`.
+
+Example for a reused key:
+
+```json
+{
+  "error": {
+    "code": "IDEMPOTENCY_KEY_REUSED",
+    "message": "This idempotency key was used with a different request body"
+  }
+}
+```
+
+Example while the original request is still running:
+
+```json
+{
+  "error": {
+    "code": "IDEMPOTENCY_KEY_IN_PROGRESS",
+    "message": "A request with this key is still being processed"
+  }
+}
+```
+
+Keys are retained for 24 hours. Reuse after that period is treated as a new
+request.
+
+## Rate Limiting
+
+The API applies one global limit of 100 requests per 60-second window. The
+counter is keyed by API key when authenticated, or by client IP when no API key
+is available. There are no additional per-endpoint limits documented here.
+The headers and error payload are implemented in the orchestrator
+[`RateLimitGuard`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/common/guards/rate-limit.guard.ts).
+
+Every response includes:
+
+| Header | Meaning |
+|--------|---------|
+| `X-RateLimit-Limit` | Maximum requests in the current window (`100`) |
+| `X-RateLimit-Remaining` | Requests remaining in the current window |
+| `X-RateLimit-Reset` | Unix timestamp when the window expires |
+
+### Response When Exceeded
+
+```http
+HTTP/1.1 429 Too Many Requests
+
+{
+  "error": {
+    "code": "RATE_LIMITED",
+    "message": "Too many requests",
+    "details": {
+      "limit": 100,
+      "windowSeconds": 60,
+      "retryAfter": 60
+    }
+  }
+}
+```
+
+## Available Endpoints
+
+Every entry below was verified against the real controllers in `apps/api/src/modules`. All paths are relative to the `/api/v1` prefix.
+
+### Auth
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/auth/api-keys` | <Badge variant="primary">POST</Badge> | Create API key |
+| `/auth/api-keys` | <Badge variant="success">GET</Badge> | List API keys |
+| `/auth/api-keys/{id}/token` | <Badge variant="primary">POST</Badge> | Generate short-lived token |
+| `/auth/me` | <Badge variant="success">GET</Badge> | Current auth context |
+
+### Config
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/config` | <Badge variant="success">GET</Badge> | Platform configuration (public) |
+
+### Health
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/health` | <Badge variant="success">GET</Badge> | Basic health check (public) |
+| `/health/detailed` | <Badge variant="success">GET</Badge> | Detailed health check (public) |
+
+### Users
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/users` | <Badge variant="primary">POST</Badge> | Create user |
+| `/users/{id}/airtm/link` | <Badge variant="primary">POST</Badge> | Link Airtm account |
+
+### Balance
+
+All balance endpoints are scoped to a user: `/users/{userId}/balance`.
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/users/{userId}/balance` | <Badge variant="success">GET</Badge> | Get user balance |
+| `/users/{userId}/balance/credit` | <Badge variant="primary">POST</Badge> | Credit available balance |
+| `/users/{userId}/balance/debit` | <Badge variant="primary">POST</Badge> | Debit available balance |
+| `/users/{userId}/balance/reserve` | <Badge variant="primary">POST</Badge> | Reserve funds |
+| `/users/{userId}/balance/release` | <Badge variant="primary">POST</Badge> | Release reserved funds |
+| `/users/{userId}/balance/cancel-reservation` | <Badge variant="primary">POST</Badge> | Cancel reservation |
+| `/users/{userId}/balance/deduct-reserved` | <Badge variant="primary">POST</Badge> | Deduct from reserved |
+| `/users/{userId}/balance/sync` | <Badge variant="primary">POST</Badge> | Sync with provider |
+| `/users/{userId}/balance/verify` | <Badge variant="success">GET</Badge> | Verify with provider |
+
+### Wallet
+
+Wallet endpoints are scoped to a user: `/users/{userId}/wallet`.
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/users/{userId}/wallet` | <Badge variant="success">GET</Badge> | Get wallet info |
+| `/users/{userId}/wallet/deposit` | <Badge variant="success">GET</Badge> | Get deposit address |
+| `/users/{userId}/wallet/transactions` | <Badge variant="success">GET</Badge> | Transaction history |
+
+### Top-ups
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/topups` | <Badge variant="primary">POST</Badge> | Create top-up |
+| `/topups` | <Badge variant="success">GET</Badge> | List top-ups |
+| `/topups/{id}` | <Badge variant="success">GET</Badge> | Get top-up |
+| `/topups/{id}/refresh` | <Badge variant="primary">POST</Badge> | Refresh status from Airtm |
+| `/topups/{id}/cancel` | <Badge variant="primary">POST</Badge> | Cancel top-up |
+| `/topups/{id}/callback` | <Badge variant="success">GET</Badge> | Airtm callback (public) |
+
+### Orders
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/orders` | <Badge variant="primary">POST</Badge> | Create order |
+| `/orders` | <Badge variant="success">GET</Badge> | List orders |
+| `/orders/{id}` | <Badge variant="success">GET</Badge> | Get order |
+| `/orders/{id}/reserve` | <Badge variant="primary">POST</Badge> | Reserve funds |
+| `/orders/{id}/cancel` | <Badge variant="primary">POST</Badge> | Cancel order |
+| `/orders/{id}/milestones` | <Badge variant="success">GET</Badge> | Get milestones |
+| `/orders/{id}/milestones/{ref}/complete` | <Badge variant="primary">POST</Badge> | Complete milestone |
+
+### Escrow
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/orders/{id}/escrow` | <Badge variant="primary">POST</Badge> | Create escrow contract |
+| `/orders/{id}/escrow/fund` | <Badge variant="primary">POST</Badge> | Fund escrow |
+
+### Resolution
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/orders/{id}/resolution/release` | <Badge variant="primary">POST</Badge> | Release to seller |
+| `/orders/{id}/resolution/refund` | <Badge variant="primary">POST</Badge> | Refund to buyer |
+| `/orders/{id}/resolution/dispute` | <Badge variant="primary">POST</Badge> | Open dispute |
+
+### Disputes
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/disputes` | <Badge variant="success">GET</Badge> | List disputes |
+| `/disputes/{id}` | <Badge variant="success">GET</Badge> | Get dispute |
+| `/disputes/{id}/assign` | <Badge variant="primary">POST</Badge> | Assign to agent |
+| `/disputes/{id}/resolve` | <Badge variant="primary">POST</Badge> | Resolve dispute |
+
+### Withdrawals
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/withdrawals` | <Badge variant="primary">POST</Badge> | Create withdrawal |
+| `/withdrawals` | <Badge variant="success">GET</Badge> | List withdrawals |
+| `/withdrawals/{id}` | <Badge variant="success">GET</Badge> | Get withdrawal |
+| `/withdrawals/{id}/commit` | <Badge variant="primary">POST</Badge> | Commit withdrawal |
+| `/withdrawals/{id}/refresh` | <Badge variant="primary">POST</Badge> | Refresh status from Airtm |
+
+### Events
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/events` | <Badge variant="success">GET</Badge> | SSE event stream |
+
+### Webhooks (inbound)
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/webhooks/airtm` | <Badge variant="primary">POST</Badge> | Receive Airtm webhooks |
+| `/webhooks/trustless-work` | <Badge variant="primary">POST</Badge> | Receive Trustless Work webhooks |
+
+### Audit Logs
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/audit/logs` | <Badge variant="success">GET</Badge> | List audit entries |
+
+## Versioning
+
+The API uses path versioning:
+
+```
+/api/v1/orders
+/api/v2/orders  (future)
+```
+
+- `v1` is the current stable version
+- Deprecated versions will have 6 months notice
+
+## Next Steps
+
+- [Events (SSE)](/docs/api-reference/events) - Real-time event stream and event catalog
+- [Inbound Webhooks](/docs/api-reference/webhooks) - AirTM and Trustless Work receivers
+- [Quick Start](/docs/guide/quick-start) - Your first API call
+- [SDK Guide](/docs/sdk/quick-start) - Use the TypeScript SDK

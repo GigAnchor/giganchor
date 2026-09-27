@@ -1,0 +1,88 @@
+---
+title: Getting Started
+description: Learn how OFFER-HUB works and how to integrate it into your marketplace in minutes.
+order: 1
+section: Getting Started
+---
+
+OFFER-HUB Orchestrator is a **self-hosted payments and escrow backend** for service marketplaces. It handles the financial plumbing — escrow, balance management, dispute resolution, and USDC transactions on Stellar — so you can focus on building your marketplace product.
+
+> **New to OFFER-HUB?** Read the [Architecture Overview](/docs/guide/architecture) first to understand the self-hosted, per-marketplace, non-custodial design before diving into integration.
+
+## Overview
+
+OFFER-HUB solves the hardest problems in marketplace payments:
+
+| Challenge | Orchestrator Solution |
+|-----------|----------------------|
+| Holding buyer funds securely | Non-custodial escrow via Trustless Work smart contracts |
+| Preventing double-spending | Atomic balance operations + idempotency keys |
+| Handling "seller didn't deliver" | Built-in dispute workflow with SPLIT resolution |
+| Managing crypto wallets for non-crypto users | Invisible Stellar wallets (Web2 UX) |
+| Tracking payment state | State machine with full audit log |
+| Real-time notifications | SSE event stream |
+
+<Callout type="tip">
+  Without the Orchestrator, building all of this could take 6-12 months. With it, you can integrate in a few days.
+</Callout>
+
+## Prerequisites
+
+Before you begin, ensure you have the following installed:
+
+| Requirement | Version | Purpose |
+|-------------|---------|---------|
+| Node.js | 20+ | Runtime environment |
+| npm or pnpm | Latest | Package management |
+| PostgreSQL | 14+ | Database |
+| Redis | 6+ | Caching and queues |
+| Git | Latest | Version control |
+
+You'll also need:
+
+- A Stellar testnet account (for development)
+- Basic familiarity with REST APIs
+- A marketplace application to integrate with
+
+<Callout type="note">
+  For production, you'll need a Stellar mainnet account with USDC trustline and a Trustless Work API key.
+</Callout>
+
+## Installation
+
+Follow the [Installation guide](/docs/installation) to get a running Orchestrator. The fastest path is the one-command setup wizard:
+
+<CommandLine>npx create-offer-hub-orchestrator</CommandLine>
+
+It configures your `.env`, runs migrations, and bootstraps the platform user automatically. A manual Docker-based setup is also available for custom environments.
+
+<Callout type="tip">
+  The setup wizard takes about 2 minutes. You'll have a running API at `http://localhost:4000` when you're done.
+</Callout>
+
+## Creating an API Key
+
+After installation, you need an API key to make API calls. The fastest way is with the CLI:
+
+<CommandLine>npm install -g @offerhub/cli && offerhub keys create</CommandLine>
+
+You can also create keys with `curl` — see the [Installation guide](/docs/installation#creating-your-first-api-key) for both methods.
+
+## Next Steps
+
+Once the Orchestrator is running, explore these guides:
+
+- [Architecture Overview](/docs/guide/architecture) — Self-hosted, per-marketplace, non-custodial design
+- [CLI Guide](/docs/guide/cli) — Manage API keys and maintenance from the command line
+- [Quick Start](/docs/guide/quick-start) — Create your first user and order in 5 minutes
+- [Orchestrator Guide](/docs/guide/orchestrator) — Deep dive into the Orchestrator architecture
+- [Escrow Flows](/docs/guide/escrow) — Learn about escrow states and transitions
+- [Orders Guide](/docs/guide/orders) — Complete order lifecycle documentation
+- [Disputes](/docs/guide/disputes) — Handle disputes and resolutions
+- [API Reference](/docs/api-reference/overview) — Full REST API documentation
+- [Events Reference](/docs/api-reference/events) — SSE event envelope, subscriptions, and catalog
+- [SDK Quick Start](/docs/sdk/quick-start) — Use the TypeScript SDK
+
+<Callout type="note">
+  Need help? Join our [Discord community](https://discord.gg/offerhub) or open an issue on [GitHub](https://github.com/OFFER-HUB/offer-hub-monorepo/issues).
+</Callout>

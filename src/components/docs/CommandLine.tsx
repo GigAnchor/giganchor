@@ -1,0 +1,137 @@
+"use client";
+
+import { useState, ReactNode } from "react";
+import { Check, Copy, Terminal } from "lucide-react";
+
+import { cn } from "@/lib/cn";
+
+interface CommandLineProps {
+  command?: string;
+  label?: string;
+  promptSymbol?: string;
+  className?: string;
+  children?: ReactNode;
+}
+
+/**
+ * Recursively extract text content from React children.
+ * This handles MDX transformations that may convert URLs or text into React elements.
+ */
+function extractTextFromChildren(children: ReactNode): string {
+  if (children === null || children === undefined) {
+    return "";
+  }
+
+  if (typeof children === "string") {
+    return children;
+  }
+
+  if (typeof children === "number") {
+    return String(children);
+  }
+
+  if (Array.isArray(children)) {
+    return children.map(extractTextFromChildren).join("");
+  }
+
+  // Handle React elements (e.g., <a> tags from MDX URL processing)
+  if (typeof children === "object" && "props" in children) {
+    const element = children as { props?: { children?: ReactNode; href?: string } };
+    // For anchor tags, prefer href as it contains the actual URL
+    if (element.props?.href && !element.props?.children) {
+      return element.props.href;
+    }
+    return extractTextFromChildren(element.props?.children);
+  }
+
+  return "";
+}
+
+export function CommandLine({
+  command,
+  label,
+  promptSymbol = "$",
+  className,
+  children,
+}: CommandLineProps) {
+  const [copied, setCopied] = useState(false);
+  const [copyStatus, setCopyStatus] = useState("");
+
+  const raw = command ?? extractTextFromChildren(children);
+  const trimmed = raw.trim();
+
+  async function handleCopy() {
+    try {
+      await navigator.clipboard.writeText(trimmed);
+      setCopied(true);
+      setCopyStatus("Command copied to clipboard.");
+      setTimeout(() => setCopied(false), 2000);
+      setTimeout(() => setCopyStatus(""), 2500);
+    } catch {
+      setCopyStatus("Unable to copy command. Please select it and copy manually.");
+    }
+  }
+
+  return (
+    <div
+      className={cn(
+        "my-6 rounded-2xl overflow-hidden bg-bg-base shadow-neu-raised relative z-10",
+        className,
+      )}
+    >
+      {/* Terminal header bar */}
+      <div
+        className="flex items-center gap-2 px-4 py-2.5 bg-bg-sunken shadow-neu-sunken-subtle"
+      >
+        <span className="w-2.5 h-2.5 rounded-full bg-theme-error/80" />
+        <span className="w-2.5 h-2.5 rounded-full bg-theme-warning/80" />
+        <span className="w-2.5 h-2.5 rounded-full bg-theme-success/80" />
+        {label && (
+          <span className="ml-2 text-xs font-bold uppercase tracking-widest text-content-secondary/60">
+            {label}
+          </span>
+        )}
+        <button
+          type="button"
+          onClick={handleCopy}
+          aria-label={copied ? "Command copied" : "Copy command"}
+          className={cn(
+            "ml-auto inline-flex items-center gap-1.5 px-2 min-h-11 min-w-11 justify-center rounded-md text-xs font-medium",
+            "transition-colors duration-200",
+            copied
+              ? "text-theme-success"
+              : "text-content-secondary hover:text-content-primary",
+          )}
+        >
+          {copied ? (
+            <Check size={12} aria-hidden="true" />
+          ) : (
+            <Copy size={12} aria-hidden="true" />
+          )}
+          {copied ? "Copied" : "Copy"}
+        </button>
+        <span role="status" aria-live="polite" className="sr-only">
+          {copyStatus}
+        </span>
+      </div>
+
+      {/* Command row */}
+      <div className="flex items-center gap-3 px-5 py-4 bg-bg-base">
+        <Terminal size={14} className="flex-shrink-0 text-theme-primary" aria-hidden="true" />
+        <span className="text-sm text-theme-primary flex-shrink-0 font-mono font-bold">
+          {promptSymbol}
+        </span>
+        <div
+          tabIndex={0}
+          role="region"
+          aria-label="Command, scrollable horizontally"
+          className="relative flex-1 overflow-x-auto"
+        >
+          <code className="block whitespace-nowrap text-sm text-content-primary font-mono pr-2">
+            {trimmed}
+          </code>
+        </div>
+      </div>
+    </div>
+  );
+}

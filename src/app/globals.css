@@ -1,0 +1,578 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   THEME VARIABLES - Dark Mode Support
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Backgrounds */
+  --color-bg-base: #F1F3F7;
+  --color-bg-elevated: #ffffff;
+  --color-bg-sunken: #e8eaef;
+
+  /* Text */
+  --color-text-primary: #19213D;
+  --color-text-secondary: #6D758F;
+  --color-text-muted: #9ca3af;
+
+  /* Brand */
+  --color-primary: #149A9B;
+  --color-primary-hover: #0d7377;
+  --color-secondary: #002333;
+  --color-accent: #15949C;
+
+  /* Neumorphic shadows */
+  --shadow-dark: #d1d5db;
+  --shadow-light: #ffffff;
+
+  /* Semantic */
+  --color-success: #16a34a;
+  --color-warning: #d97706;
+  --color-error: #FF0000;
+
+  /* Borders */
+  --color-border: #d1d5db;
+
+  /* Callout backgrounds */
+  --color-callout-note-bg: rgba(20, 154, 155, 0.08);
+  --color-callout-tip-bg: rgba(22, 163, 74, 0.08);
+  --color-callout-warning-bg: rgba(217, 119, 6, 0.12);
+  --color-callout-danger-bg: rgba(255, 0, 0, 0.08);
+}
+
+.dark {
+  /* Backgrounds */
+  --color-bg-base: #242433;
+  --color-bg-elevated: #2e2e3f;
+  --color-bg-sunken: #1a1a26;
+
+  /* Text */
+  --color-text-primary: #f1f3f7;
+  --color-text-secondary: #b8bfd0;
+  --color-text-muted: #6D758F;
+
+  /* Brand */
+  --color-primary: #1fb8b9;
+  --color-primary-hover: #25d4d5;
+  --color-accent: #15949C;
+
+  /* Semantic */
+  --color-success: #16a34a;
+  --color-warning: #d97706;
+  --color-error: #FF0000;
+
+  /* Neumorphic shadows for dark */
+  --shadow-dark: #1a1a26;
+  --shadow-light: #2e2e3f;
+
+  /* Borders */
+  --color-border: #3d3d5c;
+
+  /* Callout backgrounds for dark mode - slightly higher intensity for visibility on dark */
+  --color-callout-note-bg: rgba(31, 184, 185, 0.12);
+  --color-callout-tip-bg: rgba(22, 163, 74, 0.12);
+  --color-callout-warning-bg: rgba(217, 119, 6, 0.15);
+  --color-callout-danger-bg: rgba(255, 0, 0, 0.12);
+}
+
+/* Subtle page background — faint teal corner glows only (Dot grid handled by React) */
+body {
+  background-color: var(--color-bg-base);
+  color: var(--color-text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 65% 55% at 5% 0%, rgba(20, 154, 155, 0.055) 0%, transparent 65%),
+    radial-gradient(ellipse 55% 65% at 96% 100%, rgba(20, 154, 155, 0.045) 0%, transparent 60%),
+    radial-gradient(ellipse 42% 52% at 96% 4%, rgba(13, 115, 119, 0.040) 0%, transparent 58%),
+    radial-gradient(ellipse 48% 42% at 4% 96%, rgba(21, 148, 156, 0.038) 0%, transparent 55%);
+  will-change: auto;
+}
+
+@layer utilities {
+
+  /* Custom scrollbar utilities */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: #d1d5db transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: #d1d5db;
+    border-radius: 3px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background-color: #9ca3af;
+  }
+
+  .scrollbar-thumb-\[\#d1d5db\]::-webkit-scrollbar-thumb {
+    background-color: #d1d5db;
+  }
+
+  .scrollbar-track-transparent::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* ── Neumorphic Level-2 (L2) shadow system — Blueprint deep-nesting support ──
+     L2 tokens provide higher offsets and blurs for elements that sit closer to
+     the user ("raised-l2") or hold complex technical data ("sunken-l2").
+     Light source: 135° (top-left). Shadow colors derived from bg-base:
+       Dark shadow  → L - 8%  (--shadow-dark)
+       Light shadow → L + 5%  (--shadow-light)
+  */
+
+  /* Blueprint performance layer — promotes to GPU compositor for Safari/Mobile.
+     Apply to any container with ≥ 3 concurrent box-shadows to avoid repaints. */
+  .blueprint-layer {
+    will-change: transform;
+    transform: translateZ(0);
+  }
+
+  /* Shared elevation press/lift transition — animates only box-shadow so raised/sunken
+     surfaces feel neumorphic instead of fading or sliding. Reference this everywhere
+     a surface swaps between shadow-neu-raised* / shadow-neu-sunken* on hover or press. */
+  .transition-elevation {
+    transition-property: box-shadow;
+    transition-duration: 200ms;
+    transition-timing-function: ease-out;
+  }
+
+  .neu-input {
+    background: var(--color-bg-sunken);
+    box-shadow:
+      inset 3px 3px 6px var(--shadow-dark),
+      inset -3px -3px 6px var(--shadow-light);
+  }
+
+  .neu-btn {
+    background: var(--color-bg-base);
+    box-shadow:
+      6px 6px 12px var(--shadow-dark),
+      -6px -6px 12px var(--shadow-light);
+    transition: box-shadow 0.2s ease;
+  }
+
+  .neu-btn:active {
+    box-shadow:
+      inset 4px 4px 8px var(--shadow-dark),
+      inset -4px -4px 8px var(--shadow-light);
+  }
+
+  .neu-circle {
+    background: var(--color-bg-base);
+    border-radius: 9999px;
+    box-shadow:
+      6px 6px 12px var(--shadow-dark),
+      -6px -6px 12px var(--shadow-light);
+    transition: box-shadow 0.2s ease;
+  }
+
+  .neu-circle:active {
+    box-shadow:
+      inset 4px 4px 8px var(--shadow-dark),
+      inset -4px -4px 8px var(--shadow-light);
+  }
+
+  /* ── Neumorphic Tables ── */
+
+  /* Outer wrapper — raised card, SOLID background blocks the dot grid */
+  .neu-table-wrap {
+    background: var(--color-bg-base);
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+    box-shadow:
+      6px 6px 14px var(--shadow-dark),
+      -6px -6px 14px var(--shadow-light);
+  }
+
+  /* Header — sunken look, same pattern as .neu-input */
+  .neu-table-head {
+    background: var(--color-bg-sunken);
+    box-shadow:
+      inset 3px 3px 6px var(--shadow-dark),
+      inset -3px -3px 6px var(--shadow-light);
+  }
+
+  /* Body — solid to block dot grid from showing through */
+  .neu-table-body {
+    background: var(--color-bg-base);
+  }
+
+  /* Row dividers */
+  .neu-table-body tr+tr {
+    border-top: 1px solid var(--color-border);
+  }
+
+  /* Row hover — subtle primary tint */
+  .neu-table-row:hover td {
+    background: color-mix(in srgb, var(--color-primary) 6%, var(--color-bg-base));
+    transition: background 0.15s ease;
+  }
+
+  /* ── 3D Colored Neumorphic Buttons ── */
+  /* Ramp darkened from the brand teal (#149A9B/#15A9AA/#0D7377) so white
+     text clears WCAG AA 4.5:1 in every state: default 4.93:1, hover 6.29:1,
+     active 8.10:1 (was as low as 2.43:1 on hover). See issue #1499. */
+  .btn-neumorphic-primary {
+    background: #107D7E;
+    box-shadow:
+      6px 6px 12px var(--shadow-dark),
+      -6px -6px 12px var(--shadow-light),
+      inset 2px 2px 5px rgba(255, 255, 255, 0.4),
+      inset -3px -3px 7px rgba(0, 0, 0, 0.15);
+    transition: all 400ms cubic-bezier(0.25, 1, 0.5, 1);
+    color: white;
+  }
+
+  .btn-neumorphic-primary:hover {
+    background: #0E6B6C;
+    /* Slightly brighter highlight */
+    box-shadow:
+      3px 3px 6px var(--shadow-dark),
+      -3px -3px 6px var(--shadow-light),
+      inset 2px 2px 4px rgba(255, 255, 255, 0.5),
+      inset -2px -2px 5px rgba(0, 0, 0, 0.1);
+    transform: translateY(2px);
+  }
+
+  .btn-neumorphic-primary:active {
+    background: #0C595A;
+    box-shadow:
+      inset 5px 5px 10px rgba(0, 0, 0, 0.2),
+      inset -5px -5px 10px rgba(255, 255, 255, 0.15);
+    transform: translateY(4px);
+  }
+
+  /* Secondary Base color Neumorphic Buttons */
+  .btn-neumorphic-secondary {
+    background: var(--color-bg-base);
+    box-shadow:
+      6px 6px 12px var(--shadow-dark),
+      -6px -6px 12px var(--shadow-light),
+      inset 1px 1px 2px rgba(255, 255, 255, 0.8),
+      inset -1px -1px 2px rgba(0, 0, 0, 0.05);
+    transition: all 400ms cubic-bezier(0.25, 1, 0.5, 1);
+    color: var(--color-text-primary);
+  }
+
+  .btn-neumorphic-secondary:hover {
+    box-shadow:
+      3px 3px 6px var(--shadow-dark),
+      -3px -3px 6px var(--shadow-light),
+      inset 1px 1px 2px rgba(255, 255, 255, 0.9);
+    transform: translateY(2px);
+  }
+
+  .btn-neumorphic-secondary:active {
+    box-shadow:
+      inset 4px 4px 8px var(--shadow-dark),
+      inset -4px -4px 8px var(--shadow-light);
+    transform: translateY(4px);
+  }
+
+  /* ── Dark Mode Neumorphic Buttons ── */
+  /* Same AA-compliant ramp as the light mode button above (contrast is a
+     property of the button's own bg/fg pair, not the surrounding page). */
+  .dark .btn-neumorphic-primary {
+    background: #107D7E;
+    box-shadow:
+      6px 6px 12px var(--shadow-dark),
+      -6px -6px 12px var(--shadow-light),
+      inset 2px 2px 5px rgba(255, 255, 255, 0.15),
+      inset -3px -3px 7px rgba(0, 0, 0, 0.3);
+  }
+
+  .dark .btn-neumorphic-primary:hover {
+    background: #0E6B6C;
+    box-shadow:
+      3px 3px 6px var(--shadow-dark),
+      -3px -3px 6px var(--shadow-light),
+      inset 2px 2px 4px rgba(255, 255, 255, 0.2),
+      inset -2px -2px 5px rgba(0, 0, 0, 0.2);
+  }
+
+  .dark .btn-neumorphic-primary:active {
+    background: #0C595A;
+    box-shadow:
+      inset 5px 5px 10px rgba(0, 0, 0, 0.4),
+      inset -5px -5px 10px rgba(255, 255, 255, 0.05);
+  }
+
+  .dark .btn-neumorphic-secondary {
+    box-shadow:
+      6px 6px 12px var(--shadow-dark),
+      -6px -6px 12px var(--shadow-light),
+      inset 1px 1px 2px rgba(255, 255, 255, 0.1),
+      inset -1px -1px 2px rgba(0, 0, 0, 0.2);
+    color: var(--color-text-primary);
+  }
+
+  .dark .btn-neumorphic-secondary:hover {
+    box-shadow:
+      3px 3px 6px var(--shadow-dark),
+      -3px -3px 6px var(--shadow-light),
+      inset 1px 1px 2px rgba(255, 255, 255, 0.15);
+  }
+
+  .dark .btn-neumorphic-secondary:active {
+    box-shadow:
+      inset 4px 4px 8px var(--shadow-dark),
+      inset -4px -4px 8px var(--shadow-light);
+  }
+}
+
+/* CSS-only fade-in-up animation (replaces framer-motion whileInView) */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.6s ease-out both;
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 0.6s ease-out both;
+}
+
+.animate-fadeInScale {
+  animation: fadeInScale 0.6s ease-out both;
+}
+
+@keyframes dropdownIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-dropdownIn {
+  animation: dropdownIn 0.2s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Escrow Flow Diagram animations */
+@keyframes blockchainPulse {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.08); opacity: 0.25; }
+}
+.animate-blockchainPulse {
+  animation: blockchainPulse 2s ease-in-out infinite;
+}
+
+@keyframes connectorDash {
+  to { stroke-dashoffset: -12; }
+}
+.animate-connectorDash {
+  animation: connectorDash 1s linear infinite;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   VIEW TRANSITION - Theme Toggle Ripple Effect
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+  display: block;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 99999;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   PRINT STYLESHEET - Technical Documentation Layout
+   ══════════════════════════════════════════════════════════════════════════════ */
+@media print {
+  @page {
+    margin: 2cm;
+  }
+
+  /* Force hidden for printing */
+  .print\:hidden {
+    display: none !important;
+  }
+
+  /* Reset layout constraints and backgrounds for printing */
+  body, 
+  .min-h-screen, 
+  main,
+  #doc-page-export-content {
+    background: transparent !important;
+    color: #000000 !important;
+  }
+
+  body::before {
+    display: none !important;
+  }
+
+  /* Reset spacings and paddings */
+  .pt-40 {
+    padding-top: 0 !important;
+  }
+
+  .pb-10 {
+    padding-bottom: 0 !important;
+  }
+
+  .mb-16 {
+    margin-bottom: 2rem !important;
+  }
+
+  /* Reset layout grid to span full-width single column */
+  .max-w-\[1800px\],
+  .max-w-6xl,
+  .xl\:max-w-7xl {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .grid {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  main {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Avoid page-breaks inside crucial components */
+  pre, 
+  code, 
+  .mermaid, 
+  [class*="mermaid"] {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   FLOATING CTA - Rotating Border Animation
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+@keyframes rotate-border {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.animated-border-wrapper {
+  position: relative;
+  border-radius: 1rem;
+  padding: 2px;
+  overflow: hidden;
+}
+
+.animated-border-wrapper::before {
+  content: "";
+  position: absolute;
+  inset: -150%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 340deg,
+    var(--color-primary) 345deg,
+    var(--color-primary-hover) 355deg,
+    transparent 360deg
+  );
+  animation: rotate-border 3s linear infinite;
+}
+
+.animated-border-inner {
+  position: relative;
+  background: var(--color-bg-base);
+  border-radius: calc(1rem - 2px);
+  z-index: 1;
+}

@@ -1,0 +1,747 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "OFFER-HUB API",
+    "version": "1.0.0",
+    "description": "Auto-generated OpenAPI specification for OFFER-HUB",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.offer-hub.com",
+      "description": "Production Server"
+    }
+  ],
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "summary": "Register a new user",
+        "description": "Creates a new user account and returns a JWT token for immediate authentication.",
+        "operationId": "register-a-new-user",
+        "tags": [
+          "Auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "code": 200,
+                  "type": "success",
+                  "ok": true,
+                  "message": "User registered successfully",
+                  "data": {
+                    "id": "usr_01ABC",
+                    "email": "user@example.com",
+                    "name": "John Doe",
+                    "token": "eyJhbGciOiJIUzI1NiIs..."
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "code": 422,
+                  "type": "error",
+                  "ok": false,
+                  "message": "Validation failed",
+                  "data": null,
+                  "errors": [
+                    "Email is already registered",
+                    "Password must be at least 8 characters"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {
+                "email": "user@example.com",
+                "password": "securePassword123",
+                "name": "John Doe"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "Login and receive a JWT",
+        "description": "Authenticates a user with email and password, returns a JWT for subsequent requests.",
+        "operationId": "login-and-receive-a-jwt",
+        "tags": [
+          "Auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "code": 200,
+                  "type": "success",
+                  "ok": true,
+                  "message": "Login successful",
+                  "data": {
+                    "token": "eyJhbGciOiJIUzI1NiIs...",
+                    "user": {
+                      "id": "usr_01ABC",
+                      "email": "user@example.com",
+                      "name": "John Doe"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "code": 401,
+                  "type": "error",
+                  "ok": false,
+                  "message": "Invalid email or password",
+                  "data": null
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {
+                "email": "user@example.com",
+                "password": "securePassword123"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/balances": {
+      "get": {
+        "summary": "Get user balances",
+        "description": "Returns the authenticated user's available and held balances across all currencies.",
+        "operationId": "get-user-balances",
+        "tags": [
+          "Balances"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "code": 200,
+                  "type": "success",
+                  "ok": true,
+                  "message": "Balances retrieved",
+                  "data": {
+                    "balances": [
+                      {
+                        "currency": "USD",
+                        "available": 1250,
+                        "held": 200
+                      },
+                      {
+                        "currency": "XLM",
+                        "available": 5000,
+                        "held": 0
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "code": 401,
+                  "type": "error",
+                  "ok": false,
+                  "message": "Missing or invalid authorization token",
+                  "data": null
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/balances/transactions": {
+      "get": {
+        "summary": "Get paginated transaction history",
+        "description": "Returns paginated list of the user's transactions with optional filtering.",
+        "operationId": "get-paginated-transaction-history",
+        "tags": [
+          "Balances"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "code": 200,
+                  "type": "success",
+                  "ok": true,
+                  "message": "Transactions retrieved",
+                  "data": {
+                    "transactions": [
+                      {
+                        "id": "txn_01XYZ",
+                        "type": "credit",
+                        "amount": 100,
+                        "currency": "USD",
+                        "description": "Escrow release — Project Alpha",
+                        "created_at": "2026-01-15T10:30:00.000Z"
+                      },
+                      {
+                        "id": "txn_02XYZ",
+                        "type": "debit",
+                        "amount": 50,
+                        "currency": "USD",
+                        "description": "Withdrawal to bank",
+                        "created_at": "2026-01-14T14:20:00.000Z"
+                      }
+                    ],
+                    "pagination": {
+                      "page": 1,
+                      "limit": 20,
+                      "total": 47,
+                      "pages": 3
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "code": 401,
+                  "type": "error",
+                  "ok": false,
+                  "message": "Missing or invalid authorization token",
+                  "data": null
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "Page number (default: 1)",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Results per page (default: 20, max: 100)",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "currency",
+            "in": "query",
+            "required": false,
+            "description": "Filter by currency",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "USD",
+                "XLM",
+                "USDC"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "/wallets/connect": {
+      "post": {
+        "summary": "Connect a Stellar wallet",
+        "description": "Links a Stellar public key to the authenticated user's account for on-chain transactions.",
+        "operationId": "connect-a-stellar-wallet",
+        "tags": [
+          "Wallets"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "code": 200,
+                  "type": "success",
+                  "ok": true,
+                  "message": "Wallet connected successfully",
+                  "data": {
+                    "wallet_id": "wal_01DEF",
+                    "public_key": "GBCG42WTVWPO4Q6N...",
+                    "connected_at": "2026-01-20T08:00:00.000Z"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "code": 400,
+                  "type": "error",
+                  "ok": false,
+                  "message": "Invalid Stellar public key format",
+                  "data": null
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {
+                "public_key": "GBCG42WTVWPO4Q6N..."
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects": {
+      "get": {
+        "summary": "List projects",
+        "description": "Returns a paginated list of projects visible to the authenticated user.",
+        "operationId": "list-projects",
+        "tags": [
+          "Projects"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "code": 200,
+                  "type": "success",
+                  "ok": true,
+                  "message": "Projects retrieved",
+                  "data": {
+                    "projects": [
+                      {
+                        "id": "prj_01GHI",
+                        "title": "Project Alpha",
+                        "description": "A sample freelance project",
+                        "budget": 2500,
+                        "currency": "USD",
+                        "status": "open",
+                        "created_at": "2026-01-10T09:00:00.000Z"
+                      },
+                      {
+                        "id": "prj_02GHI",
+                        "title": "Project Beta",
+                        "description": "Another project",
+                        "budget": 1000,
+                        "currency": "USDC",
+                        "status": "in_progress",
+                        "created_at": "2026-01-12T11:00:00.000Z"
+                      }
+                    ],
+                    "pagination": {
+                      "page": 1,
+                      "limit": 20,
+                      "total": 12,
+                      "pages": 1
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "code": 401,
+                  "type": "error",
+                  "ok": false,
+                  "message": "Missing or invalid authorization token",
+                  "data": null
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "Page number (default: 1)",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Results per page (default: 20)",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ]
+      },
+      "post": {
+        "summary": "Create a project",
+        "description": "Creates a new project. Requires authentication.",
+        "operationId": "create-a-project",
+        "tags": [
+          "Projects"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "code": 200,
+                  "type": "success",
+                  "ok": true,
+                  "message": "Project created successfully",
+                  "data": {
+                    "id": "prj_03GHI",
+                    "title": "New Project",
+                    "description": "Project description here",
+                    "budget": 1500,
+                    "currency": "USD",
+                    "status": "open",
+                    "created_at": "2026-02-01T12:00:00.000Z"
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "code": 422,
+                  "type": "error",
+                  "ok": false,
+                  "message": "Validation failed",
+                  "data": null,
+                  "errors": [
+                    "Title is required",
+                    "Budget must be positive"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {
+                "title": "New Project",
+                "description": "Project description here",
+                "budget": 1500,
+                "currency": "USD"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/escrow/init": {
+      "post": {
+        "summary": "Initialise an escrow",
+        "description": "Creates a new escrow contract between buyer and seller. Funds are held until release.",
+        "operationId": "initialise-an-escrow",
+        "tags": [
+          "Escrow"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "code": 200,
+                  "type": "success",
+                  "ok": true,
+                  "message": "Escrow initialised",
+                  "data": {
+                    "escrow_id": "esc_01JKL",
+                    "project_id": "prj_01GHI",
+                    "buyer_id": "usr_01ABC",
+                    "seller_id": "usr_02ABC",
+                    "amount": 2500,
+                    "currency": "USD",
+                    "status": "funded",
+                    "created_at": "2026-02-01T14:00:00.000Z"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "code": 400,
+                  "type": "error",
+                  "ok": false,
+                  "message": "Insufficient balance to fund escrow",
+                  "data": null
+                }
+              }
+            }
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {
+                "project_id": "prj_01GHI",
+                "seller_id": "usr_02ABC",
+                "amount": 2500,
+                "currency": "USD"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/escrow/release": {
+      "post": {
+        "summary": "Release escrowed funds",
+        "description": "Releases held funds from an escrow to the seller upon project completion.",
+        "operationId": "release-escrowed-funds",
+        "tags": [
+          "Escrow"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "code": 200,
+                  "type": "success",
+                  "ok": true,
+                  "message": "Escrow released successfully",
+                  "data": {
+                    "escrow_id": "esc_01JKL",
+                    "status": "released",
+                    "released_amount": 2500,
+                    "released_at": "2026-02-10T16:00:00.000Z"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "code": 400,
+                  "type": "error",
+                  "ok": false,
+                  "message": "Escrow is not in a releasable state",
+                  "data": null
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "code": 401,
+                  "type": "error",
+                  "ok": false,
+                  "message": "Only the buyer can release the escrow",
+                  "data": null
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {
+                "escrow_id": "esc_01JKL"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {},
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": []
+}
