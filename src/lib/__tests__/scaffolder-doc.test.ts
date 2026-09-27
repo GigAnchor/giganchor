@@ -9,7 +9,7 @@ describe("docs/guide/scaffolder", () => {
     expect(doc).not.toBeNull();
     expect(doc!.frontmatter.title).toBe("Scaffolder (create-offer-hub-orchestrator)");
     expect(doc!.frontmatter.section).toBe("Guides");
-    expect(doc!.frontmatter.order).toBe(26);
+    expect(doc!.frontmatter.order).toBe(27);
     expect(doc!.content.length).toBeGreaterThan(500);
   });
 

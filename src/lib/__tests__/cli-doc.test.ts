@@ -7,7 +7,7 @@ describe("docs/guide/cli", () => {
     expect(doc).not.toBeNull();
     expect(doc!.frontmatter.title).toBe("CLI Tool");
     expect(doc!.frontmatter.section).toBe("Guides");
-    expect(doc!.frontmatter.order).toBe(23);
+    expect(doc!.frontmatter.order).toBe(24);
   });
 
   it("documents configuration resolution priority order accurately", () => {
@@ -18,35 +18,31 @@ describe("docs/guide/cli", () => {
     expect(doc.content).toContain(".env");
   });
 
-  it("marks keys revoke as unavailable in API", () => {
+  it.each([
+    {
+      name: "marks keys revoke as unavailable in API",
+      tokens: ["keys revoke", "Unavailable in API", "DELETE /auth/api-keys/:id"],
+    },
+    {
+      name: "marks maintenance commands as unavailable in API",
+      tokens: ["Maintenance Commands", "Unavailable in API", "admin/maintenance"],
+    },
+    {
+      name: "clarifies that keys list/create user-id option is not supported by API",
+      tokens: ["--user-id", "Not supported in API"],
+    },
+    {
+      name: "documents that token TTL is fixed at 1 hour by backend",
+      tokens: ["keys token", "1 hour", "3600"],
+    },
+    {
+      name: "includes cross-link to the scaffolder guide",
+      tokens: ["/docs/guide/scaffolder"],
+    },
+  ])("$name", ({ tokens }) => {
     const doc = getDocBySlug("guide/cli")!;
-    expect(doc.content).toContain("keys revoke");
-    expect(doc.content).toContain("Unavailable in API");
-    expect(doc.content).toContain("DELETE /auth/api-keys/:id");
-  });
-
-  it("marks maintenance commands as unavailable in API", () => {
-    const doc = getDocBySlug("guide/cli")!;
-    expect(doc.content).toContain("Maintenance Commands");
-    expect(doc.content).toContain("Unavailable in API");
-    expect(doc.content).toContain("admin/maintenance");
-  });
-
-  it("clarifies that keys list/create user-id option is not supported by API", () => {
-    const doc = getDocBySlug("guide/cli")!;
-    expect(doc.content).toContain("--user-id");
-    expect(doc.content).toContain("Not supported in API");
-  });
-
-  it("documents that token TTL is fixed at 1 hour by backend", () => {
-    const doc = getDocBySlug("guide/cli")!;
-    expect(doc.content).toContain("keys token");
-    expect(doc.content).toContain("1 hour");
-    expect(doc.content).toContain("3600");
-  });
-
-  it("includes cross-link to the scaffolder guide", () => {
-    const doc = getDocBySlug("guide/cli")!;
-    expect(doc.content).toContain("/docs/guide/scaffolder");
+    for (const token of tokens) {
+      expect(doc.content).toContain(token);
+    }
   });
 });
