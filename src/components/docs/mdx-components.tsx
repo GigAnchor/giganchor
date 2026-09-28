@@ -1,6 +1,7 @@
 import type { MDXComponents } from "mdx/types";
 import type { ReactElement } from "react";
 import { CodeBlock } from "./CodeBlock";
+import { CodeTabs } from "./CodeTabs";
 import { Callout } from "./Callout";
 import { CommandLine } from "./CommandLine";
 import { Badge } from "./Badge";
@@ -16,6 +17,7 @@ export const MDX_COMPONENTS: MDXComponents = {
 
   // Custom doc components (used directly in .mdx files)
   CodeBlock,
+  CodeTabs,
   Callout,
   CommandLine,
   Badge,
