@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { OrderStateMachineDiagram } from "../OrderStateMachineDiagram";
 import { EscrowStateMachineDiagram } from "../EscrowStateMachineDiagram";
+import { WithdrawalStateMachineDiagram } from "../WithdrawalStateMachineDiagram";
 
 vi.mock("@/components/shared/MermaidDiagram", () => ({
   MermaidDiagram: ({ chart, variant }: { chart?: string; variant?: string }) => (
@@ -112,6 +113,61 @@ describe("state machine diagrams", () => {
       "ORDER_CREATED",
       "ESCROW_CREATING",
       "RELEASE_REQUESTED",
+    ]) {
+      expect(chart).not.toContain(bogus);
+    }
+  });
+
+  it("renders the canonical Withdrawal state machine through MermaidDiagram", () => {
+    render(<WithdrawalStateMachineDiagram />);
+    const diagram = screen.getByTestId("mermaid");
+    const chart = diagram.getAttribute("data-chart") ?? "";
+
+    expect(diagram.getAttribute("data-variant")).toBe("framed");
+
+    // Canonical states from docs/architecture/state-machines.md (Withdrawal States)
+    // and packages/shared/src/enums/withdrawal-status.enum.ts
+    for (const state of [
+      "WITHDRAWAL_CREATED",
+      "WITHDRAWAL_COMMITTED",
+      "WITHDRAWAL_PENDING",
+      "WITHDRAWAL_PENDING_USER_ACTION",
+      "WITHDRAWAL_COMPLETED",
+      "WITHDRAWAL_FAILED",
+      "WITHDRAWAL_CANCELED",
+    ]) {
+      expect(chart).toContain(state);
+    }
+
+    // Canonical transitions from WITHDRAWAL_TRANSITIONS, plus the two
+    // synchronous crypto edges from withdrawals.service.ts
+    for (const transition of [
+      "[*] --> WITHDRAWAL_CREATED",
+      "WITHDRAWAL_CREATED --> WITHDRAWAL_COMMITTED",
+      "WITHDRAWAL_CREATED --> WITHDRAWAL_CANCELED",
+      "WITHDRAWAL_COMMITTED --> WITHDRAWAL_PENDING",
+      "WITHDRAWAL_PENDING --> WITHDRAWAL_PENDING_USER_ACTION",
+      "WITHDRAWAL_PENDING --> WITHDRAWAL_COMPLETED",
+      "WITHDRAWAL_PENDING --> WITHDRAWAL_FAILED",
+      "WITHDRAWAL_PENDING_USER_ACTION --> WITHDRAWAL_PENDING",
+      "WITHDRAWAL_PENDING_USER_ACTION --> WITHDRAWAL_FAILED",
+      "WITHDRAWAL_CREATED --> WITHDRAWAL_COMPLETED",
+      "WITHDRAWAL_CREATED --> WITHDRAWAL_FAILED",
+      "WITHDRAWAL_COMPLETED --> [*]",
+      "WITHDRAWAL_FAILED --> [*]",
+      "WITHDRAWAL_CANCELED --> [*]",
+    ]) {
+      expect(chart).toContain(transition);
+    }
+
+    // The withdrawal machine must not drift into order/escrow-level states
+    for (const bogus of [
+      "IN_PROGRESS",
+      "CLOSED",
+      "ORDER_CREATED",
+      "ESCROW_FUNDED",
+      "FUNDS_RESERVED",
+      "DISPUTED",
     ]) {
       expect(chart).not.toContain(bogus);
     }

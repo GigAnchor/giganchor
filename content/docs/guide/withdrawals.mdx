@@ -19,21 +19,9 @@ Every request uses `Authorization: Bearer <api-key>`. Write endpoints require th
 
 The statuses used by the service are `WITHDRAWAL_CREATED`, `WITHDRAWAL_COMMITTED`, `WITHDRAWAL_PENDING`, `WITHDRAWAL_PENDING_USER_ACTION`, `WITHDRAWAL_COMPLETED`, `WITHDRAWAL_FAILED`, and `WITHDRAWAL_CANCELED`.
 
-```mermaid
-stateDiagram-v2
-    [*] --> WITHDRAWAL_CREATED
-    WITHDRAWAL_CREATED --> WITHDRAWAL_COMMITTED: commit
-    WITHDRAWAL_COMMITTED --> WITHDRAWAL_PENDING
-    WITHDRAWAL_PENDING --> WITHDRAWAL_PENDING_USER_ACTION
-    WITHDRAWAL_PENDING --> WITHDRAWAL_COMPLETED
-    WITHDRAWAL_PENDING_USER_ACTION --> WITHDRAWAL_PENDING
-    WITHDRAWAL_CREATED --> WITHDRAWAL_COMPLETED: crypto provider
-    WITHDRAWAL_CREATED --> WITHDRAWAL_FAILED
-    WITHDRAWAL_PENDING --> WITHDRAWAL_FAILED
-    WITHDRAWAL_COMPLETED --> [*]
-    WITHDRAWAL_FAILED --> [*]
-    WITHDRAWAL_CANCELED --> [*]
-```
+The transitions below are the canonical ones declared in `packages/shared/src/enums/withdrawal-status.enum.ts` (`WITHDRAWAL_TRANSITIONS`) and documented in the orchestrator's `docs/architecture/state-machines.md`; the two direct edges out of `WITHDRAWAL_CREATED` to `WITHDRAWAL_COMPLETED`/`WITHDRAWAL_FAILED` are the synchronous crypto path in `apps/api/src/modules/withdrawals/withdrawals.service.ts`:
+
+<WithdrawalStateMachineDiagram />
 
 ## POST `/withdrawals`
 
@@ -124,7 +112,7 @@ curl -X POST "http://localhost:4000/api/v1/withdrawals/wd_abc123/refresh?userId=
   -H "Authorization: Bearer ohk_live_your_api_key"
 ```
 
-The response is the current `WithdrawalResponse`. Crypto withdrawals do not need provider refreshes.
+The response is the current `WithdrawalResponse`. Crypto withdrawals do not need provider refreshes. Although this is a `POST`, it is scoped `read` — it only queries the provider for the latest payout status.
 
 ## Idempotency and integration notes
 

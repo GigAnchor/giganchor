@@ -76,16 +76,9 @@ OFFER-HUB monitors the blockchain for incoming transactions. When USDC arrives:
 
 ### Deposit Flow Diagram
 
-```mermaid
-sequenceDiagram
-    participant User as User's External Wallet
-    participant OH as OFFER-HUB
+The deposit address comes from `GET /api/v1/users/:userId/wallet/deposit` (`apps/api/src/modules/wallet/wallet.controller.ts`). The orchestrator detects the inbound USDC via `apps/api/src/modules/blockchain-monitor/blockchain-monitor.service.ts`, credits the off-chain balance, and emits `balance.credited`:
 
-    User->>OH: 1. Send USDC
-    Note over OH: 2. Detect on blockchain
-    Note over OH: 3. Update balance
-    OH->>User: 4. Emit event
-```
+<CryptoDepositFlowDiagram />
 
 ## AirTM Deposits
 
@@ -99,13 +92,13 @@ For the complete server-side flow — user linking, the create request, `confirm
 curl -X POST http://localhost:4000/api/v1/topups \
   -H "Authorization: Bearer ohk_live_your_api_key" \
   -H "Content-Type: application/json" \
-  -H "Idempotency-Key: 550e8400-e29b-41d4-a716-446655440009" \
   -d '{
-    "userId": "usr_abc123",
     "amount": "100.00",
     "currency": "USD"
   }'
 ```
+
+The user ID comes from the API key (`@CurrentUser('userId')` in `apps/api/src/modules/topups/topups.controller.ts`), not from the request body. The body is `CreateTopUpDto`: `amount` plus optional `currency` and `description`. The controller declares no idempotency header.
 
 Response:
 
@@ -113,22 +106,19 @@ Response:
 {
   "data": {
     "id": "top_xyz789",
-    "userId": "usr_abc123",
     "amount": "100.00",
     "currency": "USD",
-    "status": "pending",
-    "airtm": {
-      "paymentUrl": "https://app.airtm.com/payment/abc123",
-      "expiresAt": "2026-02-25T13:00:00.000Z"
-    },
-    "created_at": "2026-02-25T12:00:00.000Z"
+    "status": "TOPUP_AWAITING_USER_CONFIRMATION",
+    "confirmationUri": "https://app.airtm.com/payment/abc123",
+    "expiresAt": "2026-02-25T13:00:00.000Z",
+    "createdAt": "2026-02-25T12:00:00.000Z"
   }
 }
 ```
 
 ### Step 2: User Completes Payment
 
-Redirect the user to the `paymentUrl` where they:
+Redirect the user to the `confirmationUri` where they:
 
 1. Log into AirTM (or create an account)
 2. Choose payment method (bank, mobile money, crypto, etc.)
@@ -142,6 +132,12 @@ The Orchestrator then:
 1. Verifies the AirTM webhook signature (Svix headers + `AIRTM_WEBHOOK_SECRET`)
 2. Credits the user's balance
 3. Emits `balance.credited` on the SSE stream, which your app can listen to
+
+### AirTM Top-up Flow Diagram
+
+The sequence is orchestrated by `apps/api/src/modules/topups/topups.service.ts` (create → AirTM payin → `confirmationUri`) and settled by the Svix-verified inbound webhook receiver in `apps/api/src/modules/webhooks/webhooks.controller.ts`, which always returns `200`:
+
+<AirTmTopUpFlowDiagram />
 
 <Callout type="warning">
   AirTM deposits can take 1-24 hours depending on the user's payment method. Set user expectations accordingly.
@@ -186,10 +182,10 @@ const topup = await sdk.topups.create({
 });
 
 // Redirect user to payment page
-window.location.href = topup.airtm.paymentUrl;
+window.location.href = topup.airtm.confirmationUri;
 
 // Or display in iframe/modal
-// <iframe src={topup.airtm.paymentUrl} />
+// <iframe src={topup.airtm.confirmationUri} />
 
 // Listen for completion
 sdk.events.on('topup.succeeded', (event) => {

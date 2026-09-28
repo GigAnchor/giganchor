@@ -27,18 +27,9 @@ OFFER-HUB eliminates all of this. Users see a simple USD balance while the syste
 
 ### How It Works
 
-```mermaid
-flowchart LR
-    subgraph UserSees["User sees"]
-        Balance["Balance: $100.00 USD"]
-    end
-    subgraph BehindTheScenes["What actually happens"]
-        Wallet["Stellar Wallet: GCV24WNJ..."]
-        USDC["USDC Balance: 100.0000000"]
-        Key["Private Key: encrypted in DB"]
-    end
-    Balance --> BehindTheScenes
-```
+Every user gets a Stellar keypair automatically (`createWallet` in `apps/api/src/modules/wallet/wallet.service.ts`). Users see a simple USD balance while the private key is stored encrypted and the USDC lives in the wallet on Stellar:
+
+<InvisibleWalletDiagram />
 
 ### Benefits
 
@@ -178,7 +169,7 @@ curl http://localhost:4000/api/v1/users/usr_abc123def456/balance \
 
 ### Encryption
 
-Private keys are encrypted using AES-256-GCM:
+Private keys are encrypted using AES-256-GCM (`apps/api/src/utils/crypto.ts`):
 
 ```
 WALLET_ENCRYPTION_KEY=64-character-hex-key
@@ -188,7 +179,7 @@ The encryption process:
 
 1. Generate random 12-byte IV
 2. Encrypt private key with AES-256-GCM
-3. Store: `IV || ciphertext || authTag`
+3. Store: `iv:authTag:ciphertext` in hexadecimal
 4. Decrypt only when signing transactions
 
 ### Key Management
