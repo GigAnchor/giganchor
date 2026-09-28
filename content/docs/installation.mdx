@@ -17,7 +17,7 @@ Choose the setup path that fits your workflow:
 
 ## Option 1: Setup Wizard <Badge variant="success">Recommended</Badge>
 
-`create-offer-hub-orchestrator` is a one-command interactive setup wizard. It configures your `.env`, runs database migrations, and bootstraps the platform user — so you can skip the manual steps entirely.
+`create-offer-hub-orchestrator` is a one-command interactive setup wizard. It configures your `.env`, runs database migrations, and bootstraps the platform user — so you can skip the manual steps entirely. For a full breakdown of each prompt, generated environment files, and the platform bootstrap step, see the [Scaffolder Guide](/docs/guide/scaffolder).
 
 <Callout type="tip">
   This is the fastest way to get a working Orchestrator. Run the wizard, answer the prompts, and you'll have a running API in under 2 minutes.
@@ -240,7 +240,7 @@ The `@offerhub/cli` is the fastest way to create an API key:
 
 <CommandLine>offerhub keys create</CommandLine>
 
-This runs an interactive wizard that prompts for user ID, scopes, and key name. See the [CLI Guide](/docs/guide/cli) for all available commands.
+This runs an interactive wizard that prompts for scopes and key name. See the [CLI Guide](/docs/guide/cli) for all available commands.
 
 ### Option B: Using curl
 
@@ -299,8 +299,9 @@ If port 4000 is already in use, change the `PORT` in your `.env` file or stop th
 
 ## Next Steps
 
+- [Scaffolder Guide](/docs/guide/scaffolder) — In-depth reference for `create-offer-hub-orchestrator`
 - [Configuration](/docs/configuration) — Learn about all environment variables
 - [Quick Start](/docs/guide/quick-start) — Create your first user and order
+- [CLI Guide](/docs/guide/cli) — Manage API keys and configuration
 - [API Reference](/docs/api-reference/overview) — Explore all endpoints
 - [SDK Guide](/docs/sdk/quick-start) — Integrate using TypeScript
-- [npm Packages](/docs/guide/cli) — Overview of all published packages

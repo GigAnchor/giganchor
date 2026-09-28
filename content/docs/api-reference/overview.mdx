@@ -144,15 +144,26 @@ Response:
 
 ---
 
+## Per-endpoint reference
+
+The summaries on this page cover the API surface at a glance. The endpoint groups below have dedicated pages with real DTO fields, signer roles, valid state transitions, error codes, and cURL plus TypeScript SDK examples:
+
+| Page | Endpoints | Source in the Orchestrator repo |
+| --- | --- | --- |
+| [Escrow Endpoints](/docs/api-reference/escrow) | `POST /orders/{id}/escrow`, `POST /orders/{id}/escrow/fund` | `apps/api/src/modules/orders/orders.controller.ts` |
+| [Resolution Endpoints](/docs/api-reference/resolution) | `POST /orders/{orderId}/resolution/release`, `/refund`, `/dispute` | `apps/api/src/modules/resolution/resolution.controller.ts` |
+| [Inbound Webhooks](/docs/api-reference/webhooks) | `POST /webhooks/airtm`, `POST /webhooks/trustless-work` | `apps/api/src/modules/webhooks/webhooks.controller.ts` |
+| [Events (SSE)](/docs/api-reference/events) | `GET /events` plus the event catalog | `apps/api/src/modules/events/events.controller.ts` |
+
 ## Escrows
 
-Escrow contracts hold funds securely between buyers and sellers until project completion.
+Escrow contracts hold funds securely between buyers and sellers until project completion. The two creation and funding calls are documented end to end in [Escrow Endpoints](/docs/api-reference/escrow); the three settlement calls are in [Resolution Endpoints](/docs/api-reference/resolution).
 
 ### Initialize an Escrow
 
 <Badge variant="primary">POST</Badge> `/api/v1/orders/{id}/escrow`
 
-Creates a new escrow contract between buyer and seller. Funds are held until release.
+Creates a new escrow contract between buyer and seller. Funds are held until release. See [Escrow Endpoints](/docs/api-reference/escrow#post-apiv1ordersidescrow) for parameters, contract roles, and the full response schema.
 
 **Request Body**
 
@@ -189,7 +200,7 @@ Creates a new escrow contract between buyer and seller. Funds are held until rel
 
 <Badge variant="primary">POST</Badge> `/api/v1/orders/{id}/escrow/fund`
 
-Funds an existing escrow contract.
+Funds an existing escrow contract. See [Escrow Endpoints](/docs/api-reference/escrow#post-apiv1ordersidescrowfund) for the reserved-balance debit, contract-type selection, and error codes.
 
 <Callout type="warning">
   Returns `422 INSUFFICIENT_FUNDS` if the buyer has insufficient balance.
@@ -199,7 +210,7 @@ Funds an existing escrow contract.
 
 <Badge variant="primary">POST</Badge> `/api/v1/orders/{id}/resolution/release`
 
-Releases held funds from an escrow to the seller upon project completion.
+Releases held funds from an escrow to the seller upon project completion. See [Resolution Endpoints](/docs/api-reference/resolution#post-apiv1ordersorderidresolutionrelease) for the three on-chain steps and their signer roles.
 
 **Response**
 
@@ -218,13 +229,13 @@ Releases held funds from an escrow to the seller upon project completion.
 
 <Badge variant="primary">POST</Badge> `/api/v1/orders/{id}/resolution/refund`
 
-Refunds escrowed funds back to the buyer.
+Refunds escrowed funds back to the buyer. See [Resolution Endpoints](/docs/api-reference/resolution#post-apiv1ordersorderidresolutionrefund) for the two-step dispute-then-resolve flow.
 
 ### Open Dispute
 
 <Badge variant="primary">POST</Badge> `/api/v1/orders/{id}/resolution/dispute`
 
-Opens a dispute on an escrow for resolution.
+Opens a dispute on an escrow for resolution. See [Resolution Endpoints](/docs/api-reference/resolution#post-apiv1ordersorderidresolutiondispute) for the `OpenDisputeDto` fields and how a dispute is later resolved.
 
 ---
 
