@@ -9,7 +9,7 @@ export default function InteractiveExplorerPage() {
   const [categories, setCategories] = useState<EndpointCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const dataRef = useRef<any>(null);
+  const dataRef = useRef<unknown>(null);
 
   useEffect(() => {
     fetch("/openapi.json")
