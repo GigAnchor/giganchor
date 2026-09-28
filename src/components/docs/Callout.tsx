@@ -44,7 +44,7 @@ export function Callout({ type = "note", children }: CalloutProps) {
   return (
     <div
       role="note"
-      className={cn("rounded-xl px-4 py-3 my-5 shadow-neu-raised-sm")}
+      className={cn("rounded-2xl px-5 py-4 my-6 shadow-neu-raised-sm")}
       style={{
         background: config.bgColor,
       }}
