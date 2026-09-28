@@ -162,7 +162,7 @@ The diagram shows the only path the state machine accepts — every `409 INVALID
 #### T16 — Trustless Work webhook rejected with `401`
 
 - **Symptom:** Trustless Work escrow events return `401`; order status stays stuck at `ESCROW_CREATING`.
-- **Cause:** The receiver verifies the `x-tw-signature` header — `HMAC-SHA256(rawBody, TRUSTLESS_WEBHOOK_SECRET)` as a hex digest ([`webhook.service.ts`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/providers/trustless-work/services/webhook.service.ts)) — and throws `UnauthorizedException` with `WEBHOOK_SIGNATURE_INVALID` on mismatch. The secret must match the value in the Trustless Work dashboard (values not starting with `tw_whsec_` log a warning).
+- **Cause:** The receiver verifies the `x-tw-signature` header extracted in [`webhooks.controller.ts`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/modules/webhooks/webhooks.controller.ts) — `HMAC-SHA256(rawBody, TRUSTLESS_WEBHOOK_SECRET)` as a hex digest ([`webhook.service.ts`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/providers/trustless-work/services/webhook.service.ts)) — and throws `UnauthorizedException` with `WEBHOOK_SIGNATURE_INVALID` on mismatch. The secret must match the value in the Trustless Work dashboard; [`trustless-work.config.ts`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/providers/trustless-work/trustless-work.config.ts) logs a warning when `TRUSTLESS_WEBHOOK_SECRET` does not start with `tw_whsec_`.
 - **Fix:** Align `TRUSTLESS_WEBHOOK_SECRET` with the provider, and make sure you sign the **raw** body, not a re-serialized JSON.
 
 #### T17 — Trustless Work event processed without a signature
@@ -223,7 +223,7 @@ Before debugging client code, confirm the Orchestrator itself is healthy.
 { "status": "healthy", "version": "1.0.0", "timestamp": "2026-09-27T12:00:00.000Z" }
 ```
 
-`GET /health/detailed` runs real dependency checks (database, Redis, AirTM, Trustless Work) through the health service and reports each one:
+`GET /health/detailed` runs real dependency checks (database, Redis, AirTM, Trustless Work) through the health service ([`health.service.ts`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/modules/health/health.service.ts)) and reports each one with a `healthy` / `degraded` / `unhealthy` status, an optional `latency`, and an `error` message when a check fails:
 
 <CommandLine>curl http://localhost:4000/api/v1/health/detailed</CommandLine>
 
@@ -231,12 +231,17 @@ Before debugging client code, confirm the Orchestrator itself is healthy.
 {
   "status": "healthy",
   "version": "1.0.0",
-  "dependencies": { "database": "up", "redis": "up", "airtm": "up", "trustlessWork": "up" },
+  "dependencies": {
+    "database": { "status": "healthy", "latency": 3 },
+    "redis": { "status": "healthy", "latency": 1 },
+    "airtm": { "status": "healthy" },
+    "trustlessWork": { "status": "healthy" }
+  },
   "timestamp": "2026-09-27T12:00:00.000Z"
 }
 ```
 
-Any dependency other than `up` explains a whole class of failures: `redis: down` produces T7/T18-style symptoms, `trustlessWork: down` produces T13/T16. Both endpoints are public — wire them into your uptime checks (see [Self-Hosting](/docs/guide/self-hosting)).
+The overall `status` is `unhealthy` if any dependency is `unhealthy` and `degraded` if any is `degraded` — a single degraded dependency explains a whole class of failures: `redis` unhealthy produces T7/T18-style symptoms, `trustlessWork` unhealthy produces T13/T16. Both endpoints are public — wire them into your uptime checks (see [Self-Hosting](/docs/guide/self-hosting)).
 
 ## Reporting an issue with X-Request-ID
 
@@ -244,7 +249,7 @@ When an error persists and you need help, the correlation-ID middleware makes an
 
 1. Send an `X-Request-ID` header (any UUID v4) on the failing request — or read the `X-Request-ID` **response** header; the server generates one when you do not supply it ([`correlation-id.middleware.ts`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/common/middleware/correlation-id.middleware.ts)).
 2. Attach that ID to the report together with the `error.code`, the exact request (method, path, body — redact secrets), and the timestamp.
-3. The same ID appears in server logs and in the `metadata.correlationId` field of events emitted by the request, so it connects the API call, the resulting state changes, and the SSE trail.
+3. The middleware binds the ID to the request context (`req.requestId`), and the event bus carries it onward in the `metadata.correlationId` field of emitted events ([`event-bus.service.ts`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/modules/events/event-bus.service.ts)), so it connects the API call, the resulting state changes, and the SSE trail.
 
 <Callout type="warning">
   Never include API keys or webhook secrets in a report. The request ID is enough to trace everything.
