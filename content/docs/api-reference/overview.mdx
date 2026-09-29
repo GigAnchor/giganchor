@@ -398,6 +398,10 @@ Content-Type: application/json
 | Escrow ops | 7 days |
 | Disputes | Forever |
 
+<Callout type="note">
+  In the current orchestrator, idempotency entries are stored for 24 hours by default (`idempotency.service.ts`, `ttlHours = 24`) regardless of resource. The per-resource windows above are the intended targets — see [Disputes API · Idempotency](/docs/api-reference/disputes#idempotency) for the behavior actually enforced today.
+</Callout>
+
 ## Rate Limiting
 
 | Endpoint | Limit |
@@ -468,7 +472,25 @@ Retry-After: 60
 | `/orders/{id}/resolution/release` | <Badge variant="primary">POST</Badge> | Release to seller |
 | `/orders/{id}/resolution/refund` | <Badge variant="primary">POST</Badge> | Refund to buyer |
 | `/orders/{id}/resolution/dispute` | <Badge variant="primary">POST</Badge> | Open dispute |
-| `/disputes/{id}/resolve` | <Badge variant="primary">POST</Badge> | Resolve dispute |
+
+### Disputes
+
+Full details in the [Disputes API reference](/docs/api-reference/disputes).
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/disputes` | <Badge variant="success">GET</Badge> | List disputes (`orderId`, `status`, `openedBy` filters) |
+| `/disputes/{id}` | <Badge variant="success">GET</Badge> | Get dispute with order relations |
+| `/disputes/{id}/assign` | <Badge variant="primary">POST</Badge> | Assign dispute for review (`OPEN` → `UNDER_REVIEW`) |
+| `/disputes/{id}/resolve` | <Badge variant="primary">POST</Badge> | Resolve with `FULL_RELEASE`, `FULL_REFUND`, or `SPLIT` |
+
+### Audit Logs
+
+Full details in the [Audit Logs API reference](/docs/api-reference/audit-logs). Requires the `support` scope.
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/audit/logs` | <Badge variant="success">GET</Badge> | Query the audit trail (`resourceType`, `resourceId`, `action`, `userId`, `from`, `to`, `limit`, `cursor`) |
 
 ### Withdrawals
 
@@ -498,6 +520,8 @@ The API uses path versioning:
 
 ## Next Steps
 
+- [Disputes API](/docs/api-reference/disputes) - List, assign, and resolve disputes
+- [Audit Logs API](/docs/api-reference/audit-logs) - Trace every mutation (support scope)
 - [Webhooks](/docs/api-reference/webhooks) - Receive event notifications
 - [Quick Start](/docs/guide/quick-start) - Your first API call
 - [SDK Guide](/docs/sdk/quick-start) - Use the TypeScript SDK
