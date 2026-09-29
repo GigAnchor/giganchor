@@ -129,6 +129,10 @@ Response:
 
 ## Error Codes
 
+The Orchestrator defines 40+ domain-specific error codes categorized across authentication, validation, users, funds, orders, escrow, disputes, top-ups, withdrawals, external providers, idempotency, rate limiting, and internal system errors.
+
+For the exhaustive catalog of all 40+ codes with causes, fixes, citations, and `@offerhub/sdk` class mappings, see the dedicated [Error Codes Reference](/docs/api-reference/errors).
+
 | Code | HTTP | When to Use |
 |------|------|-------------|
 | `VALIDATION_ERROR` | 400 | Invalid fields in request |
@@ -154,6 +158,7 @@ The summaries on this page cover the API surface at a glance. The endpoint group
 | [Resolution Endpoints](/docs/api-reference/resolution) | `POST /orders/{orderId}/resolution/release`, `/refund`, `/dispute` | `apps/api/src/modules/resolution/resolution.controller.ts` |
 | [Inbound Webhooks](/docs/api-reference/webhooks) | `POST /webhooks/airtm`, `POST /webhooks/trustless-work` | `apps/api/src/modules/webhooks/webhooks.controller.ts` |
 | [Events (SSE)](/docs/api-reference/events) | `GET /events` plus the event catalog | `apps/api/src/modules/events/events.controller.ts` |
+| [Error Codes](/docs/api-reference/errors) | 40+ error codes, envelope format, and correlation IDs | `packages/shared/src/constants/error-codes.ts` |
 
 ## Escrows
 
@@ -602,6 +607,7 @@ The API uses path versioning:
 
 ## Next Steps
 
+- [Error Codes](/docs/api-reference/errors) - Complete 40+ error code reference and SDK mappings
 - [Events (SSE)](/docs/api-reference/events) - Real-time event stream and event catalog
 - [Inbound Webhooks](/docs/api-reference/webhooks) - AirTM and Trustless Work receivers
 - [Quick Start](/docs/guide/quick-start) - Your first API call
