@@ -1,7 +1,7 @@
 ---
 title: Troubleshooting & FAQ
 description: Symptom-cause-fix recipes for the most common OFFER-HUB API failures — auth, idempotency, state transitions, escrow, webhooks, SSE reconnects, and provider timeouts — plus how to use /health/detailed and X-Request-ID when contacting support.
-order: 28
+order: 29
 section: Guides
 ---
 
@@ -31,7 +31,7 @@ Three things to do with every error:
 2. Read `error.details` — filters and guards attach context (current state, required scope, field errors) that usually names the exact fix.
 3. Capture the `X-Request-ID` **response header** — the correlation-ID middleware ([`correlation-id.middleware.ts`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/common/middleware/correlation-id.middleware.ts)) echoes your `X-Request-ID` request header or generates a UUID, and you will need it for support (see [Reporting an issue](#reporting-an-issue-with-x-request-id)).
 
-The full code catalog lives in [`docs/api/errors.md`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/docs/api/errors.md) in the Orchestrator repo, and maps to typed SDK exceptions in [SDK Errors](/docs/sdk/errors).
+The full code catalog lives in [API Error Codes](/docs/api-reference/errors) (mirrored from [`docs/api/errors.md`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/docs/api/errors.md) in the Orchestrator repo), and maps to typed SDK exceptions in [SDK Errors](/docs/sdk/errors).
 
 ## Quick triage
 
@@ -195,7 +195,7 @@ The diagram shows the only path the state machine accepts — every `409 INVALID
 
 - **Symptom:** `504 PROVIDER_TIMEOUT` after a fund, release, or withdrawal call; you do not know whether the on-chain transaction executed.
 - **Cause:** The provider did not respond within the timeout. On Stellar the transaction **may have been submitted** even though the confirmation never arrived.
-- **Fix:** Query the order/escrow (or withdrawal) status **before** retrying — if the state advanced, the transaction landed and you must not re-submit. Only retry when state is unchanged, using the same `Idempotency-Key` so an accidental duplicate stays a replay. See [Withdrawals](/docs/guide/withdrawals).
+- **Fix:** Query the order/escrow (or withdrawal) status **before** retrying — if the state advanced, the transaction landed and you must not re-submit. Only retry when state is unchanged, using the same `Idempotency-Key` so an accidental duplicate stays a replay. See [Withdrawals](/docs/guide/withdrawals) and the [Crypto-Native Provider guide](/docs/guide/crypto-native).
 
 ### Rate limits and server errors
 
@@ -281,7 +281,7 @@ Proxies and serverless functions buffer or kill idle streams. Disable buffering,
 Default is 100 requests/minute per key (T21). The SDK backs off automatically; in a demo loop, add a short sleep or cache responses.
 
 **Where do I see the full list of error codes?**
-The [API Overview](/docs/api-reference/overview) table, the [SDK Errors](/docs/sdk/errors) catalog, and the Orchestrator repo's [`docs/api/errors.md`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/docs/api/errors.md).
+The [API Error Codes](/docs/api-reference/errors) catalog, the [SDK Errors](/docs/sdk/errors) hierarchy, and the Orchestrator repo's [`docs/api/errors.md`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/docs/api/errors.md).
 
 **Something is broken and I cannot tell if it is my code or the API.**
 Check `/health/detailed` first. Then re-run the failing call with an `X-Request-ID` header, capture the response header, and include the ID plus the `error.code` when you ask for help — that single ID traces the request end to end.
@@ -295,6 +295,7 @@ Balance credit for crypto deposits is detected automatically; if it stalls, the 
 ## See also
 
 - [API Reference](/docs/api-reference/overview) — endpoint behavior, authentication, and idempotency rules
+- [API Error Codes](/docs/api-reference/errors) — the complete 40+ code catalog with HTTP status mapping
 - [SDK Errors](/docs/sdk/errors) — typed exception hierarchy and retry semantics
 - [Inbound Webhooks](/docs/api-reference/webhooks) — signature verification and delivery semantics
 - [Events](/docs/api-reference/events) — SSE stream, reconnection, and replay
