@@ -129,6 +129,10 @@ Response:
 
 ## Error Codes
 
+The Orchestrator defines 40+ domain-specific error codes categorized across authentication, validation, users, funds, orders, escrow, disputes, top-ups, withdrawals, external providers, idempotency, rate limiting, and internal system errors.
+
+For the exhaustive catalog of all 40+ codes with causes, fixes, citations, and `@offerhub/sdk` class mappings, see the dedicated [Error Codes Reference](/docs/api-reference/errors).
+
 | Code | HTTP | When to Use |
 |------|------|-------------|
 | `VALIDATION_ERROR` | 400 | Invalid fields in request |
@@ -150,10 +154,12 @@ The summaries on this page cover the API surface at a glance. The endpoint group
 
 | Page | Endpoints | Source in the Orchestrator repo |
 | --- | --- | --- |
+| [Orders & Milestones Endpoints](/docs/api-reference/orders) | `POST /orders`, `GET /orders`, `GET /orders/{id}`, `POST /orders/{id}/reserve`, `POST /orders/{id}/cancel`, `GET /orders/{id}/milestones`, `POST /orders/{id}/milestones/{milestoneRef}/complete` | `apps/api/src/modules/orders/orders.controller.ts` |
 | [Escrow Endpoints](/docs/api-reference/escrow) | `POST /orders/{id}/escrow`, `POST /orders/{id}/escrow/fund` | `apps/api/src/modules/orders/orders.controller.ts` |
 | [Resolution Endpoints](/docs/api-reference/resolution) | `POST /orders/{orderId}/resolution/release`, `/refund`, `/dispute` | `apps/api/src/modules/resolution/resolution.controller.ts` |
 | [Inbound Webhooks](/docs/api-reference/webhooks) | `POST /webhooks/airtm`, `POST /webhooks/trustless-work` | `apps/api/src/modules/webhooks/webhooks.controller.ts` |
 | [Events (SSE)](/docs/api-reference/events) | `GET /events` plus the event catalog | `apps/api/src/modules/events/events.controller.ts` |
+| [Error Codes](/docs/api-reference/errors) | 40+ error codes, envelope format, and correlation IDs | `packages/shared/src/constants/error-codes.ts` |
 
 ## Escrows
 
@@ -527,6 +533,8 @@ Each status these endpoints return is a state in the [Top-up state machine](/doc
 
 ### Orders
 
+The order lifecycle up to funding, plus milestone bookkeeping, is documented endpoint by endpoint in [Orders & Milestones Endpoints](/docs/api-reference/orders) — real DTO fields, preconditions, error codes, and cURL plus SDK examples for each route.
+
 | Endpoint | Method | Description |
 |----------|--------|-------------|
 | `/orders` | <Badge variant="primary">POST</Badge> | Create order |
@@ -608,6 +616,7 @@ The API uses path versioning:
 
 ## Next Steps
 
+- [Error Codes](/docs/api-reference/errors) - Complete 40+ error code reference and SDK mappings
 - [Events (SSE)](/docs/api-reference/events) - Real-time event stream and event catalog
 - [Inbound Webhooks](/docs/api-reference/webhooks) - AirTM and Trustless Work receivers
 - [Quick Start](/docs/guide/quick-start) - Your first API call
