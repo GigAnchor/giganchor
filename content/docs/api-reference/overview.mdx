@@ -21,48 +21,9 @@ http://localhost:4000/api/v1
 
 ## Authentication
 
-All requests require authentication via a Bearer token (API Key).
+The API uses Bearer tokens for authentication, supporting Master Keys, API Keys, and temporary 1-hour tokens. 
 
-### Request Header
-
-```http
-Authorization: Bearer ohk_live_xxxxxxxxxxxxxxxxxxxxxxxx
-```
-
-### Getting an API Key
-
-Create an API key using your master key:
-
-```bash
-curl -X POST http://localhost:4000/api/v1/auth/api-keys \
-  -H "Authorization: Bearer YOUR_OFFERHUB_MASTER_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"name": "My Marketplace", "scopes": ["read", "write"]}'
-```
-
-Response:
-
-```json
-{
-  "id": "key_abc123",
-  "api_key": "ohk_live_xxxxxxxxxxxx",
-  "name": "My Marketplace",
-  "scopes": ["read", "write"],
-  "created_at": "2026-01-12T10:00:00.000Z"
-}
-```
-
-<Callout type="danger">
-  Save the `api_key` value immediately - it's only shown once!
-</Callout>
-
-### API Key Scopes
-
-| Scope | Permissions |
-|-------|-------------|
-| `read` | All GET endpoints |
-| `write` | POST to create/modify resources |
-| `support` | Resolve disputes, add comments |
+For full details on credential types, key lifecycle, and per-endpoint scopes, see the [Authentication & Scopes](/docs/api-reference/authentication) guide.
 
 ## Common Headers
 
