@@ -1,0 +1,289 @@
+---
+title: Troubleshooting
+description: Symptom, cause and fix for the most common OFFER-HUB Orchestrator problems - auth and scope errors, idempotency conflicts, invalid order state, escrow funding, webhook signatures, SSE reconnects, provider timeouts and rate limits.
+order: 47
+section: Guides
+---
+
+Every entry below follows the same shape: **Symptom** (what you see), **Cause** (why the Orchestrator does it), **Fix** (what to change) and **Source** (the orchestrator file the behavior was read from). Paths are relative to `apps/api/src/` in the [OFFER-HUB orchestrator repository](https://github.com/OFFER-HUB/OFFER-HUB).
+
+<Callout type="tip">
+  Start with the error `code` in the response body, not the HTTP status. Codes are stable; messages are not. The full catalog is in [Error Codes](/docs/api-reference/errors). Stuck? Jump to [Getting help](#getting-help) to collect what support needs.
+</Callout>
+
+All routes are served under the `api/v1` prefix (`main.ts`), so a call to `/orders` is really `/api/v1/orders`.
+
+## Authentication and scopes
+
+### 1. 401 - Missing Authorization header
+
+**Symptom:** <Badge variant="danger">401</Badge> with `error.code: "UNAUTHORIZED"` and message `Missing Authorization header`.
+
+**Cause:** The route is protected by `ApiKeyGuard` and the request had no `Authorization` header.
+
+**Fix:** Send `Authorization: Bearer <api key>`. Only routes marked `@Public()` (for example `/health`) skip this check.
+
+**Source:** `common/guards/api-key.guard.ts`, `common/decorators/public.decorator.ts`
+
+**See also:** [Security Best Practices](/docs/guide/security), [Error Codes](/docs/api-reference/errors)
+
+### 2. 401 - Invalid Authorization format / Invalid API Key
+
+**Symptom:** <Badge variant="danger">401</Badge> with `error.code: "UNAUTHORIZED"` and one of `Invalid Authorization format`, `Invalid API Key format` or `Invalid API Key`.
+
+**Cause:** The guard rejects, in order: a header that is not `Bearer <token>`; a token that does not start with `ohk_`; a key that has fewer than five `_`-separated parts (`ohk_{env}_{id}_{random}`); a key id that is not in the database; and a key whose salted hash does not match. Short-lived tokens start with `ohk_tok_` and are validated separately.
+
+**Fix:** Check for a stray space or missing `Bearer` prefix, copy the whole key (it contains underscores), and confirm you are using the key for the right environment. If the key was rotated or revoked, create a new one.
+
+<Callout type="note">
+  Even though `INVALID_API_KEY` exists in the catalog, the guard throws plain `UnauthorizedException`s. The global filter maps every plain 401 to `UNAUTHORIZED`, so you will see `UNAUTHORIZED` with a specific message. Branch on the message text only for debugging, not in application code.
+</Callout>
+
+**Source:** `common/guards/api-key.guard.ts`, `common/filters/global-exception.filter.ts` (`mapStatusToErrorCode`)
+
+**See also:** [Security Best Practices](/docs/guide/security)
+
+### 3. 403 - Insufficient scope
+
+**Symptom:** <Badge variant="danger">403</Badge> with `error.code: "INSUFFICIENT_SCOPE"` and message `Insufficient scope`.
+
+**Cause:** The endpoint declares required scopes with `@Scopes(...)` (`read`, `write` or `support`) and your key does not carry all of them. A key with the `*` scope passes every check. The bootstrap master key (`OFFERHUB_MASTER_KEY`) carries `read`, `write` and `support`.
+
+**Fix:** Use a key that has the scope the endpoint needs. For example, the balance, top-up and withdrawal controllers use `read` for reads and `write` for mutations, and the audit-log controller requires `support`. Issue a key with the right scopes rather than using the master key in application code.
+
+**Source:** `common/guards/scope.guard.ts`, `common/decorators/scopes.decorator.ts`, `modules/balance/balance.controller.ts`, `modules/topups/topups.controller.ts`, `modules/withdrawals/withdrawals.controller.ts`, `modules/audit-logs/audit.controller.ts`
+
+**See also:** [Security Best Practices](/docs/guide/security), [Error Codes](/docs/api-reference/errors)
+
+## Requests and idempotency
+
+### 4. 400 - Idempotency-Key must be a valid UUID v4
+
+**Symptom:** <Badge variant="danger">400</Badge> with `error.code: "VALIDATION_ERROR"`, message `Idempotency-Key must be a valid UUID v4` and `details.header: "Idempotency-Key"`.
+
+**Cause:** On `POST`, `PUT` and `PATCH`, if an `Idempotency-Key` header is present it must be a UUID v4. Requests without the header skip idempotency entirely.
+
+**Fix:** Generate the key with a UUID v4 function (`crypto.randomUUID()` in Node) and send a fresh one per logical operation.
+
+**Source:** `common/guards/idempotency.guard.ts`
+
+### 5. 409 - IDEMPOTENCY_KEY_REUSED
+
+**Symptom:** <Badge variant="warning">409</Badge> `IDEMPOTENCY_KEY_REUSED` - "This idempotency key was used with a different request body".
+
+**Cause:** The Orchestrator stores a hash of the request body for each key (scoped per API key). Sending the same key with a different body is treated as a bug in the caller.
+
+**Fix:** Use a new UUID for a new request. Reuse a key only to retry the exact same body.
+
+**Source:** `modules/idempotency/idempotency.service.ts` (`checkOrLock`)
+
+**See also:** [Error Codes](/docs/api-reference/errors)
+
+### 6. 409 - IDEMPOTENCY_KEY_IN_PROGRESS
+
+**Symptom:** <Badge variant="warning">409</Badge> `IDEMPOTENCY_KEY_IN_PROGRESS` - "Original request still processing".
+
+**Cause:** The first request with that key holds a Redis lock (60 seconds) and has not finished. A retry that arrives while the lock is held is rejected.
+
+**Fix:** Wait and retry the same request with the same key. Do not generate a new key, or you risk running the operation twice.
+
+**Source:** `modules/idempotency/idempotency.service.ts` (`checkOrLock`, lock `EX 60 NX`)
+
+### 7. A retry returns an old response
+
+**Symptom:** The response carries the header `Idempotency-Replay: true` and matches an earlier call.
+
+**Cause:** This is the feature working. A completed request is replayed from Redis or the database. Completed records are kept for 24 hours by default. Only a successful response is stored; if the request fails with an exception, the lock is released so you can retry with the same key.
+
+**Fix:** Nothing to fix. If you needed a fresh execution, send a new key.
+
+**Source:** `common/filters/global-exception.filter.ts`, `common/interceptors/idempotency.interceptor.ts`, `modules/idempotency/idempotency.service.ts`
+
+### 8. 400 - VALIDATION_ERROR on a request that "looks right"
+
+**Symptom:** <Badge variant="danger">400</Badge> `VALIDATION_ERROR` with `details.validationErrors`.
+
+**Cause:** The global `ValidationPipe` runs with `whitelist`, `forbidNonWhitelisted` and `transform` enabled, so unknown properties are rejected instead of ignored. Each DTO also enforces its own rules.
+
+**Fix:** Read `details.validationErrors`, remove properties the DTO does not define, and compare your payload with the endpoint's request schema.
+
+**Source:** `main.ts` (`ValidationPipe` options), `common/filters/global-exception.filter.ts` (`extractValidationErrors`)
+
+**See also:** [Error Codes](/docs/api-reference/errors)
+
+## Orders and escrow
+
+### 9. INVALID_STATE when acting on an order
+
+**Symptom:** `error.code: "INVALID_STATE"` with a message such as `Cannot cancel order ord_... in state COMPLETED` or `Milestone ... is already completed`.
+
+**Cause:** The action is not allowed from the order's current state, or the milestone was already completed. The error names the state and the attempted action.
+
+**Fix:** `GET` the order, read its `status`, and only call actions valid for that state. See the state machine in the order guide.
+
+<Callout type="note">
+  The catalog maps `INVALID_STATE` to HTTP 409, but the order exceptions extend `BadRequestException`, so the order endpoints currently answer with HTTP <Badge variant="warning">400</Badge>. Always branch on `error.code`, not on the status.
+</Callout>
+
+**Source:** `modules/orders/exceptions/orders.exceptions.ts` (`InvalidOrderStateException`, `MilestoneAlreadyCompletedException`)
+
+**See also:** [Orders guide](/docs/guide/orders), [Orders API](/docs/api-reference/orders)
+
+### 10. Escrow "not ready" - order stays in ESCROW_FUNDING
+
+**Symptom:** You call an escrow action right after creating or funding the escrow and it fails (typically `INVALID_STATE`), or the order does not reach `IN_PROGRESS`.
+
+**Cause:** Escrow funding is asynchronous. The Trustless Work webhook `escrow.created` moves the order to `ESCROW_FUNDING`, and only `escrow.funded` moves it to `IN_PROGRESS`. Until that webhook is processed, actions that need a funded escrow are rejected.
+
+**Fix:** Do not poll on a timer and retry blindly. Subscribe to the [event stream](/docs/api-reference/events) (or your webhook) and continue when the funding event arrives. If it never arrives, check that Trustless Work webhooks reach you (see scenario 12) and that `/health/detailed` shows `trustlessWork` healthy.
+
+<Callout type="note">
+  `ESCROW_NOT_READY` (409) is defined in the shared error catalog, but no controller or service currently raises it. If you receive it, include the `X-Request-ID` when you contact support.
+</Callout>
+
+**Source:** `modules/webhooks/webhooks.controller.ts` (event mapping), `packages/shared/src/constants/error-codes.ts`
+
+**See also:** [Escrow flows](/docs/guide/escrow-flows), [Escrow API](/docs/api-reference/escrow)
+
+### 11. 409 - ESCROW_ALREADY_EXISTS
+
+**Symptom:** <Badge variant="warning">409</Badge> `ESCROW_ALREADY_EXISTS` - "Escrow already exists for order ...".
+
+**Cause:** `POST /orders/:id/escrow` was called for an order that already has an escrow, usually a retry without an idempotency key.
+
+**Fix:** Fetch the order and use its existing escrow. Send an `Idempotency-Key` on creation calls so retries replay instead of colliding.
+
+**Source:** `modules/orders/exceptions/orders.exceptions.ts` (`EscrowAlreadyExistsException`), `modules/orders/orders.controller.ts`
+
+## Webhooks and events
+
+### 12. Webhook signature verification fails
+
+**Symptom:** The provider's delivery to your Orchestrator gets <Badge variant="danger">401</Badge> `WEBHOOK_SIGNATURE_INVALID` - "Invalid webhook signature".
+
+**Cause:**
+- **Trustless Work** (`POST /webhooks/trustless-work`): the `x-tw-signature` header must equal the hex HMAC-SHA256 of the body using `TRUSTLESS_WEBHOOK_SECRET` (the config warns if the secret does not start with `tw_whsec_`).
+- **Airtm** (`POST /webhooks/airtm`): verified with the Svix headers `svix-id`, `svix-timestamp` and `svix-signature` using `AIRTM_WEBHOOK_SECRET`.
+- The signature is computed over the **raw** body. The controllers use `req.rawBody` and fall back to `JSON.stringify(req.body)` when it is missing. `main.ts` does not enable `rawBody`, so on a deployment where the fallback is used, re-serialized JSON can differ byte-for-byte from what the provider signed.
+
+**Fix:** Confirm the secret in your environment matches the one in the provider dashboard (no quotes, no trailing whitespace), and that the environment (staging vs production) matches. Verify the raw-body behavior in your deployment before debugging further.
+
+<Callout type="warning">
+  If `AIRTM_WEBHOOK_SECRET` is empty, Airtm signature verification is **disabled** and the payload is accepted unverified. A Trustless Work request with no `x-tw-signature` header is also processed, with only a warning logged. Set both secrets in any environment reachable from the internet.
+</Callout>
+
+**Source:** `modules/webhooks/webhooks.controller.ts`, `providers/trustless-work/services/webhook.service.ts` (`verifySignature`), `providers/airtm/services/airtm-webhook.service.ts`, `providers/airtm/exceptions/airtm.exception.ts`, `providers/airtm/airtm.config.ts`
+
+**Note:** the catalog lists `WEBHOOK_SIGNATURE_INVALID` as HTTP 400; both webhook services actually throw it with 401.
+
+**See also:** [Webhooks API](/docs/api-reference/webhooks), [Security Best Practices](/docs/guide/security)
+
+### 13. Duplicate webhook is "ignored"
+
+**Symptom:** The provider retries an event and gets `200` with `{"status":"ok","duplicate":true}`, or `processed: false`.
+
+**Cause:** Events are deduplicated by provider and event id. Duplicates and business-logic failures still return 200 so the provider stops retrying.
+
+**Fix:** Not an error. If `processed` is `false`, look for `Webhook processing failed` in the Orchestrator logs and use the event id to trace it.
+
+**Source:** `modules/webhooks/webhooks.controller.ts`, `providers/trustless-work/services/webhook.service.ts` (`processWebhook`)
+
+### 14. SSE stream drops, reconnects or misses events
+
+**Symptom:** `GET /events` disconnects, or after reconnecting you are missing events.
+
+**Cause:** The stream sends a `ping` event every 30 seconds as a heartbeat, so idle proxies may still close it if their timeout is shorter. Each event's SSE `id` is its `occurredAt` timestamp. On reconnect the server replays from the `Last-Event-ID` header, or the `since` query parameter if the header is absent. Replay comes from a Redis log capped at the most recent 1,000 events, so a long outage can exceed it. Events are also filtered to the marketplace tied to your API key.
+
+**Fix:**
+- Raise the read timeout on any proxy or load balancer in front of the API above 30 seconds.
+- Reconnect with `Last-Event-ID` (browsers do this automatically) or pass `since`.
+- After a long gap, reconcile by fetching current resource state instead of relying on replay.
+- The endpoint requires an API key, and the browser `EventSource` API cannot set an `Authorization` header, so use a fetch-based SSE client or a server-side proxy.
+
+<Callout type="note">
+  `sse.service.ts` declares a one-hour TTL constant for the event log, but the code only enforces the 1,000-event cap. Do not rely on a time-based replay window.
+</Callout>
+
+**Source:** `modules/events/events.controller.ts`, `modules/events/sse.service.ts`
+
+**See also:** [Events API](/docs/api-reference/events)
+
+## Providers and infrastructure
+
+### 15. 504 - PROVIDER_TIMEOUT (and 502/503 provider errors)
+
+**Symptom:** `PROVIDER_TIMEOUT` (504), `PROVIDER_ERROR` (502), `PROVIDER_RATE_LIMITED` (502) or `PROVIDER_UNAVAILABLE` (503) on escrow, top-up or withdrawal calls.
+
+**Cause:** The upstream call to Trustless Work or Airtm failed. Trustless Work calls abort after `TRUSTLESS_TIMEOUT_MS` (default 60000; the config accepts 1000 to 120000). Airtm calls time out after 30 seconds and retry on 500, 502, 503 and 504. An Airtm 408 or 504 maps to `PROVIDER_TIMEOUT`; an Airtm 429 maps to `PROVIDER_RATE_LIMITED`.
+
+**Fix:** Retry with the **same** `Idempotency-Key` and exponential backoff. Check `/health/detailed` for `airtm` and `trustlessWork`. If it is your own network, raise `TRUSTLESS_TIMEOUT_MS` within the allowed range.
+
+**Source:** `providers/trustless-work/trustless-work.config.ts`, `providers/trustless-work/clients/escrow.client.ts`, `providers/airtm/types/airtm.types.ts`, `providers/airtm/exceptions/airtm.exception.ts`
+
+**See also:** [Self-Hosting](/docs/guide/self-hosting), [Configuration](/docs/configuration)
+
+### 16. 429 - RATE_LIMITED
+
+**Symptom:** <Badge variant="warning">429</Badge> `RATE_LIMITED` with `details.limit`, `details.windowSeconds` and `details.retryAfter`.
+
+**Cause:** `RateLimitGuard` is a global guard. The default is 100 requests per 60 seconds per API key (or per IP when there is no key), tracked in Redis. Some endpoints can override this with `@RateLimit`.
+
+**Fix:** Wait `retryAfter` seconds. Watch the `X-RateLimit-Limit`, `X-RateLimit-Remaining` and `X-RateLimit-Reset` response headers to slow down before hitting the limit. If Redis is down the guard lets requests through instead of blocking them.
+
+**Source:** `common/guards/rate-limit.guard.ts`, `app.module.ts` (`APP_GUARD`)
+
+### 17. 500 - INTERNAL_ERROR
+
+**Symptom:** <Badge variant="danger">500</Badge> `INTERNAL_ERROR`.
+
+**Cause:** An unhandled exception. In production the message is the generic `Internal server error`; outside production the real message and the first lines of the stack are included in `details`.
+
+**Fix:** Copy the `X-Request-ID` response header, then search the Orchestrator logs for it. Server errors are logged with the method, URL, status and request id.
+
+**Source:** `common/filters/global-exception.filter.ts` (`handleUnknownError`, `logError`)
+
+### 18. /health/detailed says "degraded" or "unhealthy"
+
+**Symptom:** The overall status is not `healthy`.
+
+**Cause:** The check runs the database, Redis, Airtm and Trustless Work in parallel, each with a 5-second limit. The overall status is `unhealthy` if any dependency is unhealthy, otherwise `degraded` if any is degraded. Airtm and Trustless Work report `degraded` with `Not configured` when `AIRTM_API_KEY` or `TRUSTLESS_API_KEY` is unset, and `degraded` when the provider is unreachable or returns a 5xx. Only the database and Redis can be `unhealthy`.
+
+**Fix:** Read the `error` field of the failing dependency. Fix the environment variable or connectivity it points to. Use `/health` (no dependency checks) for load-balancer probes and `/health/detailed` for debugging.
+
+**Source:** `modules/health/health.controller.ts`, `modules/health/health.service.ts`
+
+**See also:** [Self-Hosting](/docs/guide/self-hosting)
+
+## Getting help
+
+When you ask for support, include the items below. They let a maintainer trace your request without guessing.
+
+**1. The `X-Request-ID`.** The Orchestrator returns an `X-Request-ID` header on every response. If you send your own `X-Request-ID` it is reused; otherwise a UUID is generated. Error bodies often repeat it as `details.requestId`, and it appears in the server logs for that request.
+
+<CommandLine>curl -i -H "X-Request-ID: my-debug-001" https://your-orchestrator.example.com/api/v1/health</CommandLine>
+
+Look for `X-Request-ID:` in the response headers. Use the same header on the failing call, then paste the id into your report. Never paste your API key.
+
+**2. The `/health/detailed` output.** It is public and returns the status, version and per-dependency latency and error:
+
+<CommandLine>curl -s https://your-orchestrator.example.com/api/v1/health/detailed</CommandLine>
+
+```json
+{
+  "status": "degraded",
+  "version": "1.0.0",
+  "dependencies": {
+    "database": { "status": "healthy", "latency": 4 },
+    "redis": { "status": "healthy", "latency": 2 },
+    "airtm": { "status": "degraded", "error": "Not configured" },
+    "trustlessWork": { "status": "healthy", "latency": 180 }
+  },
+  "timestamp": "2026-09-29T10:00:00.000Z"
+}
+```
+
+**3. The error `code`, the endpoint, the time (UTC) and the idempotency key you used.** Redact secrets and personal data before sharing.
+
+<Callout type="tip">
+  Hackathon participant? Check the [FAQ](/docs/guide/faq) first, then open a GitHub issue with the three items above.
+</Callout>

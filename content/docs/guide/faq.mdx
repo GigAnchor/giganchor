@@ -1,0 +1,92 @@
+---
+title: FAQ for Hackathon Participants
+description: Quick answers for developers building on the OFFER-HUB Orchestrator during a hackathon - local setup, API keys and scopes, idempotency, testnet, webhooks and where to look when something breaks.
+order: 48
+section: Guides
+---
+
+Short answers for people building against the Orchestrator for the first time. Each answer names the file or setting it comes from (paths relative to `apps/api/src/` in the [orchestrator repository](https://github.com/OFFER-HUB/OFFER-HUB) unless noted). For deeper symptom-by-symptom help, see [Troubleshooting](/docs/guide/troubleshooting).
+
+## Getting started
+
+### What URL and port does the API use?
+
+The API listens on `PORT`, which is `4000` in `.env.example`, and every route sits under the `/api/v1` prefix. Locally that means `http://localhost:4000/api/v1`. *(Source: `main.ts`, `.env.example`.)*
+
+### How do I run it locally?
+
+Copy `.env.example` to `.env`, install dependencies, generate the Prisma client, start the infrastructure with Docker Compose and run the dev server. The commands are in the [Quick Start](/docs/guide/quick-start) and [Self-Hosting](/docs/guide/self-hosting) guides. You need PostgreSQL and Redis running; the health check reports both. *(Source: orchestrator `README.md`, `.env.example`.)*
+
+### Do I need a fiat account to try it?
+
+No. `PAYMENT_PROVIDER` defaults to `crypto` (invisible Stellar wallets, no fiat dependency). The `airtm` option needs an Airtm Enterprise account. When using `crypto`, `WALLET_ENCRYPTION_KEY` is required. *(Source: `.env.example`.)*
+
+### Can I use the Stellar testnet?
+
+Yes. `.env.example` ships with `STELLAR_NETWORK=testnet`, the Horizon testnet URL and the testnet USDC issuer, and points `TRUSTLESS_API_URL` at Trustless Work's dev API. Switch these only when you deliberately move to mainnet. *(Source: `.env.example`.)*
+
+### Why does escrow creation fail with a platform user error?
+
+Escrows use a platform user as dispute resolver and platform address. Run the bootstrap script (`npm run bootstrap`) and paste the printed value into `PLATFORM_USER_ID`. *(Source: `.env.example`.)*
+
+## Authentication
+
+### How do I get my first API key?
+
+Set `OFFERHUB_MASTER_KEY` in `.env`. That key is accepted as a bearer token and carries the `read`, `write` and `support` scopes, which lets you create the first real API key. Use real keys, not the master key, in your app. *(Source: `common/guards/api-key.guard.ts`.)*
+
+### What does an API key look like?
+
+`ohk_{env}_{id}_{random}`. Short-lived tokens start with `ohk_tok_` and expire after one hour. Send either as `Authorization: Bearer <token>`. *(Source: `common/guards/api-key.guard.ts`, `modules/auth/auth.service.ts`.)*
+
+### I get 401 or 403. Which is which?
+
+401 means the guard could not authenticate you (missing header, wrong format, unknown or wrong key). 403 `INSUFFICIENT_SCOPE` means you are authenticated but the key lacks a required scope. See troubleshooting entries [1](/docs/guide/troubleshooting#1-401---missing-authorization-header) to [3](/docs/guide/troubleshooting#3-403---insufficient-scope). *(Source: `common/guards/scope.guard.ts`.)*
+
+## Requests
+
+### Do I have to send an Idempotency-Key?
+
+It is optional, but recommended for anything that moves money or creates resources. It must be a UUID v4, is scoped to your API key, and a completed request is replayed for 24 hours by default. The same key with a different body returns `IDEMPOTENCY_KEY_REUSED`. *(Source: `common/guards/idempotency.guard.ts`, `modules/idempotency/idempotency.service.ts`.)*
+
+### What is the rate limit?
+
+100 requests per 60 seconds per API key by default, with `X-RateLimit-*` headers on each response. Exceeding it returns `RATE_LIMITED` (429) with a `retryAfter` value. *(Source: `common/guards/rate-limit.guard.ts`.)*
+
+### What does an error response look like?
+
+```json
+{
+  "error": {
+    "code": "INVALID_STATE",
+    "message": "Cannot cancel order ord_123 in state COMPLETED"
+  }
+}
+```
+
+Always branch on `error.code`. The full list is in [Error Codes](/docs/api-reference/errors). *(Source: `common/filters/global-exception.filter.ts`.)*
+
+## Webhooks and events
+
+### How do I receive Trustless Work or Airtm events on my laptop?
+
+Providers must reach your instance from the internet, so expose it with a tunnel such as Ngrok or Cloudflare Tunnel and set `PUBLIC_BASE_URL` to the public address. Also set `TRUSTLESS_WEBHOOK_SECRET` (and `AIRTM_WEBHOOK_SECRET` if you use Airtm) or signature checks will fail or, for Airtm, be skipped. *(Source: `.env.example`, `modules/webhooks/webhooks.controller.ts`.)*
+
+### How do I get real-time updates in my frontend?
+
+Use the SSE endpoint `GET /events`. It sends a heartbeat every 30 seconds and supports reconnecting with `Last-Event-ID` or `since`. It needs an API key, so do not call it directly with the browser `EventSource` from a public page; proxy it through your backend. *(Source: `modules/events/events.controller.ts`.)*
+
+## When something breaks
+
+### Where do I start debugging?
+
+1. Read the `error.code` in the response.
+2. Copy the `X-Request-ID` response header.
+3. Call `/api/v1/health/detailed` and check which dependency is `degraded` or `unhealthy`.
+4. Find your case in [Troubleshooting](/docs/guide/troubleshooting).
+
+*(Source: `common/middleware/correlation-id.middleware.ts`, `modules/health/health.service.ts`.)*
+
+### What should I include when I ask for help?
+
+The error `code`, the endpoint, a UTC timestamp, the `X-Request-ID` and the `/health/detailed` output. Never share API keys, webhook secrets or `WALLET_ENCRYPTION_KEY`.
