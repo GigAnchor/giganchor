@@ -241,7 +241,7 @@ Refunds escrowed funds back to the buyer. See [Resolution Endpoints](/docs/api-r
 
 <Badge variant="primary">POST</Badge> `/api/v1/orders/{id}/resolution/dispute`
 
-Opens a dispute on an escrow for resolution. See [Resolution Endpoints](/docs/api-reference/resolution#post-apiv1ordersorderidresolutiondispute) for the `OpenDisputeDto` fields and how a dispute is later resolved.
+Opens a dispute on an escrow for resolution. See [Resolution Endpoints](/docs/api-reference/resolution#post-apiv1ordersorderidresolutiondispute) for the `OpenDisputeDto` fields and the [Dispute state machine](/docs/guide/disputes#state-machine) for the `OPEN` → `UNDER_REVIEW` → `RESOLVED` transitions that follow.
 
 ---
 
@@ -297,7 +297,7 @@ Subscribers consume real-time domain events over the [SSE event stream](/docs/ap
 
 <Badge variant="primary">POST</Badge> `/api/v1/withdrawals`
 
-Initiate a withdrawal from user balance.
+Initiate a withdrawal from user balance. It opens the [Withdrawal state machine](/docs/guide/withdrawals#withdrawal-state-machine) at `WITHDRAWAL_CREATED`; crypto destinations settle inline while AirTM payouts continue through `commit` and the payout webhooks.
 
 **Request Body**
 
@@ -520,6 +520,8 @@ Wallet endpoints are scoped to a user: `/users/{userId}/wallet`.
 
 ### Top-ups
 
+Each status these endpoints return is a state in the [Top-up state machine](/docs/sdk/topups#top-up-state-machine).
+
 | Endpoint | Method | Description |
 |----------|--------|-------------|
 | `/topups` | <Badge variant="primary">POST</Badge> | Create top-up |
@@ -541,7 +543,7 @@ The order lifecycle up to funding, plus milestone bookkeeping, is documented end
 | `/orders/{id}/reserve` | <Badge variant="primary">POST</Badge> | Reserve funds |
 | `/orders/{id}/cancel` | <Badge variant="primary">POST</Badge> | Cancel order |
 | `/orders/{id}/milestones` | <Badge variant="success">GET</Badge> | Get milestones |
-| `/orders/{id}/milestones/{ref}/complete` | <Badge variant="primary">POST</Badge> | Complete milestone |
+| `/orders/{id}/milestones/{ref}/complete` | <Badge variant="primary">POST</Badge> | Complete milestone — the `OPEN` → `COMPLETED` transition of the [Milestone state machine](/docs/guide/orders#milestone-state-machine) |
 
 ### Escrow
 
@@ -560,6 +562,8 @@ The order lifecycle up to funding, plus milestone bookkeeping, is documented end
 
 ### Disputes
 
+`assign` and `resolve` drive the [Dispute state machine](/docs/guide/disputes#state-machine) to `UNDER_REVIEW` and `RESOLVED`.
+
 | Endpoint | Method | Description |
 |----------|--------|-------------|
 | `/disputes` | <Badge variant="success">GET</Badge> | List disputes |
@@ -568,6 +572,8 @@ The order lifecycle up to funding, plus milestone bookkeeping, is documented end
 | `/disputes/{id}/resolve` | <Badge variant="primary">POST</Badge> | Resolve dispute |
 
 ### Withdrawals
+
+See the [Withdrawal state machine](/docs/guide/withdrawals#withdrawal-state-machine) for the transitions each status represents.
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|

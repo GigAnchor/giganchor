@@ -85,6 +85,85 @@ describe("docs/guide/data-model", () => {
     await expect(mermaid.default.parse(match![1])).resolves.toBeTruthy();
   }, 20_000);
 
+  it("documents every ID prefix the API uses", () => {
+    const doc = getDocBySlug("guide/data-model")!;
+    const start = doc.content.indexOf("## ID Prefixes");
+    const end = doc.content.indexOf("## Prisma Models");
+
+    expect(start).toBeGreaterThan(-1);
+    expect(end).toBeGreaterThan(start);
+
+    const section = doc.content.slice(start, end);
+    for (const prefix of [
+      "usr_",
+      "ord_",
+      "topup_",
+      "esc_",
+      "dsp_",
+      "wd_",
+      "wal_",
+      "key_",
+      "aud_",
+      "evt_",
+      "mkt_",
+    ]) {
+      expect(section, `missing prefix ${prefix}`).toContain(`\`${prefix}\``);
+    }
+
+    // Prefixes are documented as `<prefix>_<nanoid>`, not bare names.
+    expect(section).toContain("<prefix>_<nanoid>");
+  });
+
+  it("lists the Prisma models with their table names and identifiers", () => {
+    const doc = getDocBySlug("guide/data-model")!;
+    const start = doc.content.indexOf("## Prisma Models");
+    const end = doc.content.indexOf("## Model Reference");
+
+    expect(start).toBeGreaterThan(-1);
+    expect(end).toBeGreaterThan(start);
+
+    const section = doc.content.slice(start, end);
+    for (const [model, table] of [
+      ["User", "users"],
+      ["Balance", "balances"],
+      ["ApiKey", "api_keys"],
+      ["Wallet", "wallets"],
+      ["TopUp", "topups"],
+      ["Order", "orders"],
+      ["Escrow", "escrows"],
+      ["Milestone", "milestones"],
+      ["Withdrawal", "withdrawals"],
+      ["Dispute", "disputes"],
+      ["AuditLog", "audit_logs"],
+      ["WebhookEvent", "webhook_events"],
+      ["IdempotencyKey", "idempotency_keys"],
+      ["ProcessedTransaction", "processed_transactions"],
+    ] as const) {
+      expect(section, `missing model row for ${model}`).toContain(
+        `| \`${model}\` | \`${table}\` |`,
+      );
+    }
+  });
+
+  it("cross-links the state machine behind every status column", () => {
+    const doc = getDocBySlug("guide/data-model")!;
+    const start = doc.content.indexOf("## State Machines");
+
+    expect(start).toBeGreaterThan(-1);
+
+    const section = doc.content.slice(start);
+    for (const link of [
+      "/docs/guide/orders#order-lifecycle",
+      "/docs/guide/escrow#state-machine",
+      "/docs/guide/orders#milestone-state-machine",
+      "/docs/guide/disputes#state-machine",
+      "/docs/sdk/topups#top-up-state-machine",
+      "/docs/guide/withdrawals#withdrawal-state-machine",
+    ]) {
+      expect(section, `missing machine link ${link}`).toContain(link);
+    }
+  });
+
   it("is cross-linked from the self-hosting guide", () => {
     const raw = fs.readFileSync(
       path.join(DOCS_DIR, "guide/self-hosting.mdx"),
