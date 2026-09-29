@@ -41,7 +41,7 @@ Every endpoint in the Orchestrator enforces permission checks based on the scope
 | `write` | Write access to modify resources and generate tokens. | `/auth/token`, POST/PUT/PATCH routes | `apps/api/src/modules/auth/auth.controller.ts` |
 | `read` | Read-only access to view resources. | GET routes | Various |
 
-<Callout type="info">
+<Callout type="note">
   **Unscoped Endpoints:** Some specific endpoints in the Orchestrator deliberately declare **no guards and no scopes** (e.g., they lack the `@Scopes()` decorator). 
   - Escrow endpoints: `apps/api/src/modules/orders/orders.controller.ts`
   - Resolution endpoints: `apps/api/src/modules/resolution/resolution.controller.ts`
