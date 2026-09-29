@@ -5,6 +5,7 @@ import { Copy, Check, Code2 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { logger } from "@/utils/logger";
+import { highlightCache, escapeHtml } from "@/utils/shiki-highlight";
 
 interface CodeBlockProps {
   code?: string;
@@ -21,18 +22,6 @@ const LANGUAGE_ALIASES: Record<string, string> = {
   conf: "ini",
   config: "ini",
 };
-
-// Global cache — persists across renders and component instances
-const highlightCache = new Map<string, string>();
-
-function escapeHtml(text: string) {
-  return text
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
 
 export function CodeBlock({
   code: codeProp,
@@ -106,22 +95,18 @@ export function CodeBlock({
     <div
       ref={containerRef}
       className={cn(
-        "relative rounded-3xl overflow-hidden my-10 bg-bg-elevated group transition-all duration-300",
+        "relative rounded-3xl overflow-hidden my-10 bg-bg-elevated shadow-neu-raised group transition-colors duration-300",
         className
       )}
-      style={{
-        // Neumorphic outer shadow — distinct from page background
-        boxShadow: "6px 6px 14px var(--shadow-dark), -6px -6px 14px var(--shadow-light)",
-      }}
     >
       {/* Header bar — sunken, clean edges (no border) */}
       <div className="flex items-center justify-between px-6 py-4 rounded-t-3xl bg-bg-sunken shadow-neu-sunken-subtle">
         <div className="flex items-center gap-3.5">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-bg-base shadow-neu-raised-sm transition-all duration-300 group-hover:bg-theme-primary/10">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-bg-base shadow-neu-raised-sm transition-colors duration-300 group-hover:bg-theme-primary/10">
             <Code2 size={16} className="text-content-secondary group-hover:text-theme-primary" />
           </div>
           <div>
-            <span className="text-[11px] font-black uppercase tracking-[0.18em] font-mono text-content-secondary/70">
+            <span className="text-xs font-black uppercase tracking-[0.18em] font-mono text-content-secondary/70">
               {language}
             </span>
             <div className="h-0.5 w-4 bg-theme-primary/50 rounded-full mt-0.5" />
@@ -133,7 +118,7 @@ export function CodeBlock({
           onClick={handleCopy}
           aria-label={copied ? "Copied" : "Copy code"}
           className={cn(
-            "relative flex items-center gap-2.5 px-4 py-2 rounded-xl text-[10.5px] font-black uppercase tracking-widest transition-all duration-300",
+            "relative flex items-center gap-2.5 px-4 py-2 min-h-11 rounded-xl text-xs font-black uppercase tracking-widest transition-[color,background-color,transform] duration-300",
             copied
               ? "text-white bg-theme-primary shadow-lg shadow-theme-primary/25"
               : "text-content-secondary bg-bg-base shadow-neu-raised-sm hover:text-content-primary hover:bg-theme-primary/10 active:scale-95"
@@ -147,7 +132,12 @@ export function CodeBlock({
       </div>
 
       {/* Code Area */}
-      <div className="p-8 overflow-x-auto text-[14px] leading-[1.8] min-h-[5rem] text-content-primary scrollbar-thin scrollbar-track-transparent selection:bg-theme-primary/20 selection:text-content-primary">
+      <div
+        tabIndex={0}
+        role="region"
+        aria-label={`${language} code sample, scrollable horizontally`}
+        className="p-8 overflow-x-auto text-[14px] leading-[1.8] min-h-[5rem] text-content-primary scrollbar-thin scrollbar-track-transparent selection:bg-theme-primary/20 selection:text-content-primary"
+      >
         {highlightedCode ? (
           <div
             dangerouslySetInnerHTML={{ __html: highlightedCode }}

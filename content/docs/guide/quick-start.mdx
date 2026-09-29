@@ -1,7 +1,7 @@
 ---
 title: Quick Start
 description: Create your first user and order in 5 minutes.
-order: 1
+order: 11
 section: Guides
 ---
 
@@ -110,7 +110,7 @@ Create an order between a buyer and seller:
 curl -X POST http://localhost:4000/api/v1/orders \
   -H "Authorization: Bearer ohk_live_your_api_key" \
   -H "Content-Type: application/json" \
-  -H "Idempotency-Key: $(uuidgen)" \
+  -H "Idempotency-Key: 550e8400-e29b-41d4-a716-446655440008" \
   -d '{
     "buyerId": "usr_buyer123",
     "sellerId": "usr_seller456",
@@ -240,11 +240,11 @@ const order = await sdk.orders.create({
 await sdk.orders.reserve(order.id);
 
 // Create and fund escrow
-await sdk.escrow.create(order.id);
-await sdk.escrow.fund(order.id);
+await sdk.orders.createEscrow(order.id);
+await sdk.orders.fundEscrow(order.id);
 
 // Release to seller
-await sdk.resolution.release(order.id, { requestedBy: buyer.id });
+await sdk.orders.release(order.id, 'Work completed');
 ```
 
 ## Listening to Events

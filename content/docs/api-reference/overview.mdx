@@ -1,7 +1,7 @@
 ---
 title: API Reference
 description: Complete REST API reference for OFFER-HUB — endpoints, parameters, and response schemas.
-order: 1
+order: 40
 section: API Reference
 ---
 
@@ -44,17 +44,16 @@ Response:
 
 ```json
 {
-  "data": {
-    "id": "key_abc123",
-    "key": "ohk_live_xxxxxxxxxxxx",
-    "name": "My Marketplace",
-    "scopes": ["read", "write"]
-  }
+  "id": "key_abc123",
+  "api_key": "ohk_live_xxxxxxxxxxxx",
+  "name": "My Marketplace",
+  "scopes": ["read", "write"],
+  "created_at": "2026-01-12T10:00:00.000Z"
 }
 ```
 
 <Callout type="danger">
-  Save the `key` value immediately - it's only shown once!
+  Save the `api_key` value immediately - it's only shown once!
 </Callout>
 
 ### API Key Scopes
@@ -72,8 +71,8 @@ Response:
 | Header | Required | Description |
 |--------|----------|-------------|
 | `Authorization` | Yes | `Bearer {api_key}` |
-| `Content-Type` | Yes (POST/PUT) | `application/json` |
-| `Idempotency-Key` | Conditional | UUID for state-changing POSTs |
+| `Content-Type` | Yes (POST/PUT/PATCH) | `application/json` |
+| `Idempotency-Key` | Optional | UUID v4 for POST, PUT, and PATCH requests |
 | `X-Request-ID` | No | UUID for correlation/debugging |
 
 ### Response Headers
@@ -145,15 +144,26 @@ Response:
 
 ---
 
+## Per-endpoint reference
+
+The summaries on this page cover the API surface at a glance. The endpoint groups below have dedicated pages with real DTO fields, signer roles, valid state transitions, error codes, and cURL plus TypeScript SDK examples:
+
+| Page | Endpoints | Source in the Orchestrator repo |
+| --- | --- | --- |
+| [Escrow Endpoints](/docs/api-reference/escrow) | `POST /orders/{id}/escrow`, `POST /orders/{id}/escrow/fund` | `apps/api/src/modules/orders/orders.controller.ts` |
+| [Resolution Endpoints](/docs/api-reference/resolution) | `POST /orders/{orderId}/resolution/release`, `/refund`, `/dispute` | `apps/api/src/modules/resolution/resolution.controller.ts` |
+| [Inbound Webhooks](/docs/api-reference/webhooks) | `POST /webhooks/airtm`, `POST /webhooks/trustless-work` | `apps/api/src/modules/webhooks/webhooks.controller.ts` |
+| [Events (SSE)](/docs/api-reference/events) | `GET /events` plus the event catalog | `apps/api/src/modules/events/events.controller.ts` |
+
 ## Escrows
 
-Escrow contracts hold funds securely between buyers and sellers until project completion.
+Escrow contracts hold funds securely between buyers and sellers until project completion. The two creation and funding calls are documented end to end in [Escrow Endpoints](/docs/api-reference/escrow); the three settlement calls are in [Resolution Endpoints](/docs/api-reference/resolution).
 
 ### Initialize an Escrow
 
 <Badge variant="primary">POST</Badge> `/api/v1/orders/{id}/escrow`
 
-Creates a new escrow contract between buyer and seller. Funds are held until release.
+Creates a new escrow contract between buyer and seller. Funds are held until release. See [Escrow Endpoints](/docs/api-reference/escrow#post-apiv1ordersidescrow) for parameters, contract roles, and the full response schema.
 
 **Request Body**
 
@@ -190,7 +200,7 @@ Creates a new escrow contract between buyer and seller. Funds are held until rel
 
 <Badge variant="primary">POST</Badge> `/api/v1/orders/{id}/escrow/fund`
 
-Funds an existing escrow contract.
+Funds an existing escrow contract. See [Escrow Endpoints](/docs/api-reference/escrow#post-apiv1ordersidescrowfund) for the reserved-balance debit, contract-type selection, and error codes.
 
 <Callout type="warning">
   Returns `422 INSUFFICIENT_FUNDS` if the buyer has insufficient balance.
@@ -200,7 +210,7 @@ Funds an existing escrow contract.
 
 <Badge variant="primary">POST</Badge> `/api/v1/orders/{id}/resolution/release`
 
-Releases held funds from an escrow to the seller upon project completion.
+Releases held funds from an escrow to the seller upon project completion. See [Resolution Endpoints](/docs/api-reference/resolution#post-apiv1ordersorderidresolutionrelease) for the three on-chain steps and their signer roles.
 
 **Response**
 
@@ -219,13 +229,13 @@ Releases held funds from an escrow to the seller upon project completion.
 
 <Badge variant="primary">POST</Badge> `/api/v1/orders/{id}/resolution/refund`
 
-Refunds escrowed funds back to the buyer.
+Refunds escrowed funds back to the buyer. See [Resolution Endpoints](/docs/api-reference/resolution#post-apiv1ordersorderidresolutionrefund) for the two-step dispute-then-resolve flow.
 
 ### Open Dispute
 
 <Badge variant="primary">POST</Badge> `/api/v1/orders/{id}/resolution/dispute`
 
-Opens a dispute on an escrow for resolution.
+Opens a dispute on an escrow for resolution. See [Resolution Endpoints](/docs/api-reference/resolution#post-apiv1ordersorderidresolutiondispute) for the `OpenDisputeDto` fields and how a dispute is later resolved.
 
 ---
 
@@ -269,24 +279,9 @@ Returns a deposit address for the user to fund their account.
 
 ---
 
-## Webhooks
+## Real-Time Events
 
-Receive real-time event notifications from OFFER-HUB via HTTP webhooks.
-
-See the [Webhooks documentation](/docs/api-reference/webhooks) for complete details on:
-- Payload structures
-- Signature verification
-- Retry logic
-
-**Available Events**
-
-| Event | Trigger |
-|-------|---------|
-| `escrow.created` | New escrow contract created |
-| `escrow.funded` | Escrow has received funds |
-| `escrow.released` | Seller paid; escrow completed |
-| `escrow.disputed` | Dispute opened on an escrow |
-| `escrow.refunded` | Escrow refunded to buyer |
+Subscribers consume real-time domain events over the [SSE event stream](/docs/api-reference/events) at `GET /api/v1/events`. Separately, the Orchestrator receives inbound webhooks from external providers (Airtm, Trustless Work) to process payment and escrow lifecycle events — see the [Inbound Webhooks](/docs/api-reference/webhooks) reference for signature verification and deduplication behavior.
 
 ---
 
@@ -372,7 +367,14 @@ GET /orders?status=IN_PROGRESS&buyer_id=usr_abc&created_after=2026-01-01
 
 ## Idempotency
 
-All state-changing POSTs accept `Idempotency-Key` to prevent duplicate operations:
+`Idempotency-Key` is optional and is processed on `POST`, `PUT`, and `PATCH`
+requests. When supplied, it must be a UUID v4 and is scoped to the API key and
+request body. The guard and response lifecycle are implemented in the
+[orchestrator `IdempotencyGuard`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/common/guards/idempotency.guard.ts)
+and
+[`IdempotencyInterceptor`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/common/interceptors/idempotency.interceptor.ts).
+
+Use a real UUID v4 for every request key:
 
 ```http
 POST /orders
@@ -384,19 +386,38 @@ Content-Type: application/json
 
 ### Behavior
 
-1. **First request**: Processed normally
-2. **Repeated request** (same key): Returns original response
-3. **Different body + same key**: Returns `409 IDEMPOTENCY_KEY_REUSED`
+1. **Invalid key**: Returns `400 VALIDATION_ERROR`; the key must be a UUID v4.
+2. **First request**: Processed normally and stored for replay.
+3. **Repeated request with the same key and body**: Returns the original response
+   and sets `Idempotency-Replay: true`.
+4. **Different body with the same key**: Returns `409 IDEMPOTENCY_KEY_REUSED`.
+5. **Original request still processing**: Returns `409
+   IDEMPOTENCY_KEY_IN_PROGRESS`.
 
-### Idempotency Windows
+Example for a reused key:
 
-| Resource | Window |
-|----------|--------|
-| Top-ups | 24 hours |
-| Withdrawals | 24 hours |
-| Orders | 7 days |
-| Escrow ops | 7 days |
-| Disputes | Forever |
+```json
+{
+  "error": {
+    "code": "IDEMPOTENCY_KEY_REUSED",
+    "message": "This idempotency key was used with a different request body"
+  }
+}
+```
+
+Example while the original request is still running:
+
+```json
+{
+  "error": {
+    "code": "IDEMPOTENCY_KEY_IN_PROGRESS",
+    "message": "A request with this key is still being processed"
+  }
+}
+```
+
+Keys are retained for 24 hours. Reuse after that period is treated as a new
+request.
 
 <Callout type="note">
   In the current orchestrator, idempotency entries are stored for 24 hours by default (`idempotency.service.ts`, `ttlHours = 24`) regardless of resource. The per-resource windows above are the intended targets — see [Disputes API · Idempotency](/docs/api-reference/disputes#idempotency) for the behavior actually enforced today.
@@ -404,25 +425,33 @@ Content-Type: application/json
 
 ## Rate Limiting
 
-| Endpoint | Limit |
-|----------|-------|
-| General | 100 req/min per API key |
-| POST /topups | 10 req/min per user |
-| POST /withdrawals | 5 req/min per user |
-| GET /events | 1 SSE connection per user |
+The API applies one global limit of 100 requests per 60-second window. The
+counter is keyed by API key when authenticated, or by client IP when no API key
+is available. There are no additional per-endpoint limits documented here.
+The headers and error payload are implemented in the orchestrator
+[`RateLimitGuard`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/common/guards/rate-limit.guard.ts).
+
+Every response includes:
+
+| Header | Meaning |
+|--------|---------|
+| `X-RateLimit-Limit` | Maximum requests in the current window (`100`) |
+| `X-RateLimit-Remaining` | Requests remaining in the current window |
+| `X-RateLimit-Reset` | Unix timestamp when the window expires |
 
 ### Response When Exceeded
 
 ```http
 HTTP/1.1 429 Too Many Requests
-Retry-After: 60
 
 {
   "error": {
     "code": "RATE_LIMITED",
     "message": "Too many requests",
     "details": {
-      "retry_after": 60
+      "limit": 100,
+      "windowSeconds": 60,
+      "retryAfter": 60
     }
   }
 }
@@ -430,23 +459,73 @@ Retry-After: 60
 
 ## Available Endpoints
 
-### Auth & Config
+Every entry below was verified against the real controllers in `apps/api/src/modules`. All paths are relative to the `/api/v1` prefix.
+
+### Auth
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
 | `/auth/api-keys` | <Badge variant="primary">POST</Badge> | Create API key |
 | `/auth/api-keys` | <Badge variant="success">GET</Badge> | List API keys |
-| `/health` | <Badge variant="success">GET</Badge> | Health check |
+| `/auth/api-keys/{id}/token` | <Badge variant="primary">POST</Badge> | Generate short-lived token |
+| `/auth/me` | <Badge variant="success">GET</Badge> | Current auth context |
+
+### Config
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/config` | <Badge variant="success">GET</Badge> | Platform configuration (public) |
+
+### Health
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/health` | <Badge variant="success">GET</Badge> | Basic health check (public) |
+| `/health/detailed` | <Badge variant="success">GET</Badge> | Detailed health check (public) |
 
 ### Users
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
 | `/users` | <Badge variant="primary">POST</Badge> | Create user |
-| `/users` | <Badge variant="success">GET</Badge> | List users |
-| `/users/{id}` | <Badge variant="success">GET</Badge> | Get user |
-| `/users/{id}/balance` | <Badge variant="success">GET</Badge> | Get balance |
-| `/users/{id}/wallet/deposit` | <Badge variant="success">GET</Badge> | Get deposit address |
+| `/users/{id}/airtm/link` | <Badge variant="primary">POST</Badge> | Link Airtm account |
+
+### Balance
+
+All balance endpoints are scoped to a user: `/users/{userId}/balance`.
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/users/{userId}/balance` | <Badge variant="success">GET</Badge> | Get user balance |
+| `/users/{userId}/balance/credit` | <Badge variant="primary">POST</Badge> | Credit available balance |
+| `/users/{userId}/balance/debit` | <Badge variant="primary">POST</Badge> | Debit available balance |
+| `/users/{userId}/balance/reserve` | <Badge variant="primary">POST</Badge> | Reserve funds |
+| `/users/{userId}/balance/release` | <Badge variant="primary">POST</Badge> | Release reserved funds |
+| `/users/{userId}/balance/cancel-reservation` | <Badge variant="primary">POST</Badge> | Cancel reservation |
+| `/users/{userId}/balance/deduct-reserved` | <Badge variant="primary">POST</Badge> | Deduct from reserved |
+| `/users/{userId}/balance/sync` | <Badge variant="primary">POST</Badge> | Sync with provider |
+| `/users/{userId}/balance/verify` | <Badge variant="success">GET</Badge> | Verify with provider |
+
+### Wallet
+
+Wallet endpoints are scoped to a user: `/users/{userId}/wallet`.
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/users/{userId}/wallet` | <Badge variant="success">GET</Badge> | Get wallet info |
+| `/users/{userId}/wallet/deposit` | <Badge variant="success">GET</Badge> | Get deposit address |
+| `/users/{userId}/wallet/transactions` | <Badge variant="success">GET</Badge> | Transaction history |
+
+### Top-ups
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/topups` | <Badge variant="primary">POST</Badge> | Create top-up |
+| `/topups` | <Badge variant="success">GET</Badge> | List top-ups |
+| `/topups/{id}` | <Badge variant="success">GET</Badge> | Get top-up |
+| `/topups/{id}/refresh` | <Badge variant="primary">POST</Badge> | Refresh status from Airtm |
+| `/topups/{id}/cancel` | <Badge variant="primary">POST</Badge> | Cancel top-up |
+| `/topups/{id}/callback` | <Badge variant="success">GET</Badge> | Airtm callback (public) |
 
 ### Orders
 
@@ -457,12 +536,14 @@ Retry-After: 60
 | `/orders/{id}` | <Badge variant="success">GET</Badge> | Get order |
 | `/orders/{id}/reserve` | <Badge variant="primary">POST</Badge> | Reserve funds |
 | `/orders/{id}/cancel` | <Badge variant="primary">POST</Badge> | Cancel order |
+| `/orders/{id}/milestones` | <Badge variant="success">GET</Badge> | Get milestones |
+| `/orders/{id}/milestones/{ref}/complete` | <Badge variant="primary">POST</Badge> | Complete milestone |
 
 ### Escrow
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
-| `/orders/{id}/escrow` | <Badge variant="primary">POST</Badge> | Create escrow |
+| `/orders/{id}/escrow` | <Badge variant="primary">POST</Badge> | Create escrow contract |
 | `/orders/{id}/escrow/fund` | <Badge variant="primary">POST</Badge> | Fund escrow |
 
 ### Resolution
@@ -475,36 +556,41 @@ Retry-After: 60
 
 ### Disputes
 
-Full details in the [Disputes API reference](/docs/api-reference/disputes).
-
 | Endpoint | Method | Description |
 |----------|--------|-------------|
-| `/disputes` | <Badge variant="success">GET</Badge> | List disputes (`orderId`, `status`, `openedBy` filters) |
-| `/disputes/{id}` | <Badge variant="success">GET</Badge> | Get dispute with order relations |
-| `/disputes/{id}/assign` | <Badge variant="primary">POST</Badge> | Assign dispute for review (`OPEN` → `UNDER_REVIEW`) |
-| `/disputes/{id}/resolve` | <Badge variant="primary">POST</Badge> | Resolve with `FULL_RELEASE`, `FULL_REFUND`, or `SPLIT` |
-
-### Audit Logs
-
-Full details in the [Audit Logs API reference](/docs/api-reference/audit-logs). Requires the `support` scope.
-
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/audit/logs` | <Badge variant="success">GET</Badge> | Query the audit trail (`resourceType`, `resourceId`, `action`, `userId`, `from`, `to`, `limit`, `cursor`) |
+| `/disputes` | <Badge variant="success">GET</Badge> | List disputes |
+| `/disputes/{id}` | <Badge variant="success">GET</Badge> | Get dispute |
+| `/disputes/{id}/assign` | <Badge variant="primary">POST</Badge> | Assign to agent |
+| `/disputes/{id}/resolve` | <Badge variant="primary">POST</Badge> | Resolve dispute |
 
 ### Withdrawals
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
 | `/withdrawals` | <Badge variant="primary">POST</Badge> | Create withdrawal |
+| `/withdrawals` | <Badge variant="success">GET</Badge> | List withdrawals |
 | `/withdrawals/{id}` | <Badge variant="success">GET</Badge> | Get withdrawal |
-| `/withdrawals/{id}/commit` | <Badge variant="primary">POST</Badge> | Commit withdrawal (AirTM) |
+| `/withdrawals/{id}/commit` | <Badge variant="primary">POST</Badge> | Commit withdrawal |
+| `/withdrawals/{id}/refresh` | <Badge variant="primary">POST</Badge> | Refresh status from Airtm |
 
 ### Events
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
 | `/events` | <Badge variant="success">GET</Badge> | SSE event stream |
+
+### Webhooks (inbound)
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/webhooks/airtm` | <Badge variant="primary">POST</Badge> | Receive Airtm webhooks |
+| `/webhooks/trustless-work` | <Badge variant="primary">POST</Badge> | Receive Trustless Work webhooks |
+
+### Audit Logs
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/audit/logs` | <Badge variant="success">GET</Badge> | List audit entries |
 
 ## Versioning
 
@@ -520,8 +606,7 @@ The API uses path versioning:
 
 ## Next Steps
 
-- [Disputes API](/docs/api-reference/disputes) - List, assign, and resolve disputes
-- [Audit Logs API](/docs/api-reference/audit-logs) - Trace every mutation (support scope)
-- [Webhooks](/docs/api-reference/webhooks) - Receive event notifications
+- [Events (SSE)](/docs/api-reference/events) - Real-time event stream and event catalog
+- [Inbound Webhooks](/docs/api-reference/webhooks) - AirTM and Trustless Work receivers
 - [Quick Start](/docs/guide/quick-start) - Your first API call
 - [SDK Guide](/docs/sdk/quick-start) - Use the TypeScript SDK

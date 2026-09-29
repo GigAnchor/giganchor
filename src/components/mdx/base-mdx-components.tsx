@@ -1,12 +1,9 @@
 import type { MDXComponents } from "mdx/types";
 import type { ReactNode } from "react";
+import { slugify } from "@/utils/slugify";
 
-function slugify(children: ReactNode): string {
-  return String(children ?? "")
-    .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, "")
-    .trim()
-    .replace(/\s+/g, "-");
+function headingId(children: ReactNode): string {
+  return slugify(String(children ?? ""));
 }
 
 /**
@@ -15,21 +12,21 @@ function slugify(children: ReactNode): string {
  */
 export const BASE_MDX_COMPONENTS: MDXComponents = {
   h2: ({ children, ...props }) => {
-    const id = slugify(children);
+    const id = headingId(children);
     return (
       <h2
         id={id}
         className="text-2xl font-black mt-16 mb-6 scroll-mt-32 flex items-center gap-3 tracking-tight text-content-primary"
         {...props}
       >
-        <span className="w-1 h-6 rounded-full bg-[#149A9B]" />
+        <span className="w-1 h-6 rounded-full bg-theme-primary" />
         {children}
       </h2>
     );
   },
 
   h3: ({ children, ...props }) => {
-    const id = slugify(children);
+    const id = headingId(children);
     return (
       <h3
         id={id}
@@ -52,7 +49,7 @@ export const BASE_MDX_COMPONENTS: MDXComponents = {
   ),
 
   blockquote: ({ children }) => (
-    <blockquote className="my-6 border-l-4 border-theme-primary/40 pl-4 text-content-secondary italic">
+    <blockquote className="my-6 rounded-xl bg-bg-sunken px-4 py-3 shadow-neu-sunken-subtle text-content-secondary italic">
       {children}
     </blockquote>
   ),
@@ -69,7 +66,7 @@ export const BASE_MDX_COMPONENTS: MDXComponents = {
 
   li: ({ children }) => (
     <li className="leading-relaxed flex items-start gap-2.5">
-      <span className="mt-2.5 w-1.5 h-1.5 rounded-full bg-[#149A9B]/30 flex-shrink-0" />
+      <span className="mt-2.5 w-1.5 h-1.5 rounded-full bg-theme-primary/30 flex-shrink-0" />
       <span className="flex-1 font-medium">{children}</span>
     </li>
   ),
@@ -79,7 +76,7 @@ export const BASE_MDX_COMPONENTS: MDXComponents = {
   a: ({ href, children }) => (
     <a
       href={href}
-      className="font-bold underline decoration-2 underline-offset-4 decoration-theme-primary/40 hover:decoration-theme-primary transition-all text-theme-primary"
+      className="font-bold underline decoration-2 underline-offset-4 decoration-theme-primary/40 hover:decoration-theme-primary transition-colors text-theme-primary"
       target={href?.startsWith("http") ? "_blank" : undefined}
       rel={href?.startsWith("http") ? "noopener noreferrer" : undefined}
     >
@@ -93,7 +90,12 @@ export const BASE_MDX_COMPONENTS: MDXComponents = {
 
   table: ({ children }) => (
     <div className="neu-table-wrap my-10 w-full">
-      <div className="overflow-x-auto">
+      <div
+        tabIndex={0}
+        role="region"
+        aria-label="Table, scrollable horizontally"
+        className="overflow-x-auto"
+      >
         <table className="w-full border-collapse text-left text-sm">{children}</table>
       </div>
     </div>
@@ -102,7 +104,7 @@ export const BASE_MDX_COMPONENTS: MDXComponents = {
   tbody: ({ children }) => <tbody className="neu-table-body bg-bg-base">{children}</tbody>,
   tr: ({ children }) => <tr className="neu-table-row">{children}</tr>,
   th: ({ children }) => (
-    <th className="px-6 py-4 font-black uppercase tracking-[0.12em] text-[11px] text-theme-primary whitespace-nowrap">
+    <th className="px-6 py-4 font-black uppercase tracking-[0.12em] text-xs text-theme-primary whitespace-nowrap">
       {children}
     </th>
   ),

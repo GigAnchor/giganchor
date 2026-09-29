@@ -140,18 +140,18 @@ export function DocsSearchBar() {
                         aria-label="Documentation search"
                         aria-autocomplete="list"
                         aria-activedescendant={activeIndex >= 0 ? `result-item-${results[activeIndex]?.item.id}` : undefined}
-                        className="bg-transparent flex-1 text-content-primary placeholder:text-content-secondary w-full rounded-md focus-visible:outline-2 focus-visible:outline-theme-primary focus-visible:outline-offset-2 focus-visible:ring-2 focus-visible:ring-theme-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg-sunken"
+                        className="bg-transparent flex-1 min-h-6 text-content-primary placeholder:text-content-secondary w-full rounded-md focus-visible:outline-2 focus-visible:outline-theme-primary focus-visible:outline-offset-2 focus-visible:ring-2 focus-visible:ring-theme-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg-sunken"
                     />
                     {query ? (
                         <button
                             onClick={() => { setQuery(""); setResults([]); setIsOpen(false); }}
-                            className="text-content-secondary hover:text-content-primary transition-colors flex items-center justify-center px-1"
+                            className="text-content-secondary hover:text-content-primary transition-colors inline-flex items-center justify-center min-w-11 min-h-11 px-1"
                         >
                             <X size={18} />
                         </button>
                     ) : !inputFocused && isMac !== null ? (
                         <div className="flex items-center gap-1 pointer-events-none text-content-secondary px-2 py-1 rounded-md bg-bg-base shadow-neu-raised-sm">
-                            <span className="text-[11px] font-medium text-content-secondary">
+                            <span className="text-xs font-medium text-content-secondary">
                                 {isMac ? '⌘K' : 'Ctrl K'}
                             </span>
                         </div>
@@ -163,7 +163,7 @@ export function DocsSearchBar() {
                 <div 
                     id="docs-search-results"
                     role="listbox"
-                    className="absolute top-full left-0 mt-3 w-full rounded-2xl z-[150] animate-in fade-in slide-in-from-top-2 duration-200 bg-bg-elevated border border-theme-border/40 shadow-2xl shadow-black/10 backdrop-blur-md"
+                    className="absolute top-full left-0 mt-3 w-full rounded-2xl z-[150] animate-dropdownIn bg-bg-elevated border border-theme-border/40 shadow-2xl shadow-black/10 backdrop-blur-md"
                 >
                     <div className="max-h-[480px] overflow-y-auto scrollbar-thin">
                         {results.map((result, idx) => (
@@ -179,10 +179,9 @@ export function DocsSearchBar() {
                                     setIsOpen(false);
                                     setQuery("");
                                 }}
-                                className="w-full p-4 flex items-start gap-4 cursor-pointer transition-colors text-left appearance-none border-0 bg-transparent"
-                                style={{
-                                    backgroundColor: activeIndex === idx ? "rgba(20, 154, 155, 0.08)" : "transparent",
-                                }}
+                                className={`w-full p-4 flex items-start gap-4 cursor-pointer transition-colors text-left appearance-none border-0 ${
+                                    activeIndex === idx ? "bg-theme-primary/10" : "bg-transparent"
+                                }`}
                             >
                                 <div className={`mt-1 p-2 rounded-lg ${activeIndex === idx ? "bg-theme-primary/10 shadow-neu-sunken-subtle" : "bg-bg-base shadow-neu-raised-sm"}`}>
                                     <FileText size={18} className={activeIndex === idx ? "text-theme-primary" : "text-content-secondary"} />
@@ -204,7 +203,7 @@ export function DocsSearchBar() {
                             </button>
                         ))}
                     </div>
-                    <div className="p-3 flex justify-between items-center text-[10px] font-bold tracking-wider uppercase bg-bg-sunken/60 text-content-secondary border-t border-theme-border/40">
+                    <div className="p-3 flex justify-between items-center text-xs font-bold tracking-wider uppercase bg-bg-sunken/60 text-content-secondary border-t border-theme-border/40">
                         <span>{results.length} results found</span>
                         <div className="flex gap-3">
                             <span className="flex items-center gap-1">
@@ -219,7 +218,7 @@ export function DocsSearchBar() {
             )}
 
             {isOpen && query.length > 1 && results.length === 0 && (
-                <div className="absolute top-full mt-3 w-full rounded-2xl p-8 text-center z-[100] animate-in fade-in slide-in-from-top-2 bg-bg-elevated/95 border border-theme-border/40 shadow-neu-raised backdrop-blur-xl">
+                <div className="absolute top-full mt-3 w-full rounded-2xl p-8 text-center z-[100] animate-dropdownIn bg-bg-elevated/95 border border-theme-border/40 shadow-neu-raised backdrop-blur-xl">
                     <p className="text-content-secondary">No results found for &quot;<span className="font-semibold text-content-primary">{query}</span>&quot;</p>
                     <p className="text-sm mt-1 text-content-secondary/80">Try a different search term</p>
                 </div>
