@@ -1,7 +1,7 @@
 ---
 title: Orders Guide
 description: Complete guide to the order lifecycle - from creation to settlement.
-order: 2
+order: 15
 section: Guides
 ---
 
@@ -29,7 +29,7 @@ Every order follows a strict state machine — the same canonical diagram used a
 curl -X POST http://localhost:4000/api/v1/orders \
   -H "Authorization: Bearer ohk_live_..." \
   -H "Content-Type: application/json" \
-  -H "Idempotency-Key: $(uuidgen)" \
+  -H "Idempotency-Key: 550e8400-e29b-41d4-a716-446655440006" \
   -d '{
     "buyerId": "usr_buyer123",
     "sellerId": "usr_seller456",
@@ -353,7 +353,9 @@ if (parseFloat(balance.available) < amount) {
 ### 2. Use Idempotency Keys
 
 ```typescript
-const idempotentSdk = sdk.withIdempotencyKey(generateUUID());
+const idempotentSdk = sdk.withIdempotencyKey(
+  '550e8400-e29b-41d4-a716-446655440007'
+);
 const order = await idempotentSdk.orders.create({ ... });
 ```
 
@@ -383,5 +385,5 @@ switch (order.status) {
 
 - [Escrow Guide](/docs/guide/escrow) - How blockchain escrow works
 - [Disputes Guide](/docs/guide/disputes) - Handling disputes
-- [Events Reference](/docs/guide/events) - All order events
+- [Events Reference](/docs/api-reference/events) - All order events
 - [API Reference](/docs/api-reference/overview) - Full endpoint documentation
