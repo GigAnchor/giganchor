@@ -1,7 +1,7 @@
 ---
 title: Self-Hosting
 description: Complete instructions for deploying OFFER-HUB Orchestrator on your own infrastructure using Docker.
-order: 24
+order: 25
 section: Guides
 ---
 
@@ -46,6 +46,10 @@ flowchart LR
     API --> Redis
     API --> Stellar
 ```
+
+The API runs alongside PostgreSQL and Redis, and connects to the Stellar network.
+
+The topology is verified against the Orchestrator root `docker-compose.yml`, `apps/api/src/main.ts`, and `apps/api/src/modules/webhooks/webhooks.controller.ts`: Compose provides PostgreSQL and Redis while the API hosts both REST endpoints and inbound webhook handling.
 
 ## Docker Setup
 
@@ -158,7 +162,7 @@ Create a `.env` file in the same directory as your `docker-compose.yml`.
 |----------|---------|-------------|
 | `PORT` | `4000` | HTTP server port |
 | `LOG_LEVEL` | `info` | Logging level: `debug`, `info`, `warn`, `error` |
-| `PAYMENT_PROVIDER` | `crypto` | Payment mode: `crypto` or `airtm` |
+| `PAYMENT_PROVIDER` | `crypto` | Payment mode for the `PaymentProvider` strategy. Only `crypto` is implemented — `airtm` throws at startup |
 | `STELLAR_NETWORK` | `testnet` | Stellar network: `testnet` or `mainnet` |
 | `STELLAR_USDC_ISSUER` | Testnet issuer | USDC asset issuer address |
 

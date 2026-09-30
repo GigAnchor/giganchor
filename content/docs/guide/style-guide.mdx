@@ -12,6 +12,50 @@ section: Internal
 
 This guide documents the OFFER-HUB design system, including colors, typography, and component styling for both light and dark modes.
 
+## API Schema Components
+
+Use `ParamTable` for request parameters and `ResponseSchema` for response fields. Both components use the theme tokens and keep wide tables inside a labelled, keyboard-focusable scroll region on small screens. Nested fields start expanded and can be collapsed; field metadata supports defaults, enums, nullable values, and deprecation notes.
+
+The example below is reviewed against the checked-in Orchestrator contract at `public/openapi.json`: the `/balances` operation (`get-user-balances`) and its response example. In the orchestrator source, keep the corresponding controller and DTO references alongside the contract when updating a schema page.
+
+<ParamTable
+  label="List transactions query parameters"
+  fields={[
+    { name: "page", type: "number", description: "Page number.", defaultValue: 1 },
+    { name: "limit", type: "number", description: "Results per page (maximum 100).", defaultValue: 20 },
+    { name: "currency", type: "string", description: "Filter by currency.", enum: ["USD", "XLM", "USDC"], nullable: true },
+  ]}
+/>
+
+<ResponseSchema
+  fields={[
+    { name: "code", type: "number", required: true, description: "HTTP-style response code." },
+    { name: "type", type: "string", required: true, description: "Response classification.", enum: ["success", "error"] },
+    { name: "ok", type: "boolean", required: true, description: "Whether the request succeeded." },
+    { name: "message", type: "string", required: true, description: "Human-readable result message." },
+    {
+      name: "data",
+      type: "object",
+      required: true,
+      description: "Payload returned by the balances controller.",
+      children: [
+        {
+          name: "balances",
+          type: "array",
+          required: true,
+          description: "Available and held balances grouped by currency.",
+          children: [
+            { name: "currency", type: "string", required: true, description: "Currency code." },
+            { name: "available", type: "number", required: true, description: "Spendable balance." },
+            { name: "held", type: "number", required: true, description: "Reserved balance." },
+          ],
+        },
+      ],
+    },
+  ]}
+  example={{ code: 200, type: "success", ok: true, message: "Balances retrieved", data: { balances: [{ currency: "USD", available: 1250, held: 200 }] } }}
+/>
+
 ## Color System
 
 OFFER-HUB uses CSS variables for theme-aware colors. All colors automatically adapt when switching between light and dark modes.
@@ -198,6 +242,79 @@ font-family: var(--font-inter), Roboto, Outfit, sans-serif;
   className="bg-bg-sunken shadow-neu-sunken-subtle rounded-xl px-4 py-3 text-content-primary placeholder:text-content-muted border-none outline-none"
   placeholder="Enter text..."
 />
+```
+
+---
+
+## Diagram System
+
+All generated diagrams (Mermaid today — the same token contract is designed to carry over to a future static/offline pipeline) share one neumorphic theme module: `src/lib/diagram-theme.ts`. It reads colors directly from the CSS custom properties documented above — never hardcoded hex values — so every diagram matches the current site in both light and dark mode automatically, with no per-diagram theme code.
+
+### How it works
+
+- `readDiagramColorTokens()` reads `--color-bg-elevated`, `--color-bg-sunken`, `--color-text-primary`, `--color-text-secondary`, `--color-border`, `--shadow-dark`, and `--shadow-light` from whichever scope (`:root` or `.dark`) is active.
+- `getMermaidThemeVariables()` maps those tokens onto Mermaid's `themeVariables` (node fill, text, line color, cluster background). Node and cluster borders use the neutral `--color-border` token — never `--color-primary` — so diagram structure reads through soft shadow depth, not a colored outline.
+- `getNeumorphicDiagramCSS()` applies the same dual drop-shadow used by `shadow-neu-raised` (dark shadow bottom-right, light highlight top-left — the 145° light source from `docs/design/neumorphism.md`) directly to every node shape, via Mermaid's `themeCSS` hook.
+- `src/components/shared/MermaidDiagram.tsx` is the single rendering component; `src/components/docs/MermaidDiagram.tsx` and `src/components/architecture/MermaidDiagram.tsx` are thin re-exports of it. Every fenced `mermaid` code block in MDX renders through it automatically via `src/components/docs/mdx-components.tsx`, so it already produces a correct light and a correct dark rendering of each diagram — no separate `-light`/`-dark` source files to maintain until the static diagram pipeline (tracked separately) lands.
+
+### Accessibility
+
+- Node and edge labels use `--color-text-primary`, documented in `docs/design/color-palette.md` at 12.5:1 contrast against `--color-bg-elevated` — well past the 4.5:1 WCAG AA requirement for text.
+- Edges (`lineColor`) use `--color-text-secondary`, documented at 4.8:1 against the base background — past the 3:1 AA requirement for non-text graphical elements.
+- No diagram hardcodes a color or uses a `border-l-4`-style accent bar. Contribute new diagram styling through `diagram-theme.ts` only.
+
+### Node Type Reference
+
+Every shape below renders through the shared theme. State names are taken from the Orchestrator's real order lifecycle (`docs/architecture/state-machines.md`, "Order States", in the `OFFER-HUB/OFFER-HUB` repo) instead of placeholder labels.
+
+#### Process
+
+```mermaid
+flowchart LR
+    A[ORDER_CREATED] --> B[FUNDS_RESERVED]
+```
+
+#### Decision
+
+```mermaid
+flowchart LR
+    A[IN_PROGRESS] --> B{Dispute opened?}
+    B -->|Yes| C[DISPUTED]
+    B -->|No| D[RELEASE_REQUESTED]
+```
+
+#### Start / End
+
+```mermaid
+flowchart LR
+    A([Order created]) --> B[ORDER_CREATED]
+    B -.-> C[CLOSED]
+    C --> D([Order closed])
+```
+
+#### Database / Store
+
+```mermaid
+flowchart LR
+    A[Orchestrator] -.->|Persists state| B[(PostgreSQL)]
+```
+
+#### Subroutine (external call)
+
+```mermaid
+flowchart LR
+    A[ESCROW_CREATING] --> B[[Trustless Work API]]
+    B --> C[ESCROW_FUNDING]
+```
+
+#### Cluster
+
+```mermaid
+flowchart LR
+    subgraph Order["One order"]
+      A[ESCROW_FUNDED] --> B[IN_PROGRESS]
+      B --> C[RELEASE_REQUESTED]
+    end
 ```
 
 ---
