@@ -4,6 +4,8 @@ import { useEffect, useState, useRef } from "react";
 import { EndpointPanel } from "@/components/api-explorer/EndpointPanel";
 import { parseOpenApi, type EndpointCategory } from "@/lib/openapi-parser";
 import { Loader2 } from "lucide-react";
+import { Badge } from "@/components/docs/Badge";
+import { Callout } from "@/components/docs/Callout";
 
 export default function InteractiveExplorerPage() {
   const [categories, setCategories] = useState<EndpointCategory[]>([]);
@@ -39,6 +41,23 @@ export default function InteractiveExplorerPage() {
         <p className="text-base text-content-secondary">
           Browse endpoints, fill in parameters, and see live request/response payloads — all without leaving the docs.
         </p>
+        <div className="flex items-center gap-3 flex-wrap">
+          <h1
+            className="text-3xl sm:text-4xl font-extrabold tracking-tight text-content-primary"
+          >
+            Interactive API Explorer
+          </h1>
+          <Badge variant="warning">Coming Soon</Badge>
+        </div>
+        <p className="mt-3 text-base text-content-secondary">
+          Browse endpoints, fill in parameters, and see mock request/response
+          payloads — all without leaving the docs.
+        </p>
+        <Callout type="warning">
+          <strong>Preview Mode:</strong> This interactive explorer is currently under development.
+          The endpoints shown below are for reference only. Full interactivity with live API testing
+          is coming in a future release.
+        </Callout>
       </header>
 
       {/* Loading state */}
