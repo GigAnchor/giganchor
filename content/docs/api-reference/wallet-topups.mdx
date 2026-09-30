@@ -466,7 +466,7 @@ Lists the authenticated user's top-ups, newest first. Uses cursor-based paginati
 
 ### Response schema
 
-The controller returns a list object beside `data`, so the global interceptor wraps the whole object. The array contains `TopUpResponse` objects (see [GET /topups/{id}](#get-topupsid)); pagination fields support the next page.
+The controller returns a list object beside `data`, so the global interceptor wraps the whole object. The array contains `TopUpResponse` objects (see [GET `/topups/{id}`](#get-topupsid)); pagination fields support the next page.
 
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
@@ -634,7 +634,7 @@ Re-checks the top-up status with AirTM and returns the fresh state. Use this whe
 
 ### Response schema
 
-Same `TopUpResponse` shape as [GET /topups/{id}](#get-topupsid).
+Same `TopUpResponse` shape as [GET `/topups/{id}`](#get-topupsid).
 
 ### Response example
 
@@ -706,7 +706,7 @@ Cancels a top-up that is still awaiting user confirmation. Cancellation only wor
 
 ### Response schema
 
-Same `TopUpResponse` shape as [GET /topups/{id}](#get-topupsid), with `status` set to `TOPUP_CANCELED`.
+Same `TopUpResponse` shape as [GET `/topups/{id}`](#get-topupsid), with `status` set to `TOPUP_CANCELED`.
 
 ### Response example
 
