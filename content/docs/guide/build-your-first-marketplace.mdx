@@ -20,7 +20,9 @@ By the end of this guide you will have:
 - Complete checkout: reserve → escrow → release (and dispute path)
 - Real-time event subscription to reflect state changes in your UI
 
-```mermaid
+<MermaidDiagram
+  caption="System overview: your marketplace calls the Orchestrator, which coordinates balances, escrow, events, Stellar, and Trustless Work."
+  chart={`
 flowchart TB
     subgraph You["Your Marketplace App"]
         UI[Frontend / CLI]
@@ -32,7 +34,7 @@ flowchart TB
 
     subgraph Orch["OFFER-HUB Orchestrator :4000"]
         Ledger[Balance Ledger]
-        ESM[Escrow State Machine]
+        ESM[Order and Escrow State]
         Events[SSE Event Stream]
     end
 
@@ -41,7 +43,10 @@ flowchart TB
 
     Stellar[Stellar Testnet USDC]
     TW[Trustless Work Soroban Contracts]
-```
+`}
+/>
+
+Implementation sources: [OrdersController](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/modules/orders/orders.controller.ts), [OrderStatus and ORDER_TRANSITIONS](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/packages/shared/src/enums/order-status.enum.ts), and the [event catalog](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/packages/shared/src/events/event-catalog.ts).
 
 ---
 
@@ -222,20 +227,24 @@ When you call `sdk.users.create`, the Orchestrator:
 
 ### Signup Flow
 
-```mermaid
+<MermaidDiagram
+  caption="Signup: the app registers a buyer and seller; the Orchestrator creates each user and balance, initializes payment, and returns each user ID."
+  chart={`
 sequenceDiagram
     participant App as Your App
     participant Orch as Orchestrator
-    participant Stellar as Stellar Testnet
 
     App->>Orch: users.create (BUYER)
-    Orch->>Stellar: derive keypair
-    Orch-->>App: { id: "usr_buyer123", ... }
+    Orch->>Orch: create user and balance, initialize payment
+    Orch-->>App: buyer user record and ID
 
     App->>Orch: users.create (SELLER)
-    Orch->>Stellar: derive keypair
-    Orch-->>App: { id: "usr_seller456", ... }
-```
+    Orch->>Orch: create user and balance, initialize payment
+    Orch-->>App: seller user record and ID
+`}
+/>
+
+Implementation sources: [UsersController](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/modules/users/users.controller.ts), [CreateUserDto](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/modules/users/dto/create-user.dto.ts), and [UsersService](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/modules/users/users.service.ts).
 
 Create `src/01-signup.ts`:
 
@@ -291,17 +300,24 @@ Before a buyer can place an order they need a USDC balance. On testnet, you use 
 
 The Orchestrator watches the Stellar network for incoming USDC payments to each user's assigned address. When it detects a payment, it credits the user's `available` balance automatically.
 
-```mermaid
+<MermaidDiagram
+  caption="Deposit: Stellar Horizon streams an incoming USDC payment to the Orchestrator, which credits the buyer's available balance and emits balance.credited."
+  chart={`
 sequenceDiagram
     participant Buyer as Buyer Wallet
     participant Stellar as Stellar Testnet
+    participant Horizon as Stellar Horizon
     participant Orch as Orchestrator
 
     Buyer->>Stellar: send USDC to deposit address
-    Stellar-->>Orch: payment detected (webhook / polling)
-    Orch->>Orch: credit buyer.available += amount
+    Stellar->>Horizon: record payment
+    Horizon-->>Orch: payment stream event
+    Orch->>Orch: verify asset and credit buyer.available
     Orch->>Orch: emit balance.credited event
-```
+`}
+/>
+
+Implementation sources: [WalletController](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/modules/wallet/wallet.controller.ts) and [BlockchainMonitorService](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/modules/wallet/blockchain-monitor.service.ts).
 
 ### Get and Display the Deposit Address
 
@@ -352,14 +368,19 @@ A "listing" in your marketplace is a concept you own — OFFER-HUB does not stor
 
 Your marketplace creates a listing record. When a buyer clicks "Buy", your backend calls `sdk.orders.create` to lock the financial agreement:
 
-```mermaid
+<MermaidDiagram
+  caption="Checkout: your marketplace validates its own listing, creates an order, then reserves the buyer's funds."
+  chart={`
 flowchart LR
-    A["Buyer clicks 'Buy'"] --> B["Your backend validates listing"]
+    A["Buyer clicks Buy"] --> B["Your backend validates its listing"]
     B --> C["sdk.orders.create (buyer, seller, amount)"]
     C --> D["Order status: ORDER_CREATED"]
-    D --> E["sdk.orders.reserve — lock buyer funds"]
+    D --> E["sdk.orders.reserve - lock buyer funds"]
     E --> F["Order status: FUNDS_RESERVED"]
-```
+`}
+/>
+
+Implementation sources: [OrdersController](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/modules/orders/orders.controller.ts), [CreateOrderDto](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/modules/orders/dto/create-order.dto.ts), and [ORDER_TRANSITIONS](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/packages/shared/src/enums/order-status.enum.ts).
 
 Create `src/03-listing-and-order.ts`:
 
@@ -430,7 +451,9 @@ Once funds are reserved, the next step is locking them into a Soroban smart cont
 
 ### Escrow Funding Flow
 
-```mermaid
+<MermaidDiagram
+  caption="Escrow funding: create the Trustless Work contract, fund it on Stellar, and advance the order through ESCROW_CREATING, ESCROW_FUNDING, ESCROW_FUNDED, and IN_PROGRESS."
+  chart={`
 sequenceDiagram
     participant App as Your App
     participant Orch as Orchestrator
@@ -438,15 +461,21 @@ sequenceDiagram
     participant Stellar as Stellar Testnet
 
     App->>Orch: sdk.orders.createEscrow(orderId)
-    Orch->>TW: deploy Soroban contract
-    TW->>Stellar: contract deployed
-    Orch-->>App: status → ESCROW_CREATED
+    Orch->>Orch: order -> ESCROW_CREATING
+    Orch->>TW: create Soroban contract
+    TW-->>Orch: contract created
+    Orch->>Orch: order -> ESCROW_FUNDING
 
-    
-    Orch->>Stellar: transfer USDC into contract
-    Stellar-->>Orch: tx confirmed
-    Orch-->>App: status → IN_PROGRESS
-```
+    App->>Orch: sdk.orders.fundEscrow(orderId)
+    Orch->>TW: fund escrow
+    TW->>Stellar: submit funding transaction
+    Stellar-->>TW: transaction confirmed
+    Orch->>Orch: order -> ESCROW_FUNDED -> IN_PROGRESS
+    Orch-->>App: updated order status
+`}
+/>
+
+Implementation sources: [OrdersController](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/modules/orders/orders.controller.ts), [order lifecycle transitions](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/packages/shared/src/enums/order-status.enum.ts), and the [Trustless Work escrow client](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/providers/trustless-work/clients/escrow.client.ts).
 
 Create `src/04-escrow.ts`:
 
@@ -501,20 +530,27 @@ When the buyer is satisfied with the delivered work, they approve release. The O
 
 ### Release Flow
 
-```mermaid
+<MermaidDiagram
+  caption="Release: the buyer requests release; Trustless Work transfers USDC to the seller and the order advances through RELEASE_REQUESTED, RELEASED, and CLOSED."
+  chart={`
 sequenceDiagram
     participant App as Your App
     participant Orch as Orchestrator
     participant TW as Trustless Work
     participant Seller as Seller Wallet
 
-    App->>Orch: sdk.orders.release(orderId, reasonString)
-    Orch->>TW: release_escrow (buyer + platform co-sign)
+    App->>Orch: sdk.orders.release(orderId, reason)
+    Orch->>Orch: order -> RELEASE_REQUESTED
+    Orch->>TW: request escrow release
     TW->>Seller: transfer USDC
-    Orch->>Orch: credit seller.available
-    Orch->>Orch: emit order.released event
-    Orch-->>App: status → CLOSED
-```
+    TW-->>Orch: release confirmed
+    Orch->>Orch: order -> RELEASED -> CLOSED
+    Orch->>Orch: credit seller.available and emit order.released
+    Orch-->>App: updated order status
+`}
+/>
+
+Implementation sources: [ResolutionController](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/modules/resolution/resolution.controller.ts) and [order lifecycle transitions](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/packages/shared/src/enums/order-status.enum.ts).
 
 Create `src/05-release.ts`:
 
@@ -559,16 +595,23 @@ If the buyer is not satisfied, they can open a dispute before approving release.
 
 ### Dispute and Resolution Flow
 
-```mermaid
+<MermaidDiagram
+  caption="Dispute resolution: a buyer can dispute an IN_PROGRESS order; the platform resolves it to release or refund, and the resulting order closes."
+  chart={`
 stateDiagram-v2
-    [*] --> IN_PROGRESS : escrow funded
-    IN_PROGRESS --> DISPUTED : buyer disputes
-    IN_PROGRESS --> CLOSED : buyer releases
-    DISPUTED --> CLOSED : platform resolves → release
-    DISPUTED --> REFUNDED : platform resolves → refund
+    [*] --> IN_PROGRESS: escrow funded
+    IN_PROGRESS --> DISPUTED: buyer opens dispute
+    IN_PROGRESS --> RELEASE_REQUESTED: buyer requests release
+    RELEASE_REQUESTED --> RELEASED: release confirmed
+    RELEASED --> CLOSED: cleanup
+    DISPUTED --> RELEASED: platform resolves to release
+    DISPUTED --> REFUNDED: platform resolves to refund
+    REFUNDED --> CLOSED: cleanup
     CLOSED --> [*]
-    REFUNDED --> [*]
-```
+`}
+/>
+
+Implementation sources: [ResolutionController](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/modules/resolution/resolution.controller.ts), [DisputesController](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/modules/disputes/disputes.controller.ts), and [ORDER_TRANSITIONS](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/packages/shared/src/enums/order-status.enum.ts).
 
 Create `src/06-dispute.ts`:
 
