@@ -10,6 +10,7 @@ import { OrderStateMachineDiagram } from "./OrderStateMachineDiagram";
 import { EscrowStateMachineDiagram } from "./EscrowStateMachineDiagram";
 import { ParamTable } from "./ParamTable";
 import { ResponseSchema } from "./ResponseSchema";
+import { DocDiagram } from "./DocDiagram";
 import { BASE_MDX_COMPONENTS } from "@/components/mdx/base-mdx-components";
 
 export const MDX_COMPONENTS: MDXComponents = {
@@ -22,6 +23,7 @@ export const MDX_COMPONENTS: MDXComponents = {
   CommandLine,
   Badge,
   MermaidDiagram,
+  DocDiagram,
   OrderStateMachineDiagram,
   EscrowStateMachineDiagram,
   ParamTable,

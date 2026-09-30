@@ -5,6 +5,8 @@ order: 18
 section: Guides
 ---
 
+import { DocDiagram } from '@/components/DocDiagram';
+
 <Callout type="note">
   This is the public API/SDK guide for integrators. For internal implementation detail (Orchestrator state machine, signer roles), see [`docs/guides/deposits.md`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/docs/guides/deposits.md) in the repo.
 </Callout>
@@ -42,10 +44,10 @@ Response:
   "data": {
     "provider": "crypto",
     "method": "stellar_address",
-    "address": "GCV24WNJYXPG3QFNP6ZQMLVEMHQX5S6J2OWKGVF5U3XC6HF4QQHG7WMD",
+    "address": "GCV24WNJYXPG3QFNQ6ZQMLVEMHQX5J6J2OWKGVF5U3XC6HF4QQHG7WMD",
     "asset": {
       "code": "USDC",
-      "issuer": "GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5"
+      "issuer": "GBBD47IF6LWK7P7MDEVSWCR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5"
     },
     "network": "testnet",
     "instructions": "Send USDC to this Stellar address. Deposits are detected automatically within seconds."
@@ -68,24 +70,34 @@ OFFER-HUB monitors the blockchain for incoming transactions. When USDC arrives:
 1. **Transaction detected** — Horizon streaming catches the payment
 2. **Balance updated** — Off-chain balance incremented
 3. **Event emitted** — `balance.credited` pushed over the SSE event stream
-4. **User notified** — UI can update in real-time
+4. **User notified** — GI can update in real-time
 
 <Callout type="note">
   Deposits are typically credited within 5-10 seconds of the Stellar transaction being confirmed.
+Based on the Orchestrator `WalletController.getDepositAddress()` and the `BalanceService.credit()` flow.
 </Callout>
 
 ### Deposit Flow Diagram
 
-```mermaid
-sequenceDiagram
-    participant User as User's External Wallet
-    participant OH as OFFER-HUB
-
-    User->>OH: 1. Send USDC
-    Note over OH: 2. Detect on blockchain
-    Note over OH: 3. Update balance
-    OH->>User: 4. Emit event
-```
+<DocDiagram
+  id="deposits-crypto-flow"
+  title="Crypto deposit flow (Stellar USDC)"
+  description="User sends USDC from an external Stellar wallet; the Orchestrator detects the payment on Horizon, credits the off-chain balance and emits `balance.credited`."
+  nodes={
+[
+    { id: 'user', label: 'User external wallet', kind: 'external' },
+    { id: 'orchestrator', label: 'Orchestrator', kind: 'service' },
+    { id: 'horizon', label: 'Stellar Horizon', kind: 'service' },
+    { id: 'balance', label: 'Off-chain balance', kind: 'state' },
+    { id: 'sse', label: 'SSE event stream', kind: 'service' },
+  ],
+  edges={[
+    { from: 'user', to: 'horizon', label: '1. Send USDC' },
+    { from: 'horizon', to: 'orchestrator', label: '2. Detect payment' },
+    { from: 'orchestrator', to: 'balance', label: '3. Credit balance' },
+    { from: 'orchestrator', to: 'sse', label: '4. Emit balance.credited' },
+  ]}
+/>
 
 ## AirTM Deposits
 
@@ -147,12 +159,35 @@ The Orchestrator then:
   AirTM deposits can take 1-24 hours depending on the user's payment method. Set user expectations accordingly.
 </Callout>
 
+### AirTM Deposit Flow Diagram
+
+<DocDiagram
+  id="deposits-airtm-flow"
+  title="AirTM top-up flow"
+  description="User is redirected to AirTM to complete the payment; the Orchestrator receives an inbound webhook, verifies the signature and credits the balance."
+  nodes={
+[
+    { id: 'user', label: 'User', kind: 'external' },
+    { id: 'airtm', label: 'AirTM', kind: 'external' },
+    { id: 'webhook', label: 'Orchestrator webhook receiver', kind: 'service' },
+    { id: 'balance', label: 'Off-chain balance', kind: 'state' },
+    { id: 'sse', label: 'SSE event stream', kind: 'service' },
+  ],
+  edges={
+[
+    { from: 'user', to: 'airtm', label: '1. Complete payment' },
+    { from: 'airtm', to: 'webhook', label: '2. Inbound webhook' },
+    { from: 'webhook', to: 'balance', label: '3. Verify + credit' },
+    { from: 'webhook', to: 'sse', label: '4. Emit balance.credited' },
+  ]}
+/>
+
 ## Using the SDK
 
 ### Crypto Deposits
 
 ```typescript
-import { OfferHubSDK } from '@offerhub/sdk';
+import { OfferHubSD } from '@offerhub/sdk';
 
 const sdk = new OfferHubSDK({
   apiUrl: 'http://localhost:4000',
@@ -202,7 +237,7 @@ sdk.events.on('topup.succeeded', (event) => {
 
 ## Listening for Deposits
 
-### SSE Events
+### SSE events
 
 Connect to the event stream:
 
@@ -224,7 +259,7 @@ events.onmessage = (e) => {
 ```
 
 <Callout type="note">
-  SSE is the **only** real-time event mechanism — there is no outbound webhook subscription API. See [Events (SSE)](/docs/api-reference/events) for the full event catalog and connection details.
+  SSE is the **additional** real-time event mechanism — there is no outbound webhook subscription API. See [Events (SSE)](/docs/api-reference/events) for the full event catalog and connection details.
 </Callout>
 
 ## Checking Balance

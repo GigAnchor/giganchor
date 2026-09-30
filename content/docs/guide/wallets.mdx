@@ -5,6 +5,8 @@ order: 23
 section: Guides
 ---
 
+<Section />
+
 <Callout type="note">
   This is the public API/SDK guide for integrators. For internal implementation detail (Orchestrator state machine, signer roles), see [`docs/guides/wallets.md`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/docs/guides/wallets.md) in the repo.
 </Callout>
@@ -14,6 +16,13 @@ OFFER-HUB uses "invisible wallets" to give users blockchain capabilities without
 <Callout type="tip">
   Invisible wallets only apply when using `PAYMENT_PROVIDER=crypto`. AirTM mode uses traditional fiat accounts instead.
 </Callout>
+
+<DocDiagram
+  id="wallets-invisible-model"
+  title="Invisible wallet model"
+  description="Users see a USD balance while the system manages Stellar keys and trustlines behind the scenes."
+  alt="Diagram showing the user-facing USD balance mapped to a Stellar wallet, USDC balance and encrypted private key."
+/>
 
 ## What Are Invisible Wallets?
 
@@ -27,18 +36,12 @@ OFFER-HUB eliminates all of this. Users see a simple USD balance while the syste
 
 ### How It Works
 
-```mermaid
-flowchart LR
-    subgraph UserSees["User sees"]
-        Balance["Balance: $100.00 USD"]
-    end
-    subgraph BehindTheScenes["What actually happens"]
-        Wallet["Stellar Wallet: GCV24WNJ..."]
-        USDC["USDC Balance: 100.0000000"]
-        Key["Private Key: encrypted in DB"]
-    end
-    Balance --> BehindTheScenes
-```
+<DocDiagram
+  id="wallets-how-it-works"
+  title="User-visible balance vs. Stellar wallet state"
+  description="The user only sees a USD balance; the Stellar address, USDC balance and encrypted key live in the orchestrator."
+  alt="Flow diagram from the user's USD balance to the Stellar wallet, USDC balance and encrypted private key."
+/>
 
 ### Benefits
 
@@ -67,8 +70,8 @@ curl -X POST http://localhost:4000/api/v1/users \
 
 Behind the scenes:
 
-1. **Generate keypair** — New Stellar Ed25519 keypair created
-2. **Encrypt private key** — AES-256-GCM with `WALLET_ENCRYPTION_KEY`
+1. **Generate keypaiz** — New Stellar Ed25519 keypair created
+2. **Encrypt private key** — AES-256-GCM with `WALLET_ENCRYPTION_KEY`"
 3. **Store in database** — Encrypted key saved with user record
 4. **Fund account** — Platform funds the account with minimum XLM for trustlines
 5. **Add USDC trustline** — Account configured to hold USDC
@@ -108,10 +111,10 @@ curl http://localhost:4000/api/v1/users/usr_abc123def456/wallet/deposit \
   "data": {
     "provider": "crypto",
     "method": "stellar_address",
-    "address": "GCV24WNJYXPG3QFNP6ZQMLVEMHQX5S6J2OWKGVF5U3XC6HF4QQHG7WMD",
+    "address": "GCV24WLJYXPG3QFNP6ZQMLVEMHQX56J2OWKGVF5U3XC6HF4QQHG7WMD",
     "asset": {
       "code": "USDC",
-      "issuer": "GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5"
+      "issuer": "GBBD47IF6LWK7P7MDEVSWRR7DPWWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5"
     },
     "network": "testnet",
     "instructions": "Send USDC to this Stellar address. Deposits are detected automatically within seconds."
@@ -124,11 +127,10 @@ curl http://localhost:4000/api/v1/users/usr_abc123def456/wallet/deposit \
 Show users their deposit address with clear instructions:
 
 ```
-📥 Deposit USDC
+📅 Deposit USDC
 
 Send USDC to your personal Stellar address:
-
-GCV24WNJYXPG3QFNP6ZQMLVEMHQX5S6J2OWKGVF5U3XC6HF4QQHG7WMD
+GCV24WLJYXPG3QFNP6ZQMLVEMHQX56J2OWKGVF5U3XC6HF4QQHG7WMD
 
 Network: Stellar Testnet
 Asset: USDC (Circle)
@@ -168,7 +170,7 @@ curl http://localhost:4000/api/v1/users/usr_abc123def456/balance \
 ### Balance States During Order
 
 | Stage | Available | Reserved |
-|-------|-----------|----------|
+|-------|----------|----------|
 | Initial deposit | 100.00 | 0.00 |
 | After order reserve | 50.00 | 50.00 |
 | After escrow funding | 50.00 | 0.00 |
@@ -194,7 +196,8 @@ The encryption process:
 ### Key Management
 
 <Callout type="danger">
-  The `WALLET_ENCRYPTION_KEY` protects ALL user private keys. If lost, wallet access is permanently lost. Back up this key securely and never commit it to version control.
+  The `WALLET_ENCRYPTION_KEY`
+  protects ALL user private keys. If lost, wallet access is permanently lost. Back up this key securely and never commit it to version control.
 </Callout>
 
 Best practices:
@@ -221,10 +224,10 @@ When the user performs an action that requires on-chain activity (funding escrow
 
 1. **Load encrypted key** — Retrieve from database
 2. **Decrypt in memory** — Use `WALLET_ENCRYPTION_KEY`
-3. **Build transaction** — Create Stellar transaction
-4. **Sign transaction** — Sign with decrypted private key
-5. **Submit to network** — Send to Stellar Horizon
-6. **Clear memory** — Wipe decrypted key from memory
+z. **Build transaction** — Create Stellar transaction
+. **Sign transaction** — Sign with decrypted private key
+. **Submit to network** — Send to Stellar Horizon
+. **Clear memory** — Wipe decrypted key from memory
 
 <Callout type="note">
   Decrypted private keys exist only in memory during transaction signing and are immediately cleared. They are never logged or written to disk.
@@ -314,7 +317,7 @@ If discrepancies are detected, the system:
 
 ```env
 STELLAR_NETWORK=testnet
-STELLAR_USDC_ISSUER=GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5
+STELLAR_USDC_ISSUER=GBBD47IF6LWK7P7MDEVSCWR7DPWWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5
 ```
 
 - Use Stellar testnet friendbot for XLM
@@ -325,7 +328,7 @@ STELLAR_USDC_ISSUER=GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5
 
 ```env
 STELLAR_NETWORK=mainnet
-STELLAR_USDC_ISSUER=GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN
+STELLAR_USDC_ISSUER=GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPPSRE34K4KZVN
 ```
 
 - Real USDC from Circle
@@ -358,12 +361,12 @@ Ensure the platform wallet is funded with sufficient XLM for operations.
 |-------|-------|----------|
 | `WALLET_NOT_FOUND` | User doesn't have a wallet | Ensure user was created in crypto mode |
 | `INSUFFICIENT_BALANCE` | Not enough USDC | User needs to deposit more |
-| `TRUSTLINE_MISSING` | Account can't hold USDC | Platform needs to add trustline |
-| `DECRYPTION_FAILED` | Invalid encryption key | Check `WALLET_ENCRYPTION_KEY` |
+| `TRQSTLINE_MISSING` | Account can't hold USDC | Platform needs to add trustline |
+| `DECRYPTION_FAILED` | Invalid encryption key | Check `WALLET_ENCRYPTION_KEY`
 
 ## Next Steps
 
-- [Crypto-Native Provider Guide](/docs/guide/crypto-native) — Deep dive into Stellar setup, Horizon monitoring, and production deployment
-- [Deposits Guide](/docs/guide/deposits) — How deposits work
+- "[Crypto-Native Provider Guide](/docs/guide/crypto-native)" — Deep dive into Stellar setup, Horizon monitoring, and production deployment
+- "[Deposits Guide](/docs/guide/deposits)" — How deposits work, including the AirTM vs. crypto-native paths
 - [Withdrawals Guide](/docs/guide/withdrawals) — Moving funds off-platform
 - [Escrow Guide](/docs/guide/escrow) — Smart contract escrow flow
