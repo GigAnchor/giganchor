@@ -1,0 +1,100 @@
+import { notFound } from "next/navigation";
+import type { Metadata } from "next";
+import { MDXRemote } from "next-mdx-remote/rsc";
+import { getAllDocSlugs, getDocBySlug } from "@/lib/mdx";
+import { MDX_COMPONENTS } from "@/components/docs/mdx-components";
+import { EditOnGitHub } from "@/components/docs/EditOnGitHub";
+import { PageActionsMenu } from "@/components/docs/PageActionsMenu";
+
+import remarkGfm from "remark-gfm";
+
+interface PageProps {
+  params: Promise<{ slug: string[] }>;
+}
+
+export async function generateStaticParams() {
+  const slugs = getAllDocSlugs();
+  return slugs.map((slug) => ({ slug: slug.split("/") }));
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const doc = getDocBySlug(slug.join("/"));
+  if (!doc) notFound();
+
+  return {
+    title: doc.frontmatter.title,
+    description: doc.frontmatter.description,
+  };
+}
+
+export default async function DocPage({ params }: PageProps) {
+  const { slug } = await params;
+  const requestedSlug = slug.join("/");
+
+  if (!getAllDocSlugs().includes(requestedSlug)) {
+    notFound();
+  }
+
+  const doc = getDocBySlug(requestedSlug);
+
+  if (!doc) {
+    notFound();
+  }
+
+  return (
+    <article className="min-w-0">
+      {/* Page header */}
+      <div className="mb-8 pb-6 border-b border-theme-border/20">
+        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold mb-2 text-content-primary">
+              {doc.frontmatter.title}
+            </h1>
+            {doc.frontmatter.description && (
+              <p className="text-base leading-relaxed text-content-secondary">
+                {doc.frontmatter.description}
+              </p>
+            )}
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <PageActionsMenu
+              slug={doc.slug}
+              title={doc.frontmatter.title}
+              description={doc.frontmatter.description}
+              markdownContent={doc.content}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* MDX content */}
+      <div className="max-w-none" id="doc-page-export-content">
+        <MDXRemote
+          source={doc.content}
+          components={MDX_COMPONENTS}
+          options={{
+            // Docs pages pass structured data to MDX components (ParamTable
+            // `fields`, ResponseSchema `example`, CodeTabs `tabs`). With the
+            // default `blockJS: true`, next-mdx-remote strips every JSX
+            // attribute expression, so those props never reached the
+            // components and they rendered empty. `blockDangerousJS: true`
+            // stays enabled, so dangerous globals (process, require, eval, …)
+            // and blocked member access are still rejected at compile time.
+            blockJS: false,
+            blockDangerousJS: true,
+            mdxOptions: {
+              remarkPlugins: [remarkGfm],
+            }
+          }}
+        />
+      </div>
+
+      {/* Edit on GitHub link */}
+      <div className="mt-8 pt-6 border-t border-theme-border">
+        <EditOnGitHub filePath={`content/docs/${doc.slug}.mdx`} />
+      </div>
+    </article>
+  );
+}

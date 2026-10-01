@@ -1,0 +1,82 @@
+"use client";
+
+import type { Heading } from "@/lib/mdx";
+import { cn } from "@/lib/cn";
+import { useScrollSpy } from "@/hooks/useScrollSpy";
+
+interface TableOfContentsProps {
+  headings: Heading[];
+}
+
+export function TableOfContents({ headings }: TableOfContentsProps) {
+  const headingIds = headings.map((h) => h.id);
+
+  const activeId = useScrollSpy({
+    ids: headingIds,
+    rootMargin: "-72px 0px -60% 0px",
+    threshold: [0, 1],
+    pickActiveId: (entries) => {
+      const visibleEntries = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+
+      if (visibleEntries.length === 0) return undefined;
+
+      const isAtBottom =
+        window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 50;
+
+      return isAtBottom
+        ? visibleEntries[visibleEntries.length - 1].target.id
+        : visibleEntries[0].target.id;
+    },
+    stickyLastOnBottom: true,
+    bottomOffsetPx: 50,
+    bottomCheckDebounceMs: 100,
+  });
+
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    e.preventDefault();
+    const element = document.getElementById(id);
+    if (element) {
+      const top = element.getBoundingClientRect().top + window.scrollY - 100;
+      window.scrollTo({
+        top,
+        behavior: "smooth",
+      });
+      window.history.pushState(null, "", `#${id}`);
+    }
+  };
+
+  if (headings.length === 0) return null;
+
+  return (
+    <nav className="w-full">
+      <div className="flex flex-col">
+        <p className="text-xs font-bold uppercase tracking-[0.15em] mb-6 px-4 text-content-secondary/70">
+          On this page
+        </p>
+        <ul className="flex flex-col gap-1">
+          {headings.map((heading, index) => (
+            <li
+              key={`${heading.id}-${index}`}
+              className={heading.level === 3 ? "ml-4" : ""}
+            >
+              <a
+                href={`#${heading.id}`}
+                onClick={(e) => handleClick(e, heading.id)}
+                className={cn(
+                  "text-[13px] transition-[color,background-color,box-shadow] duration-200 flex items-center min-h-11 py-1.5 px-4 rounded-lg font-medium",
+                  activeId === heading.id
+                    ? "text-theme-primary bg-bg-sunken shadow-neu-sunken-subtle"
+                    : "text-content-secondary hover:text-content-primary hover:bg-bg-elevated"
+                )}
+              >
+                {heading.text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </nav>
+  );
+}
