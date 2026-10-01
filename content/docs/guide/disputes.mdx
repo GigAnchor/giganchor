@@ -377,16 +377,19 @@ The `order.disputed` event payload looks like this:
 
 ```json
 {
-  "id": "evt_abc123",
-  "type": "escrow.disputed",
-  "created_at": "2026-02-25T10:00:00.000Z",
-  "data": {
-    "escrow_id": "esc_xyz789",
-    "dispute_id": "dsp_abc123",
-    "opened_by": "BUYER",
+  "eventId": "evt_abc123",
+  "eventType": "order.disputed",
+  "occurredAt": "2026-02-25T10:00:00.000Z",
+  "aggregateId": "ord_xyz789",
+  "aggregateType": "Order",
+  "payload": {
+    "orderId": "ord_xyz789",
+    "disputeId": "dsp_abc123",
+    "openedBy": "BUYER",
     "reason": "NOT_DELIVERED",
-    "order_id": "ord_xyz789"
-  }
+    "openedAt": "2026-02-25T10:00:00.000Z"
+  },
+  "metadata": {}
 }
 ```
 
