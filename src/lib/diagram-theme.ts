@@ -2,10 +2,6 @@
  * Shared neumorphic theme for generated diagrams (Mermaid today; any future
  * static diagram pipeline can reuse the same token contract).
  *
- * Used by `DocDiagram` (see `src/components/docs/DocDiagram.tsx`) to render
- * the deposits, withdrawals and wallets flow diagrams, including the
- * provider-specific paths (AirTM vs crypto-native).
- *
  * Every color comes from the site's CSS custom properties (`src/app/globals.css`,
  * documented in `docs/design/color-palette.md`) so diagrams stay in sync with
  * the rest of the design system in both light and dark mode with zero
@@ -36,23 +32,6 @@ const TOKEN_FALLBACKS: Record<keyof typeof TOKEN_VAR_NAMES, string> = {
   shadowDark: "#d1d5db",
   shadowLight: "#ffffff",
 };
-
-/**
- * Provider path accents, resolved from the same design tokens as everything
- * else. AirTM (fiat on/off-ramp) and crypto-native flows are distinguished by
- * their node background/sunken surface rather than colored borders, keeping
- * the neutral `--color-border` outline contract above intact.
- */
-export type DiagramProviderPath = "airtm" | "crypto-native";
-
-export function getProviderPathTokens(
-  tokens: DiagramColorTokens,
-  path: DiagramProviderPath,
-) {
-  return path === "airtm"
-    ? { background: tokens.bgSunken, border: tokens.border, text: tokens.textPrimary }
-    : { background: tokens.bgElevated, border: tokens.border, text: tokens.textPrimary };
-}
 
 export type DiagramColorTokens = Record<keyof typeof TOKEN_VAR_NAMES, string>;
 
