@@ -218,6 +218,7 @@ The summaries on this page cover the API surface at a glance. The endpoint group
 | [Orders & Milestones Endpoints](/docs/api-reference/orders) | `POST /orders`, `GET /orders`, `GET /orders/{id}`, `POST /orders/{id}/reserve`, `POST /orders/{id}/cancel`, `GET /orders/{id}/milestones`, `POST /orders/{id}/milestones/{milestoneRef}/complete` | `apps/api/src/modules/orders/orders.controller.ts` |
 | [Escrow Endpoints](/docs/api-reference/escrow) | `POST /orders/{id}/escrow`, `POST /orders/{id}/escrow/fund` | `apps/api/src/modules/orders/orders.controller.ts` |
 | [Resolution Endpoints](/docs/api-reference/resolution) | `POST /orders/{orderId}/resolution/release`, `/refund`, `/dispute` | `apps/api/src/modules/resolution/resolution.controller.ts` |
+| [Wallet & Top-ups](/docs/api-reference/wallet-topups) | `GET /users/{userId}/wallet`, `/deposit`, `/transactions`, `POST /topups`, `GET /topups`, `GET /topups/{id}`, `/refresh`, `/cancel`, `/callback` | `apps/api/src/modules/wallet/wallet.controller.ts`, `apps/api/src/modules/topups/topups.controller.ts` |
 | [Inbound Webhooks](/docs/api-reference/webhooks) | `POST /webhooks/airtm`, `POST /webhooks/trustless-work` | `apps/api/src/modules/webhooks/webhooks.controller.ts` |
 | [Events (SSE)](/docs/api-reference/events) | `GET /events` plus the event catalog | `apps/api/src/modules/events/events.controller.ts` |
 | [Error Codes](/docs/api-reference/errors) | 40+ error codes, envelope format, and correlation IDs | `packages/shared/src/constants/error-codes.ts` |
