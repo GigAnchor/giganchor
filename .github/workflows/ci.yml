@@ -51,6 +51,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # `helpers.py` renders through the Graphviz `dot` binary rather than
+      # vendoring a renderer, so make the dependency explicit instead of
+      # relying on whatever the runner image happens to ship.
+      - name: Install Graphviz
+        run: sudo apt-get update && sudo apt-get install -y graphviz
       - uses: actions/setup-node@v4
         with:
           node-version: "20"

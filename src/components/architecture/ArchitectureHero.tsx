@@ -26,7 +26,8 @@ export function ArchitectureHero() {
       <div className="mb-8 rounded-[2rem] bg-bg-elevated p-6 md:p-8 shadow-neu-raised">
         <MermaidDiagram
           chart={architectureHeroDiagram}
-          ariaLabel="Architecture overview: client, API, and Stellar layers"
+          caption="Architecture overview: client, API, and Stellar layers"
+          className="w-full"
         />
       </div>
       <div className="rounded-[2rem] bg-bg-elevated p-8 md:p-10 shadow-neu-raised">

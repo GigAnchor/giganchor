@@ -2,7 +2,6 @@
 
 - **Status:** Accepted
 - **Date:** 2025-02-14
----
 
 ## Context
 
@@ -11,13 +10,13 @@ All 24 diagrams in the documentation site are currently Mermaid definitions rend
 1. **Client-side cost** - Mermaid is a large bundle that must be loaded and executed in the browser on every page that contains a diagram.
 2. **Flash of unstyled content** - Diagrams appear after hydration, causing layout shifts.
 3. **Inconsistent look in light/dark mode** - Mermaid theming is limited and does not match the neumorphic design system.
-4. *(Difficult to review** - Mermaid source lives inside TypeScript files, not in a dedicated diagram source location.
+4. **Difficult to review** - Mermaid source lives inside TypeScript files, not in a dedicated diagram source location.
 
 ## Decision
 
-We will generate SVG diagrams offline using **Graphviz** via the Python `interface to the Graphviz `DOT` language, with a thin Python helper layer that applies the neumorphic design tokens.
+We will generate SVG diagrams offline using **Graphviz**, driven from Python, with a thin helper layer that applies the neumorphic design tokens.
 
-The pipeline lives in `\scripts/diagrams/` and is exposed through `npm run diagrams`.
+The pipeline lives in `scripts/diagrams/` and is exposed through `npm run diagrams`.
 
 ## Why Graphviz (and not `mermaid-cli`, `diagrams`, or matplotlib)
 
@@ -34,7 +33,7 @@ The pipeline lives in `\scripts/diagrams/` and is exposed through `npm run diagr
 ### Positive
 
 - **Deterministic output** - the same source always produces the same SVG, which makes CI drift checks reliable.
-- **Instant load** - SVGs are static assets; no client-side javaScript is needed to render them.
+- **Instant load** - SVGs are static assets; no client-side JavaScript is needed to render them.
 - **Consistent look in both themes** - the helper injects CSS variables that resolve to the design tokens at runtime, so light and dark mode both look correct.
 - **Editable source** - one Python file per diagram, easy to review and diff.
 

@@ -2,9 +2,9 @@
 export const SYSTEM_ARCHITECTURE_CHART = `
 flowchart TD
     %% Node Styling
-    classDef highlight fill:#149A9B,color:#fff,stroke:#0d7377, stroke-width:2px;
+    classDef highlight fill:#149A9B,color:#fff,stroke:#0d7377,stroke-width:2px;
     classDef backend fill:#002333,color:#fff,stroke:#001522,stroke-width:2px;
-    classDef subtle fill:#F1F3F7,color:#19213D,stroke:#d1d5db, stroke-width:1px;
+    classDef subtle fill:#F1F3F7,color:#19213D,stroke:#d1d5db,stroke-width:1px;
 
     Client["Client Layer<br/><small>Next.js 15 · React 19 · Zustand · NextAuth v5</small>"]:::highlight
     Wallet["Wallet Layer<br/><small>Stellar Wallets Kit · Freighter · Lobstr · xBull</small>"]:::highlight
@@ -20,4 +20,4 @@ flowchart TD
     Stellar -->|Webhook / on-chain event| API
     API -->|API / Webhooks| Offramp
     Wallet -.->|Sign & Submit| Stellar
-  ;
+  `;

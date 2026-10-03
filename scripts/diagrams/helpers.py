@@ -3,37 +3,44 @@
 Every diagram source file imports from this module. The helpers are
 responsible for:
 
-* Providing the neumorphic design tokens (colors, fonts, shadows)
-* Rendering a Graphviz `DOT` source to a clean SVG
-* Optimising the SVG (removing comments, collapsing whitespace, adding a
-	  responsive `viewBox`)
-* Ensuring deterministic output so the CI drift check is reliable
+* providing the neumorphic design tokens (colors, shadows) as CSS variables,
+* rendering a Graphviz ``DOT`` source to a clean, accessible SVG, and
+* stamping the SVG with a hash of its source so that ``npm run diagrams:check``
+  can prove a committed diagram is still in sync with the code that made it.
 
-The module is deliberately small and depends only on the Graphviz binary.
-There is no cloud dependency and no network access.
+The stamp is deliberately a hash rather than a byte-for-byte regeneration diff:
+the layout Graphviz produces changes between releases, so comparing SVG bytes
+would report drift every time the CI runner image picks up a new Graphviz.
+
+The module depends only on the Graphviz ``dot`` binary. There is no cloud
+dependency and no network access.
 """
 
 from __future__ import annotations
 
 import hashlib
-
+import os
 import re
-import subprocess
-import tempfile
-from pathelib import Path
-from typing import Iterable, Mapping, Sequence
+import sys
+from pathlib import Path
+from typing import Mapping
+
+import graphviz
 
 
-ROOT = Path(__file__).resolve().parents2]
-OUTPUT_DIR = ROOT / "public" / "diagrams"
+ROOT = Path(__file__).resolve().parents[2]
+DEFAULT_OUTPUT_DIR = ROOT / "public" / "diagrams"
+HELPERS_PATH = Path(__file__).resolve()
+
+STAMP_PREFIX = "dg-source-sha256:"
 
 
 # -----------------------------------------------------------------------------
 # Design tokens
 # -----------------------------------------------------------------------------
 # These are the only colors allowed in diagrams. They are exposed as CSS
-# variables in the generated SVG so that the theme can be switched at
-# runtime by the site (light / dark) without regenerating the SVG.
+# variables in the generated SVG so that the site can switch theme (light /
+# dark) at runtime without regenerating the SVG.
 
 TOKENS: Mapping[str, str] = {
     "--dg-bg": "var(--color-background, #f1f3f7)",
@@ -44,48 +51,95 @@ TOKENS: Mapping[str, str] = {
     "--dg-text-muted": "var(--color-text-muted, #4b5563)",
     "--dg-accent": "var(--color-accent, #149a9b)",
     "--dg-accent-contrast": "var(--color-accent-contrast, #ffffff)",
+    "--dg-backend": "var(--color-secondary, #002333)",
+    "--dg-backend-contrast": "#ffffff",
     "--dg-shadow-dark": "rgba(163, 177, 201, 0.6)",
-   "--dg-shadow-light": "rgba(255, 255, 255, 0.9)",
+    "--dg-shadow-light": "rgba(255, 255, 255, 0.9)",
 }
 
-
-# -----------------------------------------------------------------------------
-# SVG template
-# -----------------------------------------------------------------------------
-# The template is intentionally minimal. Graphviz produces the nodes and
-# edges; the template only adds the neumorphic look (background, font,
-# shadows) and the CSS variables.
-
-SVG_TEMPLATT = """<svg xmlns="http://www.w3.org/2000/svg"
-     xmlns:xlink="http://www.w3.org/1999/xlink"
-     viewBox="0 0 {width} {height}"
-     width="{width}"
-     height="{height}"
-     role="img"
-     aria-label="{aria_label}">
-  <defs>
-    <style>
-      {tokens}
-      .dg-node rect, .dg-node polygon, .dg-node ellipse {
-        filter: drop-shadow(2px 2px 4px var(--dg-shadow-dark)) drop-shadow(-2px -2px 4px var(--dg-shadow-light));
+# Node/edge classes a diagram source can put on its elements. They resolve to
+# the tokens above, so a diagram source never hardcodes a colour.
+CLASS_CSS = """      .dg-node polygon,
+      .dg-node rect,
+      .dg-node ellipse,
+      .dg-node path {
+        fill: var(--dg-surface);
+        stroke: var(--dg-border);
+        filter: drop-shadow(2px 2px 4px var(--dg-shadow-dark))
+          drop-shadow(-2px -2px 4px var(--dg-shadow-light));
       }
+
+      .dg-node text {
+        fill: var(--dg-text);
+        font-family: var(--font-sans, Inter, ui-sans-serif, system-ui);
+        font-size: 13px;
+      }
+
+      .dg-accent polygon,
+      .dg-accent rect,
+      .dg-accent ellipse,
+      .dg-accent path {
+        fill: var(--dg-accent);
+        stroke: var(--dg-accent);
+      }
+
+      .dg-accent text {
+        fill: var(--dg-accent-contrast);
+      }
+
+      .dg-backend polygon,
+      .dg-backend rect,
+      .dg-backend ellipse,
+      .dg-backend path {
+        fill: var(--dg-backend);
+        stroke: var(--dg-backend);
+      }
+
+      .dg-backend text {
+        fill: var(--dg-backend-contrast);
+      }
+
       .dg-edge path {
         stroke: var(--dg-border);
         stroke-width: 1.5;
         fill: none;
       }
+
       .dg-edge polygon {
         fill: var(--dg-border);
         stroke: var(--dg-border);
       }
+
       .dg-edge text {
         fill: var(--dg-text-muted);
-        font-family: var(--font-sans, Inter, ui-sans-serif);
+        font-family: var(--font-sans, Inter, ui-sans-serif, system-ui);
         font-size: 11px;
-      }
+      }"""
+
+
+# -----------------------------------------------------------------------------
+# SVG template
+# -----------------------------------------------------------------------------
+# Graphviz draws the nodes and edges; this template only wraps them with the
+# responsive viewBox, the design tokens and the neumorphic class rules.
+# Placeholders are substituted with str.replace because the stylesheet below
+# contains literal braces.
+
+SVG_TEMPLATE = """<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     viewBox="0 0 __WIDTH__ __HEIGHT__"
+     width="__WIDTH__"
+     height="__HEIGHT__"
+     role="img"
+     aria-label="__ARIA_LABEL__">
+  <defs>
+    <style>
+__TOKENS__
+__CLASS_CSS__
     </style>
   </defs>
-  {body}
+  <rect width="100%" height="100%" fill="var(--dg-bg)"/>
+  __BODY__
 </svg>
 """
 
@@ -101,91 +155,150 @@ def render(
     engine: str = "dot",
     extra_tokens: Mapping[str, str] | None = None,
 ) -> str:
-    """Render a Graphviz `DOT` source to an optimised SVG string.
+    """Render a Graphviz ``DOT`` source to an optimised SVG string.
 
     Parameters
-    ---------
+    ----------
     dot_source:
-        The Graphviz source. The caller is responsible for using the
-        tokens from :data:`TOKENS` via classNames (e.g. `classDef`).
+        The Graphviz source. Use the ``dg-*`` classes rather than literal
+        colours so the diagram follows the design tokens.
     aria_label:
         Accessible label for the resulting SVG.
     engine:
-        Graphviz layout engine (`dot`, `neato`, `circo`, `twopi`, `fn` in
-        the Graphviz command). Defaults to `dot`.
+        Graphviz layout engine (``dot``, ``neato``, ``circo``, ``twopi``, ...).
     extra_tokens:
-        Optional overrides merged into :data:`TOKENS`. Useful for one-off
-        diagrams that need an additional color that is still a token.
+        Optional overrides merged into :data:`TOKENS`, for a diagram that
+        needs one additional token-driven colour.
     """
     tokens = dict(TOKENS)
     if extra_tokens:
-        tokens.update(extra_tokens:)
-
-    with tempfile.NamedTemporaryFile("suffix"=".dot", mode="w", delete=False) as tmp
-        tmp_path = Path(tmp.name)
-        tmp.write(dot_source)
+        tokens.update(extra_tokens)
 
     try:
-        result = subprocess.run(
-            ["dot", f"-T{engine}", "-Tsvg", str(tmp_path)],
-            capture_output=True,
-            check=True,
-            text=True,
-        )
-    finally:
-        tmp_path.unlink"missing_ok" =True
+        raw = graphviz.Source(dot_source, engine=engine).pipe(format="svg")
+    except graphviz.ExecutableNotFound as exc:  # pragma: no cover - env issue
+        raise RuntimeError(
+            "Graphviz 'dot' was not found on PATH. Install it with "
+            "`brew install graphviz` (macOS) or `apt-get install graphviz` (CI)."
+        ) from exc
 
-    svg = result.stdout
+    svg = raw.decode("utf-8") if isinstance(raw, (bytes, bytearray)) else raw
     return _optimise(svg, tokens, aria_label)
 
 
-def write_diagram(name: str, svg: str) -> Path:
-    """Write an SVG to `public/diagrams/<name>.svg` and return the path."""
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    output_path = OUTPUT_DIR / f"{name}.svg"
-    output_path.write_text(svg, encoding="utf-8")
+def write_diagram(name: str, svg: str, *, source: str | Path | None = None) -> Path:
+    """Write an SVG to ``public/diagrams/<name>.svg`` and return the path.
+
+    ``DIAGRAMS_OUT_DIR`` overrides the destination, which is how
+    ``npm run diagrams:check`` renders into a scratch directory.
+
+    The file is stamped with :func:`source_hash` so a later run can tell
+    whether the diagram was generated from the current source.
+    """
+    output_dir = _output_dir()
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_path = output_dir / f"{name}.svg"
+    output_path.write_text(stamp(svg, source), encoding="utf-8")
     return output_path
 
 
-def source_hash(path: Path) -> str:
-    """Return a stable hash of a diagram source file."""
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+def source_hash(source: str | Path | None = None) -> str:
+    """Return a stable hash of a diagram source file.
+
+    The hash covers the diagram source *and* this helper module, so editing
+    either one marks every diagram generated from it as stale.
+    """
+    path = Path(source).resolve() if source is not None else _running_source()
+    if path is None or not path.is_file():
+        raise RuntimeError(
+            "cannot determine the diagram source file; run the diagram as a "
+            "script or pass source=<path>"
+        )
+    digest = hashlib.sha256()
+    digest.update(path.read_bytes())
+    digest.update(b"\x00")
+    digest.update(HELPERS_PATH.read_bytes())
+    return digest.hexdigest()
+
+
+def stamp(svg: str, source: str | Path | None = None) -> str:
+    """Return ``svg`` with the source hash recorded in a leading comment."""
+    marker = f"<!-- {STAMP_PREFIX}{source_hash(source)} -->"
+    if marker in svg:
+        return svg
+    return svg.replace(">", f">\n  {marker}", 1)
 
 
 # -----------------------------------------------------------------------------
 # Internals
 # -----------------------------------------------------------------------------
 
-_COMMENT_RE = re.compile(r"\u003c!--.*?--\u003e", re.DOTALL)
-_WHITESPACE_RE = re.compile(r"\s*\n\s*|\s*\t+\s*")
-_VIEWBOX_RE = re.compile(r'viewBox="[^"]*"')
-_WIDTH_HEIGHT_RE = re.compile(r"(width=\"[^\"]*\"|height=\"[^\"]*\")")
+_COMMENT_RE = re.compile(r"<!--.*?-->", re.DOTALL)
+_XML_DECL_RE = re.compile(r"<\?xml.*?\?>", re.DOTALL)
+_DOCTYPE_RE = re.compile(r"<!DOCTYPE.*?>", re.DOTALL)
+# Graphviz writes viewBox="0.00 0.00 <width> <height>".
+_VIEWBOX_RE = re.compile(
+    r'viewBox="([-\d.eE+]+)\s+([-\d.eE+]+)\s+([-\d.eE+]+)\s+([-\d.eE+]+)"'
+)
+_ROOT_TAG_RE = re.compile(r"<svg\b[^>]*>", re.DOTALL)
+_ATTR_ESCAPES = (("&", "&amp;"), ("<", "&lt;"), (">", "&gt;"), ('"', "&quot;"))
+
+
+def _output_dir() -> Path:
+    override = os.environ.get("DIAGRAMS_OUT_DIR")
+    return Path(override).resolve() if override else DEFAULT_OUTPUT_DIR
+
+
+def _running_source() -> Path | None:
+    """The script being executed, when the diagram was run as a script."""
+    argv0 = sys.argv[0] if sys.argv else ""
+    if not argv0:
+        return None
+    path = Path(argv0).resolve()
+    return path if path.suffix == ".py" and path.is_file() else None
+
+
+def _escape_attr(value: str) -> str:
+    for char, entity in _ATTR_ESCAPES:
+        value = value.replace(char, entity)
+    return value
 
 
 def _optimise(svg: str, tokens: Mapping[str, str], aria_label: str) -> str:
-    """Apply the neumorphic template and optimise the SVG."""
+    """Apply the neumorphic template and normalise the Graphviz output."""
+    # The generator comment carries the Graphviz version, and the XML
+    # declaration/DOCTYPE are replaced by our own root element.
     svg = _COMMENT_RE.sub("", svg)
-    svg = _WHITESPACE_RE.sub(" ", svg).strip()
+    svg = _XML_DECL_RE.sub("", svg)
+    svg = _DOCTYPE_RE.sub("", svg).strip()
 
-    # Extract the root viewBox and the body of the Graphviz output.
-    viewbox_match = _VIEWBOX_RE.search(svg)
-    if not viewbox_match:
+    root = _ROOT_TAG_RE.search(svg)
+    if not root:
+        raise ValueError("Graphviz output has no <svg> root tag.")
+    match = _VIEWBOX_RE.search(root.group(0))
+    if not match:
         raise ValueError("Graphviz output is missing a viewBox.")
-    viewbox = viewbox_match.group(0)
-    _, _, width, height = re.split(r"\s+", viewbox)
+    _, _, width, height = match.groups()
 
-    # Remove the Graphviz wrapper and the generator comment.
-    body_start = svg.find(">") + 1
+    body_start = root.end()
     body_end = svg.rfind("</svg>")
-    body = svg[body_start:body_end]
+    if body_end < body_start:
+        raise ValueError("Graphviz output has no closing </svg> tag.")
+    body = svg[body_start:body_end].strip()
+    if "<svg" in body:
+        raise ValueError("Graphviz output contains a nested <svg> element.")
+    # Collapse the whitespace Graphviz inserts between elements, but leave the
+    # text inside <text> untouched.
+    body = re.sub(r">\s+<", "><", body)
 
-    # Add the design tokens as CSS variables in a single :style: block.
     token_css = "\n".join(f"      {key}: {value};" for key, value in tokens.items())
 
-    return SVG_TEMPLATE.format(
-        width=width,
-        height=height,
-        aria_label=aria_label,
-        tokens=token_css,
-        body=body,
+    return (
+        SVG_TEMPLATE
+        .replace("__ARIA_LABEL__", _escape_attr(aria_label))
+        .replace("__TOKENS__", token_css)
+        .replace("__CLASS_CSS__", CLASS_CSS)
+        .replace("__WIDTH__", width)
+        .replace("__HEIGHT__", height)
+        .replace("__BODY__", body)
     )

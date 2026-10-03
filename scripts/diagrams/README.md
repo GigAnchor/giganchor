@@ -10,8 +10,7 @@ The decision to use Graphviz is documented in
 ## Prerequisites
 
 - Python 3.10+
-
-- [Graphviz](https://graphviz.org/download) (`dot` must be on the `PTH`)
+- [Graphviz](https://graphviz.org/download) (`dot` must be on the `PATH`)
 
 ## Installation
 
@@ -25,7 +24,7 @@ pip install -r scripts/diagrams/requirements.txt
 
 ```bash
 npm run diagrams
-l```
+```
 
 This runs every `*.py` file in `scripts/diagrams/`, except `__init__.py`
 and `helpers.py`, and writes the resulting SVG to `public/diagrams/`.
@@ -33,30 +32,38 @@ and `helpers.py`, and writes the resulting SVG to `public/diagrams/`.
 To generate a single diagram:
 
 ```bash
-python scripts/diagrams/system-architecture.py
+python3 scripts/diagrams/system-architecture.py
 ```
 
 ## Adding a new diagram
 
-1. Create a new Python file in `this directory`. The file name must match
+1. Create a new Python file in this directory. The file name must match
    the output SVG name, e.g. `system-architecture.py` produces
    `public/diagrams/system-architecture.svg`.
-2. Import the helpers and define the Graphviz source:
+2. Import the helpers and define the Graphviz source. Colour the nodes and
+   edges with the `dg-*` classes so the diagram follows the design tokens:
 
    ```python
    from helpers import render, write_diagram
 
    DOT = """
-   diagraph TD {
-       classDef accent fill=var(--dg-accent), color=var(--dg-accent-contrast), stroke=var(--dg-border);
-       A["A"]::accent
-       B[&#34;B&#34;]::accent
-       A --> B
+   digraph Example {
+       node [shape=box, style="rounded,filled", class="dg-node"]
+       edge [class="dg-edge"]
+
+       A [label="A", class="dg-node dg-accent"]
+       B [label="B"]
+
+       A -> B [label="edge"]
    }
    """
 
-   svg = render(DOT, aria_label="A simple diagram")
-   write_diagram("system-architecture", svg)
+   def main() -> None:
+       svg = render(DOT, aria_label="A simple diagram")
+       write_diagram("example", svg)
+
+   if __name__ == "__main__":
+       main()
    ```
 
 3. Use the SVG in MDX with the existing image component:
@@ -70,13 +77,20 @@ python scripts/diagrams/system-architecture.py
 
 ## Design tokens
 
-All colors must come from the design tokens exposed by `helpers.py`. The
-Graphviz source uses CSS variables (e.g. `fill=var(--dg-accent)`) so the
-SVG automatically adapts to light and dark mode. Do not hardcode hex
-colors in a diagram source.
+All colors must come from the design tokens exposed by `helpers.py`. Use the
+`dg-node`, `dg-accent` and `dg-backend` classes on your nodes and edges; the
+helper injects CSS that resolves them to CSS variables (e.g.
+`var(--dg-accent)`), so the SVG automatically adapts to light and dark mode.
+Do not hardcode hex colors in a diagram source.
 
 ## CI drift check
 
-The check compares the committed SVGs with the output of the
-generator. If they differ, the job fails and you must run `npm run
-diagrams` and commit the result.
+`npm run diagrams:check` runs the generator again and compares the
+`dg-source-sha256` stamp embedded in the committed SVG with the one the
+current sources produce. If the two differ, the job fails and you must run
+`npm run diagrams` and commit the result.
+
+The check compares the source stamp rather than the SVG bytes on purpose:
+Graphviz's layout changes between releases, so a byte-for-byte comparison
+would report drift every time the CI runner image upgrades Graphviz. The
+stamp only changes when a diagram source, or `helpers.py` itself, changes.
