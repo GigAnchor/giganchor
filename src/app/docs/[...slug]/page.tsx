@@ -77,7 +77,9 @@ export default async function DocPage({ params }: PageProps) {
           options={{
             mdxOptions: {
               remarkPlugins: [remarkGfm],
-            }
+            },
+            blockJS: false,
+            blockDangerousJS: true,
           }}
         />
       </div>
