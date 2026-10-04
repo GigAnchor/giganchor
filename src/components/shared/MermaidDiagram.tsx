@@ -5,6 +5,7 @@ import { Copy, Check } from "lucide-react";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { cn } from "@/lib/cn";
 import { logger } from "@/utils/logger";
+import { getMermaidThemeVariables, getNeumorphicDiagramCSS, readDiagramColorTokens } from "@/lib/diagram-theme";
 
 export type MermaidDiagramProps = {
   chart?: string;
@@ -29,60 +30,6 @@ function extractChartContent(chart: string | undefined, children: ReactNode): st
     if (typeof el.props?.children === "string") return el.props.children.trim();
   }
   return "";
-}
-
-function themeVariables(isDark: boolean, zoom: boolean) {
-  const fontSize = zoom ? "16px" : "14px";
-  if (isDark) {
-    return {
-      primaryColor: "#2e2e3f",
-      primaryTextColor: "#f1f3f7",
-      primaryBorderColor: "#1fb8b9",
-      secondaryColor: "#242433",
-      secondaryTextColor: "#b8bfd0",
-      secondaryBorderColor: "#3d3d5c",
-      tertiaryColor: "#1a1a26",
-      tertiaryTextColor: "#f1f3f7",
-      tertiaryBorderColor: "#3d3d5c",
-      background: "#242433",
-      mainBkg: "#2e2e3f",
-      textColor: "#f1f3f7",
-      lineColor: "#6D758F",
-      fontFamily: "Inter, sans-serif",
-      fontSize,
-      nodeBorder: "#1fb8b9",
-      nodeTextColor: "#f1f3f7",
-      clusterBkg: "#2e2e3f",
-      clusterBorder: "#3d3d5c",
-      edgeLabelBackground: "#2e2e3f",
-      labelBackgroundColor: "#2e2e3f",
-      titleColor: "#f1f3f7",
-    };
-  }
-  return {
-    primaryColor: "#E8F7F7",
-    primaryTextColor: "#19213D",
-    primaryBorderColor: "#149A9B",
-    secondaryColor: "#F1F3F7",
-    secondaryTextColor: "#19213D",
-    secondaryBorderColor: "#6D758F",
-    tertiaryColor: "#ffffff",
-    tertiaryTextColor: "#19213D",
-    tertiaryBorderColor: "#d1d5db",
-    background: "#ffffff",
-    mainBkg: "#E8F7F7",
-    textColor: "#19213D",
-    lineColor: "#6D758F",
-    fontFamily: "Inter, sans-serif",
-    fontSize,
-    nodeBorder: "#149A9B",
-    nodeTextColor: "#19213D",
-    clusterBkg: "#F1F3F7",
-    clusterBorder: "#149A9B",
-    edgeLabelBackground: "#ffffff",
-    labelBackgroundColor: "#ffffff",
-    titleColor: "#19213D",
-  };
 }
 
 /**
@@ -133,17 +80,16 @@ export function MermaidDiagram({
       setError(null);
       setSvg("");
 
-      const isDark =
-        resolvedTheme === "dark" ||
-        (typeof document !== "undefined" &&
-          document.documentElement.classList.contains("dark"));
+      const tokens = readDiagramColorTokens();
+      const fontSize = zoom ? "16px" : "14px";
 
       try {
         const m = await import("mermaid");
         m.default.initialize({
           startOnLoad: false,
           theme: "base",
-          themeVariables: themeVariables(isDark, zoom),
+          themeVariables: getMermaidThemeVariables(tokens, fontSize),
+          themeCSS: getNeumorphicDiagramCSS(tokens),
           flowchart: { htmlLabels: true, curve: "basis", padding: 24 },
         });
 
@@ -210,9 +156,9 @@ export function MermaidDiagram({
         <div className="flex items-center justify-between px-6 py-4 rounded-t-3xl bg-bg-sunken shadow-neu-sunken-subtle">
           <div className="flex items-center gap-3">
             <div className="flex gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-theme-primary/50" />
-              <span className="w-2.5 h-2.5 rounded-full bg-theme-primary/30" />
-              <span className="w-2.5 h-2.5 rounded-full bg-theme-primary/20" />
+              <span className="w-2.5 h-2.5 rounded-full bg-content-muted/40" />
+              <span className="w-2.5 h-2.5 rounded-full bg-content-muted/25" />
+              <span className="w-2.5 h-2.5 rounded-full bg-content-muted/15" />
             </div>
             <span className="text-xs font-black uppercase tracking-[0.18em] font-mono text-content-secondary/80">
               Mermaid
