@@ -25,6 +25,24 @@ The API uses Bearer tokens for authentication, supporting Master Keys, API Keys,
 
 For full details on credential types, key lifecycle, and per-endpoint scopes, see the [Authentication & Scopes](/docs/api-reference/authentication) guide.
 
+### Token Exchange Flow
+
+A long-lived API key can be exchanged for a short-lived bearer token (valid for 1 hour). This is useful for clients, such as a browser, that should not hold the long-lived key. The exchange endpoint requires the `write` scope.
+
+```mermaid
+sequenceDiagram
+    accTitle: API key and token exchange
+    accDescr: A marketplace backend exchanges a long-lived API key for a short-lived bearer token, then uses that token to call the Orchestrator.
+    autonumber
+    participant App as Marketplace Backend
+    participant Auth as POST /auth/api-keys/&#123;id&#125;/token
+    participant API as Orchestrator API
+    App->>Auth: POST (Bearer key with write scope)
+    Auth-->>App: 201 &#123; data: &#123; token &#125;, meta &#125;
+    App->>API: GET /api/v1/orders (Bearer token)
+    API-->>App: 200 &#123; data: &#123; success, data: [...] &#125;, meta &#125;
+```
+
 ## Common Headers
 
 ### Request Headers
