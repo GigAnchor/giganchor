@@ -1,10 +1,7 @@
-
-
-```
 ---
 title: Architecture
 description: Self-hosted, per-marketplace, non-custodial architecture overview.
-order: 2
+order: 13
 section: Guides
 ---
 
@@ -37,11 +34,12 @@ flowchart TB
     B_Orch -.->|Isolated| B_DB[(PostgreSQL B)]
 ```
 
+Each marketplace owns an isolated Orchestrator and database.
+
+This deployment boundary is verified against the Orchestrator's `apps/api/src/main.ts` bootstrap and `packages/database/prisma/schema.prisma`; each installation supplies its own service configuration and database connection.
+
 ## Next Steps
 
 - [Quick Start](/docs/guide/quick-start)
 - [Orchestrator Guide](/docs/guide/orchestrator)
 - [Self-Hosting Guide](/docs/guide/self-hosting)
-```
-
-Changes: list moved OUTSIDE Callout, mermaid closing fixed to triple backticks.
