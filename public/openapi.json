@@ -1,5 +1,5 @@
 {
-  "openapi": "3.0.3",
+  "openapi": "3.0.0",
   "info": {
     "title": "OFFER-HUB API",
     "version": "1.0.0",
@@ -11,34 +11,8 @@
   },
   "servers": [
     {
-      "url": "https://api.offer-hub.com",
+      "url": "https://api.offer-hub.org",
       "description": "Production Server"
-    },
-    {
-      "url": "http://localhost:3000",
-      "description": "Local Development Server"
-    }
-  ],
-  "tags": [
-    {
-      "name": "Auth",
-      "description": "Authentication and session management"
-    },
-    {
-      "name": "Balances",
-      "description": "User balances and transaction history"
-    },
-    {
-      "name": "Wallets",
-      "description": "Stellar wallet linking and management"
-    },
-    {
-      "name": "Projects",
-      "description": "Project lifecycle management"
-    },
-    {
-      "name": "Escrow",
-      "description": "Escrow funding, release and dispute operations"
     }
   ],
   "paths": {
@@ -61,7 +35,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AuthRegisterResponse"
+                  "type": "object"
                 },
                 "example": {
                   "code": 200,
@@ -83,7 +57,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "type": "object"
                 },
                 "example": {
                   "code": 422,
@@ -104,7 +78,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/AuthRegisterRequest"
+                "type": "object"
               },
               "example": {
                 "email": "user@example.com",
@@ -112,8 +86,7 @@
                 "name": "John Doe"
               }
             }
-          },
-          "required": true
+          }
         }
       }
     },
@@ -136,7 +109,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AuthLoginResponse"
+                  "type": "object"
                 },
                 "example": {
                   "code": 200,
@@ -160,7 +133,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "type": "object"
                 },
                 "example": {
                   "code": 401,
@@ -177,15 +150,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/AuthLoginRequest"
+                "type": "object"
               },
               "example": {
                 "email": "user@example.com",
                 "password": "securePassword123"
               }
             }
-          },
-          "required": true
+          }
         }
       }
     },
@@ -208,7 +180,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/BalancesResponse"
+                  "type": "object"
                 },
                 "example": {
                   "code": 200,
@@ -238,7 +210,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "type": "object"
                 },
                 "example": {
                   "code": 401,
@@ -272,7 +244,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TransactionsResponse"
+                  "type": "object"
                 },
                 "example": {
                   "code": 200,
@@ -314,7 +286,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "type": "object"
                 },
                 "example": {
                   "code": 401,
@@ -334,9 +306,7 @@
             "required": false,
             "description": "Page number (default: 1)",
             "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "default": 1
+              "type": "number"
             }
           },
           {
@@ -345,10 +315,7 @@
             "required": false,
             "description": "Results per page (default: 20, max: 100)",
             "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 100,
-              "default": 20
+              "type": "number"
             }
           },
           {
@@ -357,7 +324,7 @@
             "required": false,
             "description": "Filter by currency",
             "schema": {
-              "$ref": "#/components/schemas/Currency",
+              "type": "string",
               "enum": [
                 "USD",
                 "XLM",
@@ -387,7 +354,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/WalletConnectResponse"
+                  "type": "object"
                 },
                 "example": {
                   "code": 200,
@@ -408,7 +375,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "type": "object"
                 },
                 "example": {
                   "code": 400,
@@ -425,14 +392,13 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/WalletConnectRequest"
+                "type": "object"
               },
               "example": {
                 "public_key": "GBCG42WTVWPO4Q6N..."
               }
             }
-          },
-          "required": true
+          }
         }
       }
     },
@@ -455,7 +421,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProjectsListResponse"
+                  "type": "object"
                 },
                 "example": {
                   "code": 200,
@@ -499,7 +465,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "type": "object"
                 },
                 "example": {
                   "code": 401,
@@ -519,9 +485,7 @@
             "required": false,
             "description": "Page number (default: 1)",
             "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "default": 1
+              "type": "number"
             }
           },
           {
@@ -530,10 +494,7 @@
             "required": false,
             "description": "Results per page (default: 20)",
             "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 100,
-              "default": 20
+              "type": "number"
             }
           }
         ]
@@ -556,7 +517,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProjectResponse"
+                  "type": "object"
                 },
                 "example": {
                   "code": 200,
@@ -581,7 +542,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "type": "object"
                 },
                 "example": {
                   "code": 422,
@@ -602,7 +563,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ProjectCreateRequest"
+                "type": "object"
               },
               "example": {
                 "title": "New Project",
@@ -611,8 +572,7 @@
                 "currency": "USD"
               }
             }
-          },
-          "required": true
+          }
         }
       }
     },
@@ -624,18 +584,14 @@
         "tags": [
           "Escrow"
         ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
+        "security": [],
         "responses": {
           "200": {
             "description": "Success",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EscrowResponse"
+                  "type": "object"
                 },
                 "example": {
                   "code": 200,
@@ -661,7 +617,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "type": "object"
                 },
                 "example": {
                   "code": 400,
@@ -678,7 +634,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/EscrowInitRequest"
+                "type": "object"
               },
               "example": {
                 "project_id": "prj_01GHI",
@@ -687,8 +643,7 @@
                 "currency": "USD"
               }
             }
-          },
-          "required": true
+          }
         }
       }
     },
@@ -711,7 +666,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EscrowReleaseResponse"
+                  "type": "object"
                 },
                 "example": {
                   "code": 200,
@@ -733,7 +688,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "type": "object"
                 },
                 "example": {
                   "code": 400,
@@ -750,7 +705,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "type": "object"
                 },
                 "example": {
                   "code": 401,
@@ -767,644 +722,26 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/EscrowReleaseRequest"
+                "type": "object"
               },
               "example": {
                 "escrow_id": "esc_01JKL"
               }
             }
-          },
-          "required": true
+          }
         }
       }
     }
   },
   "components": {
-    "schemas": {
-      "Currency": {
-        "type": "string",
-        "enum": [
-          "USD",
-          "XLM",
-          "USDC"
-        ]
-      },
-      "ErrorResponse": {
-        "type": "object",
-        "required": [
-          "code",
-          "type",
-          "ok",
-          "message"
-        ],
-        "properties": {
-          "code": {
-            "type": "integer"
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "error"
-            ]
-          },
-          "ok": {
-            "type": "boolean",
-            "enum": [
-              false
-            ]
-          },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "nullable": true
-          },
-          "errors": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        }
-      },
-      "AuthRegisterRequest": {
-        "type": "object",
-        "required": [
-          "email",
-          "password",
-          "name"
-        ],
-        "properties": {
-          "email": {
-            "type": "string",
-            "format": "email"
-          },
-          "password": {
-            "type": "string",
-            "minLength": 8
-          },
-          "name": {
-            "type": "string"
-          }
-        }
-      },
-      "AuthRegisterResponse": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer"
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "success"
-            ]
-          },
-          "ok": {
-            "type": "boolean",
-            "enum": [
-              true
-            ]
-          },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string"
-              },
-              "email": {
-                "type": "string",
-                "format": "email"
-              },
-              "name": {
-                "type": "string"
-              },
-              "token": {
-                "type": "string"
-              }
-            }
-          }
-        }
-      },
-      "AuthLoginRequest": {
-        "type": "object",
-        "required": [
-          "email",
-          "password"
-        ],
-        "properties": {
-          "email": {
-            "type": "string",
-            "format": "email"
-          },
-          "password": {
-            "type": "string"
-          }
-        }
-      },
-      "AuthLoginResponse": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer"
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "success"
-            ]
-          },
-          "ok": {
-            "type": "boolean",
-            "enum": [
-              true
-            ]
-          },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "type": "object",
-            "properties": {
-              "token": {
-                "type": "string"
-              },
-              "user": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string"
-                  },
-                  "email": {
-                    "type": "string",
-                    "format": "email"
-                  },
-                  "name": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "Balance": {
-        "type": "object",
-        "properties": {
-          "currency": {
-            "$ref": "#/components/schemas/Currency"
-          },
-          "available": {
-            "type": "number"
-          },
-          "held": {
-            "type": "number"
-          }
-        }
-      },
-      "BalancesResponse": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer"
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "success"
-            ]
-          },
-          "ok": {
-            "type": "boolean",
-            "enum": [
-              true
-            ]
-          },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "type": "object",
-            "properties": {
-              "balances": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/Balance"
-                }
-              }
-            }
-          }
-        }
-      },
-      "Transaction": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "credit",
-              "debit"
-            ]
-          },
-          "amount": {
-            "type": "number"
-          },
-          "currency": {
-            "$ref": "#/components/schemas/Currency"
-          },
-          "description": {
-            "type": "string"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
-      "Pagination": {
-        "type": "object",
-        "properties": {
-          "page": {
-            "type": "integer"
-          },
-          "limit": {
-            "type": "integer"
-          },
-          "total": {
-            "type": "integer"
-          },
-          "pages": {
-            "type": "integer"
-          }
-        }
-      },
-      "TransactionsResponse": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer"
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "success"
-            ]
-          },
-          "ok": {
-            "type": "boolean",
-            "enum": [
-              true
-            ]
-          },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "type": "object",
-            "properties": {
-              "transactions": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/Transaction"
-                }
-              },
-              "pagination": {
-                "$ref": "#/components/schemas/Pagination"
-              }
-            }
-          }
-        }
-      },
-      "WalletConnectRequest": {
-        "type": "object",
-        "required": [
-          "public_key"
-        ],
-        "properties": {
-          "public_key": {
-            "type": "string",
-            "pattern": "^G[A-Z2-7]{55}$"
-          }
-        }
-      },
-      "WalletConnectResponse": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer"
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "success"
-            ]
-          },
-          "ok": {
-            "type": "boolean",
-            "enum": [
-              true
-            ]
-          },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "type": "object",
-            "properties": {
-              "wallet_id": {
-                "type": "string"
-              },
-              "public_key": {
-                "type": "string"
-              },
-              "connected_at": {
-                "type": "string",
-                "format": "date-time"
-              }
-            }
-          }
-        }
-      },
-      "Project": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "title": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "budget": {
-            "type": "number"
-          },
-          "currency": {
-            "$ref": "#/components/schemas/Currency"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "open",
-              "in_progress",
-              "completed",
-              "cancelled"
-            ]
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
-      "ProjectCreateRequest": {
-        "type": "object",
-        "required": [
-          "title",
-          "budget",
-          "currency"
-        ],
-        "properties": {
-          "title": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "budget": {
-            "type": "number",
-            "exclusiveMinimum": 0
-          },
-          "currency": {
-            "$ref": "#/components/schemas/Currency"
-          }
-        }
-      },
-      "ProjectResponse": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer"
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "success"
-            ]
-          },
-          "ok": {
-            "type": "boolean",
-            "enum": [
-              true
-            ]
-          },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "$ref": "#/components/schemas/Project"
-          }
-        }
-      },
-      "ProjectsListResponse": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer"
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "success"
-            ]
-          },
-          "ok": {
-            "type": "boolean",
-            "enum": [
-              true
-            ]
-          },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "type": "object",
-            "properties": {
-              "projects": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/Project"
-                }
-              },
-              "pagination": {
-                "$ref": "#/components/schemas/Pagination"
-              }
-            }
-          }
-        }
-      },
-      "Escrow": {
-        "type": "object",
-        "properties": {
-          "escrow_id": {
-            "type": "string"
-          },
-          "project_id": {
-            "type": "string"
-          },
-          "buyer_id": {
-            "type": "string"
-          },
-          "seller_id": {
-            "type": "string"
-          },
-          "amount": {
-            "type": "number"
-          },
-          "currency": {
-            "$ref": "#/components/schemas/Currency"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "pending",
-              "funded",
-              "released",
-              "disputed",
-              "refunded"
-            ]
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
-      "EscrowInitRequest": {
-        "type": "object",
-        "required": [
-          "project_id",
-          "seller_id",
-          "amount",
-          "currency"
-        ],
-        "properties": {
-          "project_id": {
-            "type": "string"
-          },
-          "seller_id": {
-            "type": "string"
-          },
-          "amount": {
-            "type": "number",
-            "exclusiveMinimum": 0
-          },
-          "currency": {
-            "$ref": "#/components/schemas/Currency"
-          }
-        }
-      },
-      "EscrowResponse": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer"
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "success"
-            ]
-          },
-          "ok": {
-            "type": "boolean",
-            "enum": [
-              true
-            ]
-          },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "$ref": "#/components/schemas/Escrow"
-          }
-        }
-      },
-      "EscrowReleaseRequest": {
-        "type": "object",
-        "required": [
-          "escrow_id"
-        ],
-        "properties": {
-          "escrow_id": {
-            "type": "string"
-          }
-        }
-      },
-      "EscrowReleaseResponse": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer"
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "success"
-            ]
-          },
-          "ok": {
-            "type": "boolean",
-            "enum": [
-              true
-            ]
-          },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "type": "object",
-            "properties": {
-              "escrow_id": {
-                "type": "string"
-              },
-              "status": {
-                "type": "string",
-                "enum": [
-                  "released"
-                ]
-              },
-              "released_amount": {
-                "type": "number"
-              },
-              "released_at": {
-                "type": "string",
-                "format": "date-time"
-              }
-            }
-          }
-        }
-      }
-    },
+    "schemas": {},
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
         "scheme": "bearer",
-        "bearerFormat": "JWT",
-        "description": "JWT access token issued by /auth/login or /auth/register"
+        "bearerFormat": "JWT"
       }
     }
   },
-  "security": [
-    {
-      "bearerAuth": []
-    }
-  ]
+  "security": []
 }
