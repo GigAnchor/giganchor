@@ -1,27 +1,12 @@
 import { cn } from "@/lib/cn";
 import type { HttpMethod } from "@/data/api-schema";
 
-const METHOD_STYLES: Record<HttpMethod, { color: string; background: string }> = {
-  GET: {
-    color: "var(--color-success)",
-    background: "color-mix(in srgb, var(--color-success) 14%, transparent)",
-  },
-  POST: {
-    color: "var(--color-primary)",
-    background: "color-mix(in srgb, var(--color-primary) 14%, transparent)",
-  },
-  PUT: {
-    color: "var(--color-warning)",
-    background: "color-mix(in srgb, var(--color-warning) 16%, transparent)",
-  },
-  PATCH: {
-    color: "var(--color-primary)",
-    background: "color-mix(in srgb, var(--color-primary) 18%, transparent)",
-  },
-  DELETE: {
-    color: "var(--color-error)",
-    background: "color-mix(in srgb, var(--color-error) 16%, transparent)",
-  },
+const METHOD_STYLES: Record<HttpMethod, { color: string; bg: string }> = {
+  GET: { color: "var(--color-success)", bg: "rgba(22,163,74,0.12)" },
+  POST: { color: "var(--color-primary)", bg: "rgba(20,154,155,0.12)" },
+  PUT: { color: "var(--color-warning)", bg: "rgba(217,119,6,0.12)" },
+  PATCH: { color: "var(--color-primary)", bg: "rgba(20,154,155,0.18)" },
+  DELETE: { color: "var(--color-error)", bg: "rgba(220,38,38,0.12)" },
 };
 
 interface MethodBadgeProps {
@@ -34,12 +19,11 @@ export function MethodBadge({ method, className }: MethodBadgeProps) {
 
   return (
     <span
-      aria-label={`HTTP method ${method}`}
       className={cn(
-        "inline-flex items-center justify-center rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.16em] font-mono leading-none shadow-neu-raised-sm",
+        "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold font-mono",
         className
       )}
-      style={{ color: style.color, background: style.background }}
+      style={{ color: style.color, background: style.bg }}
     >
       {method}
     </span>
