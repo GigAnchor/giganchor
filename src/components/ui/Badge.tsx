@@ -10,13 +10,13 @@ interface BadgeProps {
 }
 
 const variantStyles: Record<BadgeVariant, string> = {
-  easy: 'bg-[rgba(22,163,74,0.12)] text-[#16a34a]',
-  medium: 'bg-[rgba(217,119,6,0.12)] text-[#d97706]',
-  hard: 'bg-[rgba(220,38,38,0.12)] text-[#dc2626]',
-  feature: 'bg-[rgba(20,154,155,0.12)] text-[#149A9B]',
-  new: 'bg-[rgba(20,154,155,0.12)] text-[#149A9B]',
-  fix: 'bg-[rgba(109,117,143,0.12)] text-[#6D758F]',
-  breaking: 'bg-[rgba(220,38,38,0.15)] text-[#dc2626] border border-[#dc2626]',
+  easy: 'bg-theme-success/12 text-theme-success',
+  medium: 'bg-theme-warning/12 text-theme-warning',
+  hard: 'bg-theme-error/12 text-theme-error',
+  feature: 'bg-theme-primary/12 text-theme-primary',
+  new: 'bg-theme-primary/12 text-theme-primary',
+  fix: 'bg-content-muted/12 text-content-secondary',
+  breaking: 'bg-theme-error/15 text-theme-error border border-theme-error/20',
 };
 
 const defaultLabels: Record<BadgeVariant, string> = {
@@ -35,7 +35,7 @@ export const Badge: React.FC<BadgeProps> = ({ variant, label, className }) => {
   return (
     <span
       className={cn(
-        'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium',
+        'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium shadow-neu-raised-sm',
         variantStyles[variant],
         className
       )}

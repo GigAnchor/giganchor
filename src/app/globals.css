@@ -2,9 +2,86 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ══════════════════════════════════════════════════════════════════════════════
+   THEME VARIABLES - Dark Mode Support
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Backgrounds */
+  --color-bg-base: #F1F3F7;
+  --color-bg-elevated: #ffffff;
+  --color-bg-sunken: #e8eaef;
+
+  /* Text */
+  --color-text-primary: #19213D;
+  --color-text-secondary: #6D758F;
+  --color-text-muted: #9ca3af;
+
+  /* Brand */
+  --color-primary: #149A9B;
+  --color-primary-hover: #0d7377;
+  --color-secondary: #002333;
+  --color-accent: #15949C;
+
+  /* Neumorphic shadows */
+  --shadow-dark: #d1d5db;
+  --shadow-light: #ffffff;
+
+  /* Semantic */
+  --color-success: #16a34a;
+  --color-warning: #d97706;
+  --color-error: #FF0000;
+
+  /* Borders */
+  --color-border: #d1d5db;
+
+  /* Callout backgrounds */
+  --color-callout-note-bg: rgba(20, 154, 155, 0.08);
+  --color-callout-tip-bg: rgba(22, 163, 74, 0.08);
+  --color-callout-warning-bg: rgba(217, 119, 6, 0.12);
+  --color-callout-danger-bg: rgba(255, 0, 0, 0.08);
+}
+
+.dark {
+  /* Backgrounds */
+  --color-bg-base: #242433;
+  --color-bg-elevated: #2e2e3f;
+  --color-bg-sunken: #1a1a26;
+
+  /* Text */
+  --color-text-primary: #f1f3f7;
+  --color-text-secondary: #b8bfd0;
+  --color-text-muted: #6D758F;
+
+  /* Brand */
+  --color-primary: #1fb8b9;
+  --color-primary-hover: #25d4d5;
+  --color-accent: #15949C;
+
+  /* Semantic */
+  --color-success: #16a34a;
+  --color-warning: #d97706;
+  --color-error: #FF0000;
+
+  /* Neumorphic shadows for dark */
+  --shadow-dark: #1a1a26;
+  --shadow-light: #2e2e3f;
+
+  /* Borders */
+  --color-border: #3d3d5c;
+
+  /* Callout backgrounds for dark mode - slightly higher intensity for visibility on dark */
+  --color-callout-note-bg: rgba(31, 184, 185, 0.12);
+  --color-callout-tip-bg: rgba(22, 163, 74, 0.12);
+  --color-callout-warning-bg: rgba(217, 119, 6, 0.15);
+  --color-callout-danger-bg: rgba(255, 0, 0, 0.12);
+}
+
 /* Subtle page background — faint teal corner glows only (Dot grid handled by React) */
 body {
-  background-color: #F1F3F7;
+  background-color: var(--color-bg-base);
+  color: var(--color-text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 body::before {
@@ -22,6 +99,7 @@ body::before {
 }
 
 @layer utilities {
+
   /* Custom scrollbar utilities */
   .scrollbar-thin {
     scrollbar-width: thin;
@@ -99,6 +177,80 @@ body::before {
     box-shadow: 0 8px 20px #d1d5db, 0 -2px 10px #ffffff;
   }
 
+  .neu-input {
+    background: var(--color-bg-sunken);
+    box-shadow:
+      inset 3px 3px 6px var(--shadow-dark),
+      inset -3px -3px 6px var(--shadow-light);
+  }
+
+  .neu-btn {
+    background: var(--color-bg-base);
+    box-shadow:
+      6px 6px 12px var(--shadow-dark),
+      -6px -6px 12px var(--shadow-light);
+    transition: all 0.2s ease;
+  }
+
+  .neu-btn:active {
+    box-shadow:
+      inset 4px 4px 8px var(--shadow-dark),
+      inset -4px -4px 8px var(--shadow-light);
+  }
+
+  .neu-circle {
+    background: var(--color-bg-base);
+    border-radius: 9999px;
+    box-shadow:
+      6px 6px 12px var(--shadow-dark),
+      -6px -6px 12px var(--shadow-light);
+    transition: all 0.2s ease;
+  }
+
+  .neu-circle:active {
+    box-shadow:
+      inset 4px 4px 8px var(--shadow-dark),
+      inset -4px -4px 8px var(--shadow-light);
+  }
+
+  /* ── Neumorphic Tables ── */
+
+  /* Outer wrapper — raised card, SOLID background blocks the dot grid */
+  .neu-table-wrap {
+    background: var(--color-bg-base);
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+    box-shadow:
+      6px 6px 14px var(--shadow-dark),
+      -6px -6px 14px var(--shadow-light);
+  }
+
+  /* Header — sunken look, same pattern as .neu-input */
+  .neu-table-head {
+    background: var(--color-bg-sunken);
+    box-shadow:
+      inset 3px 3px 6px var(--shadow-dark),
+      inset -3px -3px 6px var(--shadow-light);
+  }
+
+  /* Body — solid to block dot grid from showing through */
+  .neu-table-body {
+    background: var(--color-bg-base);
+  }
+
+  /* Row dividers */
+  .neu-table-body tr+tr {
+    border-top: 1px solid var(--color-border);
+  }
+
+  /* Row hover — subtle primary tint */
+  .neu-table-row:hover td {
+    background: color-mix(in srgb, var(--color-primary) 6%, var(--color-bg-base));
+    transition: background 0.15s ease;
+  }
+
   /* ── 3D Colored Neumorphic Buttons ── */
   .btn-neumorphic-primary {
     background: #149A9B;
@@ -161,22 +313,90 @@ body::before {
       inset -4px -4px 8px #ffffff;
     transform: translateY(4px);
   }
+
+  /* ── Dark Mode Neumorphic Buttons ── */
+  .dark .btn-neumorphic-primary {
+    background: #1fb8b9;
+    box-shadow:
+      6px 6px 12px #1a1a26,
+      -6px -6px 12px #2e2e3f,
+      inset 2px 2px 5px rgba(255, 255, 255, 0.15),
+      inset -3px -3px 7px rgba(0, 0, 0, 0.3);
+  }
+
+  .dark .btn-neumorphic-primary:hover {
+    background: #25d4d5;
+    box-shadow:
+      3px 3px 6px #1a1a26,
+      -3px -3px 6px #2e2e3f,
+      inset 2px 2px 4px rgba(255, 255, 255, 0.2),
+      inset -2px -2px 5px rgba(0, 0, 0, 0.2);
+  }
+
+  .dark .btn-neumorphic-primary:active {
+    background: #149A9B;
+    box-shadow:
+      inset 5px 5px 10px rgba(0, 0, 0, 0.4),
+      inset -5px -5px 10px rgba(255, 255, 255, 0.05);
+  }
+
+  .dark .btn-neumorphic-secondary {
+    background: #242433;
+    box-shadow:
+      6px 6px 12px #1a1a26,
+      -6px -6px 12px #2e2e3f,
+      inset 1px 1px 2px rgba(255, 255, 255, 0.1),
+      inset -1px -1px 2px rgba(0, 0, 0, 0.2);
+    color: #f1f3f7;
+  }
+
+  .dark .btn-neumorphic-secondary:hover {
+    box-shadow:
+      3px 3px 6px #1a1a26,
+      -3px -3px 6px #2e2e3f,
+      inset 1px 1px 2px rgba(255, 255, 255, 0.15);
+  }
+
+  .dark .btn-neumorphic-secondary:active {
+    box-shadow:
+      inset 4px 4px 8px #1a1a26,
+      inset -4px -4px 8px #2e2e3f;
+  }
 }
 
 /* CSS-only fade-in-up animation (replaces framer-motion whileInView) */
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes fadeInScale {
-  from { opacity: 0; transform: scale(0.96); }
-  to   { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .animate-fadeIn {
@@ -200,4 +420,23 @@ body::before {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   VIEW TRANSITION - Theme Toggle Ripple Effect
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+  display: block;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 99999;
 }

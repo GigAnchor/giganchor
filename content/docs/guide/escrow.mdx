@@ -149,8 +149,10 @@ Releasing funds requires three separate blockchain transactions:
 | 2 | `release_escrow` | Platform authorizes release |
 | 3 | Claim funds | Seller receives USDC |
 
-```
-Buyer signs "complete" → Platform signs "release" → Seller claims funds
+```mermaid
+flowchart LR
+    A[Buyer signs complete] --> B[Platform signs release]
+    B --> C[Seller claims funds]
 ```
 
 ### Release Response

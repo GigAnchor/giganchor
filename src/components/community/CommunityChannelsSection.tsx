@@ -1,10 +1,7 @@
-import {
-  ArrowUpRight,
-  Disc3,
-  Github,
-  Send,
-  Twitter,
-} from "lucide-react";
+"use client";
+
+import { ArrowUpRight, Disc3, Github, Send, Twitter } from "lucide-react";
+import { motion } from "framer-motion";
 import SectionHeading from "@/components/community/SectionHeading";
 
 const channels = [
@@ -44,7 +41,13 @@ const CommunityChannelsSection = () => {
           subtitle="Find us where the conversation is happening."
         />
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <motion.div
+          initial={{ opacity: 0, y: 32 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4"
+        >
           {channels.map((channel) => {
             const Icon = channel.icon;
             return (
@@ -53,22 +56,22 @@ const CommunityChannelsSection = () => {
                 href={channel.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex h-full flex-col rounded-2xl bg-background p-6 shadow-raised transition-transform duration-300 hover:-translate-y-1"
+                className="flex h-full flex-col rounded-2xl bg-bg-elevated p-6 shadow-neu-raised transition-all duration-300 hover:-translate-y-1 hover:shadow-neu-raised-hover"
               >
-                <Icon size={18} className="text-primary" />
-                <h3 className="mt-4 text-xl font-bold text-text-primary">
+                <Icon size={18} className="text-theme-primary" />
+                <h3 className="mt-4 text-xl font-bold text-content-primary">
                   {channel.name}
                 </h3>
-                <p className="mt-2 text-sm font-light leading-relaxed text-text-secondary">
+                <p className="mt-2 text-sm font-light leading-relaxed text-content-secondary">
                   {channel.description}
                 </p>
-                <span className="mt-auto pt-6 inline-flex items-center gap-2 text-sm font-semibold text-text-primary">
+                <span className="mt-auto pt-6 inline-flex items-center gap-2 text-sm font-semibold text-content-primary">
                   Join channel <ArrowUpRight size={16} />
                 </span>
               </a>
             );
           })}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

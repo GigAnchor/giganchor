@@ -68,50 +68,61 @@ export function CommandLine({
   return (
     <div
       className={cn(
-        "my-4 rounded-xl border border-white/10 bg-[#0f172a] text-sm font-mono text-slate-100",
+        "my-6 rounded-2xl overflow-hidden bg-bg-base relative z-10",
         className,
       )}
+      style={{
+        boxShadow: "6px 6px 14px var(--shadow-dark), -6px -6px 14px var(--shadow-light)",
+      }}
     >
-      {label && (
-        <div className="flex items-center justify-between px-4 pt-3 pb-1 text-xs text-slate-300">
-          <span>{label}</span>
-        </div>
-      )}
-
-      <div className="flex items-center justify-between gap-3 px-4 py-3">
-        <div className="flex items-center gap-3 min-w-0 flex-1">
-          <Terminal
-            size={14}
-            className="flex-shrink-0 text-primary"
-            aria-hidden="true"
-          />
-          <span className="text-sm text-primary flex-shrink-0">
-            {promptSymbol}
+      {/* Terminal header bar */}
+      <div
+        className="flex items-center gap-2 px-4 py-2.5 border-b border-theme-border/20"
+        style={{
+          background: "var(--color-bg-sunken)",
+          boxShadow: "inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light)",
+        }}
+      >
+        <span className="w-2.5 h-2.5 rounded-full bg-red-400/80" />
+        <span className="w-2.5 h-2.5 rounded-full bg-yellow-400/80" />
+        <span className="w-2.5 h-2.5 rounded-full bg-green-400/80" />
+        {label && (
+          <span className="ml-2 text-[11px] font-bold uppercase tracking-widest text-content-secondary/60">
+            {label}
           </span>
-          <div className="relative flex-1 overflow-x-auto">
-            <code className="block whitespace-nowrap text-sm text-slate-100 pr-2">
-              {trimmed}
-            </code>
-          </div>
-        </div>
-
+        )}
         <button
           type="button"
           onClick={handleCopy}
           aria-label={copied ? "Command copied" : "Copy command"}
           className={cn(
-            "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium flex-shrink-0",
+            "ml-auto inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-medium",
             "transition-all duration-200",
-            copied ? "text-emerald-400" : "text-slate-300 hover:text-slate-50",
+            copied
+              ? "text-green-500"
+              : "text-content-secondary hover:text-content-primary",
           )}
         >
           {copied ? (
-            <Check size={13} aria-hidden="true" />
+            <Check size={12} aria-hidden="true" />
           ) : (
-            <Copy size={13} aria-hidden="true" />
+            <Copy size={12} aria-hidden="true" />
           )}
-          <span>{copied ? "Copied" : "Copy"}</span>
+          {copied ? "Copied" : "Copy"}
         </button>
+      </div>
+
+      {/* Command row */}
+      <div className="flex items-center gap-3 px-5 py-4 bg-bg-base">
+        <Terminal size={14} className="flex-shrink-0 text-theme-primary" aria-hidden="true" />
+        <span className="text-sm text-theme-primary flex-shrink-0 font-mono font-bold">
+          {promptSymbol}
+        </span>
+        <div className="relative flex-1 overflow-x-auto">
+          <code className="block whitespace-nowrap text-sm text-content-primary font-mono pr-2">
+            {trimmed}
+          </code>
+        </div>
       </div>
     </div>
   );

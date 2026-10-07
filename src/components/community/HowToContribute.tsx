@@ -24,13 +24,13 @@ export default function HowToContribute() {
             <div className="max-w-7xl mx-auto px-6 lg:px-8">
                 {/* Heading */}
                 <div className="text-center mb-16">
-                    <p className="text-xs font-medium uppercase tracking-[0.4em] mb-4" style={{ color: "#149A9B" }}>
+                    <p className="text-xs font-medium uppercase tracking-[0.4em] mb-4 text-theme-primary">
                         How to Contribute
                     </p>
-                    <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-6" style={{ color: "#19213D" }}>
+                    <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-6 text-content-primary">
                         Join the OFFER HUB Community
                     </h2>
-                    <p className="text-lg text-secondary max-w-2xl mx-auto" style={{ color: "#6D758F" }}>
+                    <p className="text-lg max-w-2xl mx-auto text-content-secondary">
                         We welcome all types of contributions! Here is a step-by-step guide to help you build with us.
                     </p>
                 </div>
@@ -40,17 +40,14 @@ export default function HowToContribute() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 justify-center">
                         {steps.map((step) => (
                             <div key={step.number} className="flex flex-col items-center text-center gap-6">
-                                <div
-                                    className="w-24 h-24 rounded-full shadow-raised flex items-center justify-center flex-shrink-0 relative z-10"
-                                    style={{ background: "#F1F3F7" }}
-                                >
-                                    <span className="text-2xl font-black" style={{ color: "#149A9B" }}>
+                                <div className="w-24 h-24 rounded-full bg-bg-elevated shadow-neu-raised flex items-center justify-center flex-shrink-0 relative z-10">
+                                    <span className="text-2xl font-black text-theme-primary">
                                         {step.number}
                                     </span>
                                 </div>
                                 <div className="flex flex-col gap-3">
-                                    <h3 className="text-xl font-bold" style={{ color: "#19213D" }}>{step.title}</h3>
-                                    <p className="text-sm font-light leading-relaxed max-w-xs mx-auto" style={{ color: "#6D758F" }}>
+                                    <h3 className="text-xl font-bold text-content-primary">{step.title}</h3>
+                                    <p className="text-sm font-light leading-relaxed max-w-xs mx-auto text-content-secondary">
                                         {step.description}
                                     </p>
                                 </div>
@@ -61,7 +58,7 @@ export default function HowToContribute() {
 
                 {/* Contribution Types */}
                 <div className="mb-24">
-                    <h3 className="text-2xl font-bold tracking-tight text-center mb-12" style={{ color: "#19213D" }}>
+                    <h3 className="text-2xl font-bold tracking-tight text-center mb-12 text-content-primary">
                         Ways to Contribute
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -70,14 +67,13 @@ export default function HowToContribute() {
                             return (
                                 <div
                                     key={type.title}
-                                    className="rounded-2xl p-6 shadow-raised flex flex-col gap-4"
-                                    style={{ background: "#F1F3F7" }}
+                                    className="rounded-2xl p-6 bg-bg-elevated shadow-neu-raised flex flex-col gap-4"
                                 >
-                                    <div className="w-12 h-12 rounded-full flex items-center justify-center shadow-sunken" style={{ background: "#F1F3F7" }}>
-                                        <Icon className="w-5 h-5" style={{ color: "#149A9B" }} />
+                                    <div className="w-12 h-12 rounded-full flex items-center justify-center bg-bg-sunken shadow-neu-sunken-subtle">
+                                        <Icon className="w-5 h-5 text-theme-primary" />
                                     </div>
-                                    <h4 className="text-lg font-bold" style={{ color: "#19213D" }}>{type.title}</h4>
-                                    <p className="text-sm font-light leading-relaxed" style={{ color: "#6D758F" }}>
+                                    <h4 className="text-lg font-bold text-content-primary">{type.title}</h4>
+                                    <p className="text-sm font-light leading-relaxed text-content-secondary">
                                         {type.description}
                                     </p>
                                 </div>
@@ -92,16 +88,14 @@ export default function HowToContribute() {
                         href="https://github.com/OFFER-HUB/offer-hub-monorepo/issues"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="px-8 py-4 rounded-xl font-medium shadow-raised hover:shadow-raised-hover transition-all duration-300 flex items-center gap-2"
-                        style={{ background: "#149A9B", color: "#FFFFFF" }}
+                        className="btn-neumorphic-primary px-8 py-4 rounded-xl font-medium flex items-center gap-2"
                     >
                         View open issues
                         <Bug className="w-4 h-4" />
                     </Link>
                     <Link
                         href="/docs"
-                        className="px-8 py-4 rounded-xl font-medium shadow-raised hover:shadow-raised-hover transition-all duration-300 flex items-center gap-2"
-                        style={{ background: "#F1F3F7", color: "#19213D" }}
+                        className="btn-neumorphic-secondary px-8 py-4 rounded-xl font-medium flex items-center gap-2"
                     >
                         Read contribution guide
                         <BookOpen className="w-4 h-4" />

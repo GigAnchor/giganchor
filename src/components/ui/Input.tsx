@@ -30,14 +30,14 @@ export function Input({
             {label && (
                 <label
                     htmlFor={inputId}
-                    className="text-sm font-medium text-[#19213D]"
+                    className="text-sm font-medium text-content-primary"
                 >
                     {label}
                 </label>
             )}
             <div className="relative w-full">
                 {icon && iconPosition === "left" && (
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#6D758F]" aria-hidden="true">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-content-secondary" aria-hidden="true">
                         {icon}
                     </span>
                 )}
@@ -46,20 +46,20 @@ export function Input({
                     aria-invalid={error ? "true" : undefined}
                     aria-describedby={error ? errorId : ariaDescribedBy}
                     className={cn(
-                        "w-full rounded-xl bg-[#F1F3F7] px-4 py-3 text-[#19213D]",
-                        "shadow-[inset_4px_4px_8px_#d1d5db,inset_-4px_-4px_8px_#ffffff]",
-                        "placeholder:text-[#6D758F]",
-                        "focus:outline-none focus:ring-2 focus:ring-[#149A9B]",
+                        "w-full rounded-xl px-4 py-3",
+                        "bg-bg-sunken shadow-neu-sunken-subtle",
+                        "text-content-primary placeholder:text-content-muted",
+                        "focus:outline-none focus:ring-2 focus:ring-theme-primary",
                         "transition-all duration-200",
                         icon && iconPosition === "left" && "pl-12",
                         icon && iconPosition === "right" && "pr-12",
-                        error && "ring-2 ring-red-500",
+                        error && "ring-2 ring-theme-error",
                         className
                     )}
                     {...props}
                 />
                 {icon && iconPosition === "right" && !rightElement && (
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[#6D758F]" aria-hidden="true">
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-content-secondary" aria-hidden="true">
                         {icon}
                     </span>
                 )}
@@ -70,7 +70,7 @@ export function Input({
                 )}
             </div>
             {error && (
-                <span id={errorId} className="text-sm text-red-500" role="alert">
+                <span id={errorId} className="text-sm text-theme-error" role="alert">
                     {error}
                 </span>
             )}

@@ -18,14 +18,14 @@ When users want to move funds off the platform, they create a withdrawal request
 
 ### State Machine
 
-```
-PENDING
-   ↓
-PROCESSING
-   ↓
-┌──┴──┐
-↓     ↓
-COMPLETED  FAILED
+```mermaid
+stateDiagram-v2
+    [*] --> PENDING
+    PENDING --> PROCESSING
+    PROCESSING --> COMPLETED
+    PROCESSING --> FAILED
+    COMPLETED --> [*]
+    FAILED --> [*]
 ```
 
 ### State Descriptions
@@ -87,8 +87,12 @@ curl -X POST http://localhost:4000/api/v1/withdrawals \
 6. **Confirm on-chain** — Wait for ledger confirmation
 7. **Update status** — Mark as `COMPLETED`
 
-```
-Balance debited → Transaction signed → Submitted → Confirmed → Complete
+```mermaid
+flowchart LR
+    A[Balance debited] --> B[Transaction signed]
+    B --> C[Submitted]
+    C --> D[Confirmed]
+    D --> E[Complete]
 ```
 
 <Callout type="note">

@@ -10,8 +10,7 @@ export default function InteractiveExplorerPage() {
       <header className="mb-10">
         <div className="flex items-center gap-3 flex-wrap">
           <h1
-            className="text-3xl sm:text-4xl font-extrabold tracking-tight"
-            style={{ color: "#19213D" }}
+            className="text-3xl sm:text-4xl font-extrabold tracking-tight text-content-primary"
           >
             Interactive API Explorer
           </h1>
@@ -19,7 +18,7 @@ export default function InteractiveExplorerPage() {
             Coming Soon
           </span>
         </div>
-        <p className="mt-3 text-base" style={{ color: "#6D758F" }}>
+        <p className="mt-3 text-base text-content-secondary">
           Browse endpoints, fill in parameters, and see mock request/response
           payloads — all without leaving the docs.
         </p>
@@ -37,13 +36,10 @@ export default function InteractiveExplorerPage() {
         {API_SCHEMA.map((category) => (
           <section key={category.name}>
             <div className="mb-4">
-              <h2
-                className="text-xl font-bold"
-                style={{ color: "#19213D" }}
-              >
+              <h2 className="text-xl font-bold text-content-primary">
                 {category.name}
               </h2>
-              <p className="text-sm mt-1" style={{ color: "#6D758F" }}>
+              <p className="text-sm mt-1 text-content-secondary">
                 {category.description}
               </p>
             </div>

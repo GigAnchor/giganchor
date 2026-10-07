@@ -23,26 +23,30 @@ export function ParameterInput({
 }: ParameterInputProps) {
   const inputId = `param-${name}`;
 
+  const inputClasses = cn(
+    "w-full rounded-xl px-3 py-2.5 text-sm font-medium",
+    "bg-bg-sunken shadow-neu-sunken-subtle",
+    "text-content-primary placeholder:text-content-muted",
+    "border border-transparent outline-none transition-all duration-200",
+    "focus:ring-2 focus:ring-theme-primary focus:ring-offset-0"
+  );
+
   return (
     <div className="space-y-1.5">
       <label htmlFor={inputId} className="flex items-center gap-2">
-        <span
-          className="text-sm font-semibold font-mono"
-          style={{ color: "#19213D" }}
-        >
+        <span className="text-sm font-semibold font-mono text-content-primary">
           {name}
         </span>
         <span
-          className="text-xs font-medium px-1.5 py-0.5 rounded"
-          style={{
-            color: required ? "#dc2626" : "#6D758F",
-            background: required ? "rgba(220,38,38,0.08)" : "rgba(109,117,143,0.08)",
-          }}
+          className={cn(
+            "text-xs font-medium px-1.5 py-0.5 rounded",
+            required ? "text-theme-error bg-theme-error/10" : "text-content-secondary bg-content-muted/10"
+          )}
         >
           {required ? "required" : "optional"}
         </span>
       </label>
-      <p className="text-xs" style={{ color: "#6D758F" }}>
+      <p className="text-xs text-content-secondary">
         {description}
       </p>
 
@@ -51,12 +55,7 @@ export function ParameterInput({
           id={inputId}
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className={cn(
-            "w-full rounded-xl border px-3 py-2 text-sm",
-            "outline-none transition-all duration-200",
-            "focus:ring-2 focus:ring-[#149A9B] focus:border-transparent"
-          )}
-          style={{ borderColor: "#e5e7eb", color: "#19213D" }}
+          className={inputClasses}
         >
           <option value="">Select...</option>
           {options.map((opt) => (
@@ -72,12 +71,7 @@ export function ParameterInput({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          className={cn(
-            "w-full rounded-xl border px-3 py-2 text-sm",
-            "outline-none transition-all duration-200",
-            "focus:ring-2 focus:ring-[#149A9B] focus:border-transparent"
-          )}
-          style={{ borderColor: "#e5e7eb", color: "#19213D" }}
+          className={inputClasses}
         />
       )}
     </div>

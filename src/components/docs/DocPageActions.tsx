@@ -1,16 +1,15 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Download, FileCode2, FileJson, FileText, Github } from "lucide-react";
+import { Download, FileCode2, FileText, Github } from "lucide-react";
 
-import type { DocFrontmatter } from "@/lib/mdx";
+import { ExportJSON } from "@/components/docs/ExportJSON";
 
 interface DocPageActionsProps {
   slug: string;
   title: string;
   description?: string;
   markdownContent: string;
-  frontmatter: DocFrontmatter;
 }
 
 const DOCS_REPO_BASE = "https://github.com/OFFER-HUB/offer-hub-monorepo/blob/main/content/docs";
@@ -31,28 +30,14 @@ function downloadBlob(filename: string, content: string, mimeType: string) {
   URL.revokeObjectURL(url);
 }
 
-export function DocPageActions({ slug, title, description, markdownContent, frontmatter }: DocPageActionsProps) {
+export function DocPageActions({ slug, title, description, markdownContent }: DocPageActionsProps) {
   const [isExportingPdf, setIsExportingPdf] = useState(false);
 
   const markdownFileName = useMemo(() => `${slug.replace(/\//g, "-")}-${dateStamp()}.md`, [slug]);
-  const jsonFileName = useMemo(() => `${slug.replace(/\//g, "-")}-${dateStamp()}.json`, [slug]);
   const pdfFileName = useMemo(() => `${slug.replace(/\//g, "-")}-${dateStamp()}.pdf`, [slug]);
 
   function handleExportMarkdown() {
     downloadBlob(markdownFileName, markdownContent, "text/markdown;charset=utf-8");
-  }
-
-  function handleExportJson() {
-    const payload = {
-      slug,
-      title,
-      description,
-      frontmatter,
-      content: markdownContent,
-      exportedAt: new Date().toISOString(),
-    };
-
-    downloadBlob(jsonFileName, JSON.stringify(payload, null, 2), "application/json;charset=utf-8");
   }
 
   async function handleExportPdf() {
@@ -88,7 +73,7 @@ export function DocPageActions({ slug, title, description, markdownContent, fron
       exportContainer.innerHTML = `
         <header style="display:flex;align-items:center;justify-content:space-between;gap:20px;padding-bottom:18px;border-bottom:1px solid #e5e7eb;margin-bottom:18px;">
           <div style="display:flex;align-items:center;gap:10px;">
-            <img src="${logo}" alt="OFFER-HUB" style="height:36px;width:auto;object-fit:contain;" />
+            <img src="${logo}" alt="OFFER-HUB" style="height:48px;width:auto;object-fit:contain;" />
           </div>
           <div style="text-align:right;">
             <div style="font-size:12px;letter-spacing:0.08em;color:#149A9B;font-weight:700;text-transform:uppercase;">Documentation Export</div>
@@ -201,47 +186,40 @@ export function DocPageActions({ slug, title, description, markdownContent, fron
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-2" data-pdf-exclude="true">
-      <button
-        type="button"
-        onClick={handleExportMarkdown}
-        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium border transition-colors"
-        style={{ borderColor: "#d1d5db", color: "#19213D", background: "#ffffff" }}
-      >
-        <FileCode2 size={15} />
-        Export Markdown
-      </button>
+    <div className="flex flex-wrap items-center justify-end gap-3" data-pdf-exclude="true">
+      <span className="text-sm font-semibold text-content-secondary mr-1">Export as</span>
 
       <button
         type="button"
-        onClick={handleExportJson}
-        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium border transition-colors"
-        style={{ borderColor: "#d1d5db", color: "#19213D", background: "#ffffff" }}
+        onClick={handleExportMarkdown}
+        title="Export Markdown"
+        className="neu-circle w-10 h-10 flex items-center justify-center text-content-secondary hover:text-[#149A9B]"
       >
-        <FileJson size={15} />
-        Export JSON
+        <FileCode2 size={18} />
       </button>
+
+      <ExportJSON slug={slug} title={title} />
 
       <button
         type="button"
         onClick={handleExportPdf}
         disabled={isExportingPdf}
-        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium border transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-        style={{ borderColor: "#149A9B", color: "#149A9B", background: "#ffffff" }}
+        title="Export PDF"
+        className="neu-circle w-10 h-10 flex items-center justify-center text-content-secondary hover:text-[#149A9B] disabled:opacity-50"
       >
-        {isExportingPdf ? <Download size={15} /> : <FileText size={15} />}
-        {isExportingPdf ? "Generating PDF..." : "Export as PDF"}
+        {isExportingPdf ? <Download size={18} /> : <FileText size={18} />}
       </button>
+
+      <div className="w-px h-6 bg-theme-border/40 mx-2"></div>
 
       <a
         href={`${DOCS_REPO_BASE}/${slug}.mdx`}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium border transition-colors"
-        style={{ borderColor: "#d1d5db", color: "#19213D", background: "#ffffff" }}
+        title="Edit on GitHub"
+        className="neu-circle w-10 h-10 flex items-center justify-center text-content-secondary hover:text-[#149A9B]"
       >
-        <Github size={15} />
-        Edit on GitHub
+        <Github size={18} />
       </a>
     </div>
   );

@@ -22,11 +22,11 @@ const HowToContributeSection = () => {
           {contributionSteps.map((step) => (
             <article
               key={step}
-              className="rounded-2xl bg-background p-6 shadow-raised"
+              className="rounded-2xl bg-bg-elevated p-6 shadow-neu-raised"
             >
               <div className="flex items-start gap-3">
-                <CheckCircle2 size={18} className="mt-1 text-primary" />
-                <p className="text-base font-light leading-relaxed text-text-primary">
+                <CheckCircle2 size={18} className="mt-1 text-theme-primary flex-shrink-0" />
+                <p className="text-base font-light leading-relaxed text-content-primary">
                   {step}
                 </p>
               </div>

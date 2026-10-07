@@ -1,19 +1,15 @@
 ---
 title: Getting Started
-description: Learn what OFFER-HUB is, how it works, and how to integrate it into your marketplace.
+description: Learn how OFFER-HUB works and how to integrate it into your marketplace in minutes.
 order: 1
 section: Getting Started
 ---
 
-OFFER-HUB Orchestrator is a **self-hosted payments and escrow backend** for service marketplaces. It handles the financial plumbing - escrow, balance management, dispute resolution, and USDC transactions on Stellar - so you can focus on building your marketplace product.
+OFFER-HUB Orchestrator is a **self-hosted payments and escrow backend** for service marketplaces. It handles the financial plumbing — escrow, balance management, dispute resolution, and USDC transactions on Stellar — so you can focus on building your marketplace product.
 
-<Callout type="tip">
-  Ready to start coding? Jump to [Installation](/docs/installation) for setup instructions, or [Quick Start](/docs/guide/quick-start) for your first API call.
-</Callout>
+## Overview
 
-## What Problems It Solves
-
-Building a marketplace with escrow payments from scratch requires solving many complex challenges. The Orchestrator handles them for you:
+OFFER-HUB solves the hardest problems in marketplace payments:
 
 | Challenge | Orchestrator Solution |
 |-----------|----------------------|
@@ -21,117 +17,240 @@ Building a marketplace with escrow payments from scratch requires solving many c
 | Preventing double-spending | Atomic balance operations + idempotency keys |
 | Handling "seller didn't deliver" | Built-in dispute workflow with SPLIT resolution |
 | Managing crypto wallets for non-crypto users | Invisible Stellar wallets (Web2 UX) |
-| Tracking payment state across distributed systems | State machine with full audit log |
-| Real-time payment notifications | SSE event stream |
+| Tracking payment state | State machine with full audit log |
+| Real-time notifications | SSE event stream |
 
-Without the Orchestrator, building all of this could take 6-12 months. With it, you can integrate in a few days.
+<Callout type="tip">
+  Without the Orchestrator, building all of this could take 6-12 months. With it, you can integrate in a few days.
+</Callout>
 
-## How It Works
+## Prerequisites
 
-OFFER-HUB uses a **balance-based ledger** and **smart-contract escrow** to protect every transaction:
+Before you begin, ensure you have the following installed:
 
-```mermaid
-flowchart TB
-    subgraph YM["Your Marketplace"]
-        FE["Frontend"]
-        BE["Backend"]
-    end
+| Requirement | Version | Purpose |
+|-------------|---------|---------|
+| Node.js | 18+ | Runtime environment |
+| npm or pnpm | Latest | Package management |
+| PostgreSQL | 14+ | Database |
+| Redis | 6+ | Caching and queues |
+| Git | Latest | Version control |
 
-    subgraph OH["OFFER-HUB Orchestrator"]
-        ORC["API & State Machine"]
-    end
+You'll also need:
 
-    subgraph BC["Blockchain Layer"]
-        ST["Stellar + USDC"]
-        TW["Trustless Work<br/>Smart Contracts"]
-    end
+- A Stellar testnet account (for development)
+- Basic familiarity with REST APIs
+- A marketplace application to integrate with
 
-    FE --> BE
-    BE --> ORC
-    ORC --> ST
-    ORC --> TW
+<Callout type="note">
+  For production, you'll need a Stellar mainnet account with USDC trustline and a Trustless Work API key.
+</Callout>
 
-    style OH fill:#E8F7F7,stroke:#149A9B,stroke-width:2px
-    style ORC fill:#149A9B,color:#fff
-    style ST fill:#F3F4F6,stroke:#6D758F
-    style TW fill:#F3F4F6,stroke:#6D758F
+## Installation
+
+### Clone the Repository
+
+<CommandLine>git clone https://github.com/OFFER-HUB/offer-hub-monorepo.git</CommandLine>
+
+<CommandLine>cd offer-hub-monorepo</CommandLine>
+
+### Install Dependencies
+
+<CommandLine>npm install</CommandLine>
+
+### Set Up the Database
+
+Create a PostgreSQL database:
+
+<CommandLine>createdb offerhub_dev</CommandLine>
+
+Run migrations:
+
+<CommandLine>npm run db:migrate</CommandLine>
+
+### Start the Development Server
+
+<CommandLine>npm run dev</CommandLine>
+
+The API will be available at `http://localhost:4000`.
+
+<Callout type="tip">
+  Run `npm run dev:watch` for auto-reload during development.
+</Callout>
+
+## Configuration
+
+Create a `.env` file in the project root:
+
+```bash
+# Database
+DATABASE_URL=postgresql://localhost:5432/offerhub_dev
+
+# Redis
+REDIS_URL=redis://localhost:6379
+
+# Stellar Network
+STELLAR_NETWORK=testnet
+STELLAR_HORIZON_URL=https://horizon-testnet.stellar.org
+
+# Trustless Work (Escrow Provider)
+TRUSTLESS_WORK_API_URL=https://api.trustlesswork.com
+TRUSTLESS_WORK_SECRET=your_secret_here
+
+# API Security
+OFFERHUB_MASTER_KEY=your_master_key_here
+JWT_SECRET=your_jwt_secret_here
+
+# Payment Provider (crypto or airtm)
+PAYMENT_PROVIDER=crypto
 ```
 
-### The Payment Flow
+### Key Configuration Options
 
-1. **Buyer deposits funds** - USDC is detected on-chain and credited to the buyer's available balance
-2. **Buyer creates an order** - Funds move from `available` to `reserved` (escrow)
-3. **Order goes on-chain** - USDC is locked in a Soroban smart contract via Trustless Work
-4. **Work happens** - Your marketplace manages communication, files, deliverables
-5. **Buyer approves** - 3 on-chain transactions release USDC to seller
-6. **Seller withdraws** - Sends USDC to any Stellar address
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `DATABASE_URL` | Yes | PostgreSQL connection string |
+| `REDIS_URL` | Yes | Redis connection string |
+| `STELLAR_NETWORK` | Yes | `testnet` or `mainnet` |
+| `TRUSTLESS_WORK_SECRET` | Yes | API key for escrow contracts |
+| `OFFERHUB_MASTER_KEY` | Yes | Master key for creating API keys |
+| `PAYMENT_PROVIDER` | No | `crypto` (default) or `airtm` |
 
-At every step, the Orchestrator emits events to your SSE subscriber so you can update your UI in real-time.
+<Callout type="warning">
+  Never commit your `.env` file to version control. Add it to `.gitignore`.
+</Callout>
 
-## Balance Model
+See [Configuration](/docs/configuration) for the complete list of environment variables.
 
-Every user has an internal balance with two components:
+## Your First Escrow
 
-| State | Description |
-|-------|-------------|
-| `available` | Spendable funds - can be withdrawn or used to create orders |
-| `reserved` | Locked in active escrow - released on settlement or cancellation |
+Let's walk through creating your first escrow transaction.
 
-When an order is funded, `available` decreases and `reserved` increases. When released, `reserved` decreases and the seller's `available` increases.
+### 1. Create an API Key
 
-## Key Features
+First, generate an API key using your master key:
 
-### Invisible Wallets
-Users never see Stellar addresses, seed phrases, or private keys. They see a Web2 balance interface. The Orchestrator manages Stellar keypairs server-side, encrypted with AES-256-GCM.
+```bash
+curl -X POST http://localhost:4000/api/v1/auth/api-keys \
+  -H "Authorization: Bearer YOUR_MASTER_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"name": "My Marketplace", "scopes": ["read", "write"]}'
+```
 
-### Non-Custodial Escrow
-Funds in escrow are held in Soroban smart contracts on Stellar, not in your database. The Orchestrator signs transactions but cannot unilaterally move funds - the contracts enforce the rules.
+Save the returned `key` value — it's only shown once.
 
-### State Machine Enforcement
-Every order follows a strict state machine. Invalid transitions (e.g., releasing before escrow is funded) are rejected. This prevents double-charges, double-releases, and race conditions.
+### 2. Create Users
 
-### Idempotent Operations
-Every state-changing operation accepts an `Idempotency-Key`. Retrying a failed request with the same key returns the cached response - preventing duplicate orders, escrows, or payments.
+Create a buyer and seller:
 
-### Real-Time Events
-Every state change emits a domain event streamed via SSE. Your backend subscribes once and receives real-time updates: "order funded," "funds released," "dispute resolved."
+```bash
+# Create buyer
+curl -X POST http://localhost:4000/api/v1/users \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"external_id": "buyer_123", "email": "buyer@example.com"}'
 
-## Payment Providers
+# Create seller
+curl -X POST http://localhost:4000/api/v1/users \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"external_id": "seller_456", "email": "seller@example.com"}'
+```
 
-Set `PAYMENT_PROVIDER` in your environment to switch:
+### 3. Fund the Buyer's Account
 
-| Feature | Crypto-Native (default) | AirTM (optional) |
-|---------|------------------------|-----------------|
-| Deposit method | Send USDC to Stellar address | Fiat payin via AirTM redirect |
-| Withdrawal method | Direct USDC to Stellar address | Payout to bank/mobile money |
-| Settlement currency | USDC (Stellar) | USD |
-| KYC required | No | AirTM KYC |
-| Speed | Seconds | Minutes to days |
+Get the buyer's deposit address:
 
-For most new deployments, **crypto mode is recommended**.
+```bash
+curl -X GET http://localhost:4000/api/v1/users/buyer_123/wallet/deposit \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
 
-## What the Orchestrator Does NOT Do
+Send testnet USDC to the returned address. The balance will update automatically.
 
-| NOT included | Why |
-|-------------|-----|
-| User authentication | Your marketplace handles auth |
-| Product listings | Your marketplace handles this |
-| Communication (chat, files) | Your marketplace handles this |
-| Tax calculation | Your marketplace or accounting tool |
-| Multiple currencies | USDC only (for now) |
+### 4. Create an Order
 
-The Orchestrator is intentionally narrow: it handles payments, escrow, and balances. Everything else is your marketplace's responsibility.
+```bash
+curl -X POST http://localhost:4000/api/v1/orders \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -H "Idempotency-Key: order-001" \
+  -d '{
+    "buyer_id": "buyer_123",
+    "seller_id": "seller_456",
+    "amount": "100.00",
+    "currency": "USD",
+    "description": "Website development project"
+  }'
+```
 
-## Supported Currencies
+### 5. Fund the Escrow
 
-<Badge variant="primary">USDC</Badge>
+Reserve the buyer's funds in escrow:
 
-USDC on Stellar is the primary supported currency.
+```bash
+curl -X POST http://localhost:4000/api/v1/orders/ORDER_ID/escrow/fund \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Idempotency-Key: fund-001"
+```
+
+The funds are now locked in a smart contract on Stellar.
+
+### 6. Release to Seller
+
+When the work is complete, release the funds:
+
+```bash
+curl -X POST http://localhost:4000/api/v1/orders/ORDER_ID/resolution/release \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Idempotency-Key: release-001"
+```
+
+The seller's balance is now credited with the payment amount.
+
+<Callout type="tip">
+  Use the same `Idempotency-Key` if you need to retry a request. The Orchestrator will return the cached response instead of processing a duplicate.
+</Callout>
+
+### TypeScript Example
+
+Here's the same flow using the TypeScript SDK:
+
+```ts
+import { OfferHubClient } from '@offer-hub/sdk';
+
+const client = new OfferHubClient({
+  baseUrl: 'http://localhost:4000',
+  apiKey: 'YOUR_API_KEY',
+});
+
+// Create an order
+const order = await client.orders.create({
+  buyerId: 'buyer_123',
+  sellerId: 'seller_456',
+  amount: '100.00',
+  currency: 'USD',
+  description: 'Website development project',
+});
+
+// Fund the escrow
+await client.orders.fundEscrow(order.id);
+
+// Release to seller when complete
+await client.orders.release(order.id);
+```
 
 ## Next Steps
 
-- [Installation](/docs/installation) - Set up the project locally
-- [Configuration](/docs/configuration) - Environment variables and setup
-- [Quick Start](/docs/guide/quick-start) - Your first API call in 5 minutes
-- [API Reference](/docs/api-reference/overview) - Explore the REST API
-- [SDK Guide](/docs/sdk/quick-start) - Use the TypeScript SDK
+Now that you've completed your first escrow, explore these guides:
+
+- [Orchestrator Guide](/docs/guide/orchestrator) — Deep dive into the Orchestrator architecture
+- [Escrow Flows](/docs/guide/escrow) — Learn about escrow states and transitions
+- [Orders Guide](/docs/guide/orders) — Complete order lifecycle documentation
+- [Disputes](/docs/guide/disputes) — Handle disputes and resolutions
+- [API Reference](/docs/api-reference/overview) — Full REST API documentation
+- [SDK Quick Start](/docs/sdk/quick-start) — Use the TypeScript SDK
+
+<Callout type="note">
+  Need help? Join our [Discord community](https://discord.gg/offerhub) or open an issue on [GitHub](https://github.com/OFFER-HUB/offer-hub-monorepo/issues).
+</Callout>

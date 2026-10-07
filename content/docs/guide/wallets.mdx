@@ -23,13 +23,17 @@ OFFER-HUB eliminates all of this. Users see a simple USD balance while the syste
 
 ### How It Works
 
-```
-User sees:           What actually happens:
-┌─────────────┐      ┌─────────────────────────────────────┐
-│ Balance:    │      │ Stellar Wallet: GCV24WNJ...         │
-│ $100.00 USD │  ←   │ USDC Balance: 100.0000000           │
-│             │      │ Private Key: (encrypted in DB)      │
-└─────────────┘      └─────────────────────────────────────┘
+```mermaid
+flowchart LR
+    subgraph UserSees["User sees"]
+        Balance["Balance: $100.00 USD"]
+    end
+    subgraph BehindTheScenes["What actually happens"]
+        Wallet["Stellar Wallet: GCV24WNJ..."]
+        USDC["USDC Balance: 100.0000000"]
+        Key["Private Key: encrypted in DB"]
+    end
+    Balance --> BehindTheScenes
 ```
 
 ### Benefits

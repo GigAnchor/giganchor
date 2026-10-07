@@ -122,10 +122,10 @@ export default function HeroSection() {
         {/* Tagline — product-accurate description */}
         <p
           className="animate-fadeInUp mt-10 text-lg md:text-xl font-light max-w-xl leading-relaxed"
-          style={{ color: "#6D758F", animationDelay: "300ms" }}
+          style={{ color: "var(--color-text-secondary)", animationDelay: "300ms" }}
         >
           A payments orchestrator for modern marketplaces.{" "}
-          <span className="font-semibold" style={{ color: "#19213D" }}>
+          <span className="font-semibold" style={{ color: "var(--color-text-primary)" }}>
             Zero custodial risk. Complete developer control.
           </span>
         </p>

@@ -8,24 +8,24 @@ interface BadgeProps {
   className?: string;
 }
 
-const STYLES: Record<BadgeVariant, { color: string; bg: string }> = {
-  default: { color: "#6D758F", bg: "rgba(109,117,143,0.1)" },
-  primary: { color: "#149A9B", bg: "rgba(20,154,155,0.1)" },
-  success: { color: "#16a34a", bg: "rgba(22,163,74,0.1)" },
-  warning: { color: "#d97706", bg: "rgba(217,119,6,0.1)" },
-  danger: { color: "#dc2626", bg: "rgba(220,38,38,0.1)" },
+const STYLES: Record<BadgeVariant, string> = {
+  default: "bg-content-muted/10 text-content-secondary",
+  primary: "bg-theme-primary/10 text-theme-primary",
+  success: "bg-theme-success/10 text-theme-success",
+  warning: "bg-theme-warning/10 text-theme-warning",
+  danger: "bg-theme-error/10 text-theme-error",
 };
 
 export function Badge({ variant = "default", children, className }: BadgeProps) {
-  const style = STYLES[variant];
+  const variantClass = STYLES[variant];
 
   return (
     <span
       className={cn(
-        "inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold shadow-raised-sm",
+        "inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold shadow-neu-raised-sm",
+        variantClass,
         className
       )}
-      style={{ color: style.color, background: style.bg }}
     >
       {children}
     </span>

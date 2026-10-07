@@ -4,18 +4,16 @@ export default function CTASection() {
       <div className="max-w-3xl mx-auto px-6 text-center flex flex-col items-center gap-10">
         <div className="flex flex-col gap-4 animate-fadeInUp">
           <p
-            className="text-xs font-medium uppercase tracking-[0.4em]"
-            style={{ color: "#149A9B" }}
+            className="text-[11px] font-black uppercase tracking-[0.4em] text-theme-primary"
           >
             Get started today
           </p>
           <h2
-            className="text-4xl md:text-5xl font-black tracking-tight leading-tight"
-            style={{ color: "#19213D" }}
+            className="text-4xl md:text-5xl font-black tracking-tight leading-tight text-content-primary"
           >
             The payments layer your marketplace deserves
           </h2>
-          <p className="text-lg font-light leading-relaxed" style={{ color: "#6D758F" }}>
+          <p className="text-lg font-medium leading-relaxed text-content-secondary">
             Self-hosted, non-custodial, open source. Own your infrastructure from day one.
           </p>
         </div>
@@ -29,7 +27,7 @@ export default function CTASection() {
           </a>
           <a
             href="/register"
-            className="px-8 py-3.5 rounded-xl text-sm font-semibold btn-neumorphic-secondary text-[#149A9B]"
+            className="px-8 py-3.5 rounded-xl text-sm font-semibold btn-neumorphic-secondary text-theme-primary"
           >
             Start Free Trial
           </a>

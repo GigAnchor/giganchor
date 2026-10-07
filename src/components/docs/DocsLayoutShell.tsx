@@ -12,6 +12,7 @@ import type { Heading, SidebarSection } from "@/lib/mdx";
 import { DocsSidebar } from "@/components/docs/DocsSidebar";
 import { TableOfContents } from "@/components/docs/TableOfContents";
 import { Navbar } from "@/components/layout/Navbar";
+import { FileCode2, FileJson, FileText, Github } from "lucide-react";
 
 // Use production URL for AI assistant links
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://offer-hub.tech";
@@ -47,6 +48,8 @@ export function DocsLayoutShell({ nav, children }: DocsLayoutShellProps) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [headings, setHeadings] = useState<Heading[]>([]);
 
+  const isHub = pathname === "/docs" || pathname === "/docs/";
+
   const pathSegments = useMemo(() => {
     const [, docs, ...rest] = pathname.split("/");
     if (docs !== "docs") return [];
@@ -58,6 +61,7 @@ export function DocsLayoutShell({ nav, children }: DocsLayoutShellProps) {
   }, [pathname]);
 
   useEffect(() => {
+    if (isHub) return;
     // Collect headings immediately
     setHeadings(collectHeadingsFromPage());
 
@@ -70,10 +74,12 @@ export function DocsLayoutShell({ nav, children }: DocsLayoutShellProps) {
     });
     observer.observe(root, { childList: true, subtree: true });
     return () => observer.disconnect();
-  }, [pathname]);
+  }, [pathname, isHub]);
+
+  // No early return for isHub to allow sidebar on the hub page
 
   return (
-    <div className="min-h-screen bg-transparent">
+    <div className="min-h-screen bg-bg-base">
       <Navbar />
 
       <div className="pt-40 pb-10">
@@ -87,42 +93,51 @@ export function DocsLayoutShell({ nav, children }: DocsLayoutShellProps) {
               <button
                 type="button"
                 onClick={() => setIsDrawerOpen(true)}
-                className="lg:hidden inline-flex items-center justify-center p-2 rounded-lg text-[#6D758F] hover:bg-[#149A9B]/5 hover:text-[#149A9B] transition-all"
+                className="lg:hidden inline-flex items-center justify-center p-2 rounded-lg text-content-secondary hover:bg-[#149A9B]/5 hover:text-[#149A9B] transition-all"
                 aria-label="Open docs navigation"
               >
                 <Menu size={20} />
               </button>
 
               <div className="flex items-center gap-2 text-[14px] whitespace-nowrap overflow-x-auto no-scrollbar py-1">
-                <Link href="/docs" className="text-[#149A9B] hover:text-[#149A9B]/80 transition-colors font-medium flex items-center gap-1.5">
-                  <Home size={15} />
-                  Docs
-                </Link>
-                {pathSegments.map((segment, index) => {
-                  const href = `/docs/${pathSegments.slice(0, index + 1).join("/")}`;
-                  const isLast = index === pathSegments.length - 1;
-                  return (
-                    <span key={`${segment}-${index}`} className="flex items-center gap-2">
-                      <ChevronRight size={14} className="text-[#6D758F]/30" />
-                      {isLast ? (
-                        <span className="text-[#19213D]/90 font-medium">
-                          {formatSegment(segment)}
+                {!isHub ? (
+                  <>
+                    <Link href="/docs" className="text-[#149A9B] hover:text-[#149A9B]/80 transition-colors font-medium flex items-center gap-1.5">
+                      <Home size={15} />
+                      Docs
+                    </Link>
+                    {pathSegments.map((segment, index) => {
+                      const href = `/docs/${pathSegments.slice(0, index + 1).join("/")}`;
+                      const isLast = index === pathSegments.length - 1;
+                      return (
+                        <span key={`${segment}-${index}`} className="flex items-center gap-2">
+                          <ChevronRight size={14} className="text-content-secondary/30" />
+                          {isLast ? (
+                            <span className="text-content-primary font-medium">
+                              {formatSegment(segment)}
+                            </span>
+                          ) : (
+                            <Link href={href} className="text-content-secondary hover:text-content-primary transition-colors font-medium">
+                              {formatSegment(segment)}
+                            </Link>
+                          )}
                         </span>
-                      ) : (
-                        <Link href={href} className="text-[#19213D]/50 hover:text-[#19213D] transition-colors font-medium">
-                          {formatSegment(segment)}
-                        </Link>
-                      )}
-                    </span>
-                  );
-                })}
+                      );
+                    })}
+                  </>
+                ) : (
+                  <span className="text-content-primary font-bold tracking-tight opacity-40 italic">Documentation Index</span>
+                )}
               </div>
             </nav>
 
-            {/* "Copy" Component - Compact, Neumorphic, Aligned */}
-            <div className="flex items-center justify-start md:justify-end">
-              <DocActionsMenu slug={pathname.replace("/docs/", "")} />
-            </div>
+
+            {/* Actions toolbar */}
+            {!isHub && (
+              <div className="flex items-center justify-start md:justify-end">
+                <DocActionsMenu slug={pathname.replace("/docs/", "")} />
+              </div>
+            )}
           </div>
         </div>
 
@@ -169,17 +184,17 @@ export function DocsLayoutShell({ nav, children }: DocsLayoutShellProps) {
             onClick={() => setIsDrawerOpen(false)}
           />
           <aside
-            className="relative h-full w-80 max-w-[85vw] p-8 bg-[#F1F3F7]"
+            className="relative h-full w-80 max-w-[85vw] p-8 bg-bg-base shadow-neu-raised"
             style={{ borderTopRightRadius: "30px", borderBottomRightRadius: "30px" }}
           >
-            <div className="mb-8 flex items-center justify-between pb-4 border-b border-[#D1D5DB]/30">
+            <div className="mb-8 flex items-center justify-between pb-4 border-b border-theme-border/40">
               <p className="text-sm font-bold uppercase tracking-widest text-[#149A9B]">
                 Navigation
               </p>
               <button
                 type="button"
                 onClick={() => setIsDrawerOpen(false)}
-                className="inline-flex items-center justify-center p-2 rounded-lg text-[#6D758F] hover:bg-[#149A9B]/5 hover:text-[#19213D] transition-all"
+                className="inline-flex items-center justify-center p-2 rounded-lg text-content-secondary hover:bg-bg-elevated hover:text-content-primary transition-all"
                 aria-label="Close docs navigation"
               >
                 <X size={20} />
@@ -194,6 +209,8 @@ export function DocsLayoutShell({ nav, children }: DocsLayoutShellProps) {
     </div>
   );
 }
+
+import { ExportJSON } from "@/components/docs/ExportJSON";
 
 function DocActionsMenu({ slug }: { slug: string }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -387,7 +404,7 @@ function DocActionsMenu({ slug }: { slug: string }) {
       label: "Copy MCP URL",
       sublabel: "For Cursor, VSCode, or Windsurf",
       icon: (
-        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" className="w-4 h-4 text-[#19213D]">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" className="w-4 h-4 text-content-primary">
           <rect x="4" y="4" width="16" height="16" rx="2" ry="2" />
           <rect x="9" y="9" width="6" height="6" />
           <path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 15h3M1 9h3M1 15h3" />
@@ -409,65 +426,79 @@ function DocActionsMenu({ slug }: { slug: string }) {
     },
   ];
 
+  /* ─── Inline helpers ─── */
+  async function handleExportMarkdown() {
+    const el = document.getElementById("doc-metadata-for-actions");
+    const markdown = el?.getAttribute("data-markdown") || "";
+    const filename = `${slug.replace(/\//g, "-")}.md`;
+    const blob = new Blob([markdown], { type: "text/markdown;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = Object.assign(document.createElement("a"), { href: url, download: filename });
+    document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+  }
+
+  const DOCS_REPO_BASE = "https://github.com/OFFER-HUB/offer-hub-monorepo/blob/main/content/docs";
+
+  const NEU_ICON_BTN = "neu-circle w-10 h-10 flex items-center justify-center text-content-secondary hover:text-[#149A9B] transition-colors";
+  const NEU_PILL = "flex items-center gap-2 px-5 py-2 rounded-full text-[13px] font-medium tracking-tight transition-all duration-300 ease-out text-content-secondary hover:text-[#149A9B]" +
+    " shadow-[4px_4px_8px_var(--shadow-dark),-4px_-4px_8px_var(--shadow-light)] bg-[var(--color-bg-base)]" +
+    " hover:shadow-[inset_2px_2px_5px_var(--shadow-dark),inset_-2px_-2px_5px_var(--shadow-light)]";
+
   return (
-    <div className="relative">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className={cn(
-          "flex items-center gap-2 px-6 py-2 transition-all duration-300 ease-out rounded-full text-[13px] font-medium tracking-tight",
-          "shadow-[4px_4px_8px_#d1d5db,-4px_-4px_8px_#ffffff] bg-[#F1F3F7] text-[#6D758F] hover:text-[#149A9B] hover:shadow-[inset_2px_2px_5px_#d1d5db,inset_-2px_-2px_5px_#ffffff]"
-        )}
-      >
-        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4">
-          <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
-          <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
-        </svg>
-        {isExportingPdf ? "Exporting..." : "Copy"}
+    <div className="flex items-center gap-3">
+      {/* ── Export as ── */}
+      <span className="text-[11px] font-bold uppercase tracking-widest text-content-secondary/60 mr-1">Export as</span>
+
+      <button type="button" title="Download Markdown" onClick={handleExportMarkdown} className={NEU_ICON_BTN}>
+        <FileCode2 size={17} />
       </button>
 
-      {isOpen && (
-        <>
-          <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
-          <div className="absolute right-0 mt-3 w-80 bg-white rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.12)] p-2 z-50 border border-[#D1D5DB]/30 animate-fadeInScale origin-top-right overflow-hidden">
-            <div className="px-4 py-2 mb-2 text-[10px] font-bold uppercase tracking-widest text-[#6D758F]/40 border-b border-[#D1D5DB]/10">
-              Page Actions
-            </div>
-            {actions.map((action, i) => {
-              if (action.type === "divider") {
-                return <div key={i} className="my-1.5 border-t border-[#D1D5DB]/10 mx-3" />;
-              }
-              return (
-                <button
-                  key={i}
-                  disabled={isExportingPdf}
-                  onClick={() => {
-                    action.onClick?.();
-                    setIsOpen(false);
-                  }}
-                  className="w-full flex items-start gap-4 p-3 rounded-xl hover:bg-[#149A9B]/5 text-left group transition-all disabled:opacity-50"
-                >
-                  <div className="mt-0.5 shrink-0 text-[#6D758F]/60 group-hover:text-[#149A9B] transition-colors">
-                    {action.icon}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-[#19213D] text-[13.5px] font-semibold group-hover:text-[#149A9B] transition-colors">{action.label}</span>
-                      {action.external && (
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5 text-[#D1D5DB] group-hover:text-[#149A9B]/40">
-                          <path d="M7 7h10v10M7 17L17 7" />
-                        </svg>
-                      )}
-                    </div>
-                    {action.sublabel && (
-                      <p className="text-[#6D758F]/70 text-[11px] leading-tight mt-1 font-medium group-hover:text-[#6D758F]">{action.sublabel}</p>
-                    )}
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </>
-      )}
+      <ExportJSON slug={slug} title={slug} />
+
+      <button
+        type="button" title="Export PDF"
+        disabled={isExportingPdf}
+        onClick={handleExportPdf}
+        className={NEU_ICON_BTN + " disabled:opacity-50"}
+      >
+        <FileText size={17} />
+      </button>
+
+      {/* ── Divider ── */}
+      <span className="w-px h-5 bg-[var(--color-border)]/40" />
+
+      {/* ── GitHub ── */}
+      <a
+        href={`${DOCS_REPO_BASE}/${slug}.mdx`}
+        target="_blank" rel="noopener noreferrer"
+        title="Edit on GitHub"
+        className={NEU_ICON_BTN}
+      >
+        <Github size={17} />
+      </a>
+
+      {/* ── Divider ── */}
+      <span className="w-px h-5 bg-[var(--color-border)]/40" />
+
+      {/* ── Copy pill ── */}
+      <button
+        type="button"
+        title={copyStatus ? "Copied!" : "Copy page as Markdown"}
+        onClick={handleCopyMarkdown}
+        className={NEU_PILL}
+      >
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4">
+          {copyStatus ? (
+            <path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" />
+          ) : (
+            <>
+              <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+              <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+            </>
+          )}
+        </svg>
+        {copyStatus ? "Copied!" : "Copy"}
+      </button>
     </div>
   );
 }

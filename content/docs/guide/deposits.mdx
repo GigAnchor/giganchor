@@ -72,19 +72,15 @@ OFFER-HUB monitors the blockchain for incoming transactions. When USDC arrives:
 
 ### Deposit Flow Diagram
 
-```
-User's External Wallet          OFFER-HUB
-        │                           │
-        │ 1. Send USDC              │
-        │ ─────────────────────────>│
-        │                           │
-        │   2. Detect on blockchain │
-        │                           │
-        │   3. Update balance       │
-        │                           │
-        │   4. Emit event           │
-        │ <─────────────────────────│
-        │                           │
+```mermaid
+sequenceDiagram
+    participant User as User's External Wallet
+    participant OH as OFFER-HUB
+
+    User->>OH: 1. Send USDC
+    Note over OH: 2. Detect on blockchain
+    Note over OH: 3. Update balance
+    OH->>User: 4. Emit event
 ```
 
 ## AirTM Deposits
