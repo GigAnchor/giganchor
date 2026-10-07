@@ -19,33 +19,35 @@ interface ContributorsSectionProps {
 // Memoized contributor card to prevent unnecessary re-renders
 const ContributorCard = memo(function ContributorCard({ person }: { person: ContributorData }) {
   return (
-    <article className="group relative rounded-2xl bg-bg-elevated p-5 shadow-neu-raised transition-shadow duration-300 hover:shadow-neu-raised-hover">
-      <div className="flex flex-col items-center text-center gap-3">
+    <article className="group relative rounded-3xl bg-bg-base p-6 shadow-neu-raised transition-all duration-300 hover:shadow-neu-raised-hover hover:-translate-y-1">
+      <div className="flex flex-col items-center text-center gap-4">
         {person.avatar ? (
-          <img
-            src={person.avatar}
-            alt={person.name}
-            loading="lazy"
-            decoding="async"
-            className="w-16 h-16 rounded-full object-cover shadow-neu-sunken-subtle"
-          />
+          <div className="p-1 rounded-full bg-bg-base shadow-neu-sunken-subtle group-hover:shadow-neu-sunken transition-shadow">
+            <img
+              src={person.avatar}
+              alt={person.name}
+              loading="lazy"
+              decoding="async"
+              className="w-16 h-16 rounded-full object-cover"
+            />
+          </div>
         ) : (
-          <div className="w-14 h-14 rounded-full bg-bg-elevated flex items-center justify-center shadow-neu-sunken-subtle">
-            <Users size={20} className="text-content-secondary" />
+          <div className="w-16 h-16 rounded-full bg-bg-base flex items-center justify-center shadow-neu-sunken-subtle">
+            <Users size={24} className="text-content-secondary" />
           </div>
         )}
 
         <div className="min-w-0">
-          <h3 className="text-base font-bold text-content-primary truncate tracking-tight">
+          <h3 className="text-base font-black text-content-primary truncate tracking-tight">
             {person.name || person.username}
           </h3>
-          <p className="text-xs font-medium text-theme-primary">
+          <p className="text-[11px] font-black uppercase tracking-widest text-theme-primary mt-1">
             @{person.username}
           </p>
         </div>
 
-        <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-content-secondary">
-          <GitCommit size={12} />
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-bg-base shadow-neu-sunken-subtle text-[10px] font-bold uppercase tracking-wider text-content-secondary">
+          <GitCommit size={14} className="text-theme-primary/60" />
           <span>{person.commits} commits</span>
         </div>
 
@@ -54,9 +56,9 @@ const ContributorCard = memo(function ContributorCard({ person }: { person: Cont
             href={person.profileUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-1 text-[10px] font-bold text-theme-primary hover:underline"
+            className="mt-1 p-2 rounded-lg bg-bg-base shadow-neu-raised-sm text-[10px] font-black uppercase tracking-widest text-theme-primary hover:shadow-neu-sunken-subtle active:shadow-neu-sunken transition-all"
           >
-            View Profile
+            Profile
           </a>
         )}
       </div>
@@ -91,16 +93,16 @@ const ContributorsSection = ({ contributors }: ContributorsSectionProps) => {
         </div>
 
         {hasMore && (
-          <div className="mt-12 text-center">
+          <div className="mt-16 text-center">
             <button
               onClick={handleLoadMore}
-              className="inline-flex items-center gap-2.5 px-7 py-3 rounded-xl text-sm font-semibold text-white transition-all duration-300 shadow-neu-raised hover:shadow-neu-raised-hover active:shadow-neu-sunken-subtle bg-theme-primary"
+              className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest text-white transition-all duration-300 btn-neumorphic-primary group"
             >
-              Show more ({totalContributors - displayCount} remaining)
-              <ChevronDown size={16} />
+              Show more creators
+              <ChevronDown size={14} className="group-hover:translate-y-1 transition-transform" />
             </button>
-            <p className="mt-3 text-xs text-content-secondary">
-              Showing {displayCount} of {totalContributors} contributors
+            <p className="mt-6 text-[10px] font-bold uppercase tracking-widest text-content-muted">
+              Displaying {displayCount} of {totalContributors} contributors
             </p>
           </div>
         )}

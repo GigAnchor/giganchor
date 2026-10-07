@@ -22,14 +22,14 @@ const IssueCard = memo(function IssueCard({ issue }: { issue: IssueData }) {
   const isGoodFirstIssue = issue.labels.some(l => l.toLowerCase().includes('good') || l.toLowerCase().includes('help'));
 
   return (
-    <article className="group relative flex flex-col justify-between rounded-2xl bg-bg-base p-6 shadow-neu-raised transition-shadow duration-300 hover:shadow-neu-raised-hover">
+    <article className="group relative flex flex-col justify-between rounded-3xl bg-bg-base p-6 shadow-neu-raised transition-all duration-300 hover:shadow-neu-raised-hover">
       <div>
         <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2 px-2.5 py-1 rounded-lg bg-bg-base text-[10px] font-semibold text-content-secondary tracking-wider shadow-neu-sunken-subtle uppercase">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-bg-base text-[10px] font-bold text-content-secondary tracking-wider shadow-neu-sunken-subtle uppercase">
             #{issue.number}
           </div>
           {isGoodFirstIssue && (
-            <span className="text-[9px] font-bold text-theme-primary uppercase tracking-widest bg-green-500/10 dark:bg-green-500/20 px-1.5 py-0.5 rounded shadow-sm">
+            <span className="text-[10px] font-black text-theme-primary uppercase tracking-widest bg-theme-primary/10 px-2 py-1 rounded-lg shadow-sm">
               Starter
             </span>
           )}
@@ -39,19 +39,19 @@ const IssueCard = memo(function IssueCard({ issue }: { issue: IssueData }) {
           href={issue.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="block text-[15px] font-semibold text-content-primary hover:text-theme-primary transition-colors leading-snug line-clamp-2 mb-4 tracking-tight"
+          className="block text-base font-black text-content-primary hover:text-theme-primary transition-colors leading-tight line-clamp-2 mb-4 tracking-tight"
         >
           {issue.title}
         </a>
 
         {issue.labels.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 mb-6">
+          <div className="flex flex-wrap gap-2 mb-6">
             {issue.labels.slice(0, 2).map((label) => (
               <span
                 key={label}
-                className="flex items-center gap-1 text-[10px] font-medium text-content-secondary px-2 py-1 bg-bg-base rounded-lg shadow-neu-raised-sm"
+                className="flex items-center gap-1.5 text-[10px] font-bold text-content-secondary px-3 py-1.5 bg-bg-base rounded-xl shadow-neu-raised-sm"
               >
-                <Tag size={9} className="text-theme-primary" />
+                <Tag size={10} className="text-theme-primary" />
                 {label}
               </span>
             ))}
@@ -59,26 +59,28 @@ const IssueCard = memo(function IssueCard({ issue }: { issue: IssueData }) {
         )}
       </div>
 
-      <div className="flex items-center justify-between pt-4 border-t border-theme-border/20">
+      <div className="flex items-center justify-between pt-6 mt-2">
         <div className="flex flex-col">
-          <span className="text-[9px] font-bold uppercase tracking-widest text-content-muted mb-0.5">Priority</span>
-          <span className={cn(
-            "text-[10px] font-bold uppercase tracking-widest",
-            issue.priority === 'High' ? 'text-red-500' :
-              issue.priority === 'Low' ? 'text-emerald-500' :
-                'text-theme-primary'
-          )}>
-            {issue.priority}
-          </span>
+          <span className="text-[9px] font-black uppercase tracking-widest text-content-muted mb-1">Priority</span>
+          <div className="px-3 py-1 rounded-lg bg-bg-base shadow-neu-sunken-subtle">
+            <span className={cn(
+              "text-[10px] font-black uppercase tracking-widest",
+              issue.priority === 'High' ? 'text-red-500' :
+                issue.priority === 'Low' ? 'text-emerald-500' :
+                  'text-theme-primary'
+            )}>
+              {issue.priority}
+            </span>
+          </div>
         </div>
 
         <a
           href={issue.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="p-2 rounded-xl text-white transition-all btn-neumorphic-primary flex items-center justify-center"
+          className="w-10 h-10 rounded-xl text-white transition-all btn-neumorphic-primary flex items-center justify-center shadow-neu-raised-sm hover:scale-105"
         >
-          <ArrowUpRight size={16} />
+          <ArrowUpRight size={18} />
         </a>
       </div>
     </article>

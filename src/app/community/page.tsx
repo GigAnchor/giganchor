@@ -1,7 +1,7 @@
 import HeroRepoStatsSection from "@/components/community/HeroRepoStatsSection";
 import ContributorsSection from "@/components/community/ContributorsSection";
 import HowToContribute from "@/components/community/HowToContribute";
-import RecentPRsSection from "@/components/community/RecentPRsSection";
+import RecentPRsSection, { PullRequestData } from "@/components/community/RecentPRsSection";
 import OpenIssuesSection from "@/components/community/OpenIssuesSection";
 import RepoLinksSection from "@/components/community/RepoLinksSection";
 import CommunityChannelsSection from "@/components/community/CommunityChannelsSection";
@@ -32,15 +32,6 @@ interface ContributorData {
   profileUrl: string;
 }
 
-interface PullRequestData {
-  number: number;
-  title: string;
-  author: string;
-  mergedAt: string;
-  url: string;
-  status: string;
-}
-
 interface IssueData {
   number: number;
   title: string;
@@ -59,6 +50,8 @@ interface GitHubPullRequest {
   number: number;
   title: string;
   html_url: string;
+  state: string;
+  created_at: string;
   merged_at: string | null;
   user: {
     login: string;
@@ -138,10 +131,17 @@ function processGitHubData(validData: NonNullable<Awaited<ReturnType<typeof fetc
   };
 
   const allPRs = validData.flatMap(d => d.pullRequests)
-    .filter(pr => pr.merged_at !== null)
-    .map(pr => ({ number: pr.number, title: pr.title, author: pr.user?.login || "Unknown", mergedAt: pr.merged_at!, url: pr.html_url, status: "Merged" }))
-    .sort((a, b) => new Date(b.mergedAt).getTime() - new Date(a.mergedAt).getTime());
-  const pullRequests: PullRequestData[] = allPRs.slice(0, 30).map(pr => ({ ...pr, mergedAt: formatTimeAgo(pr.mergedAt) }));
+    .map(pr => ({
+      number: pr.number,
+      title: pr.title,
+      author: pr.user?.login || "Unknown",
+      timestamp: pr.state === 'open' ? pr.created_at : pr.merged_at || pr.created_at,
+      url: pr.html_url,
+      status: (pr.state === 'open' ? 'Open' : 'Merged') as 'Open' | 'Merged' | 'Closed'
+    }))
+    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+
+  const pullRequests: PullRequestData[] = allPRs.slice(0, 30).map(pr => ({ ...pr, timestamp: formatTimeAgo(pr.timestamp) }));
 
   const allIssues = validData.flatMap(d => d.issues)
     .filter(issue => !issue.pull_request)
@@ -166,7 +166,7 @@ async function fetchRepoData(repo: string) {
   const [repoRes, contribRes, prRes, issueRes] = await Promise.all([
     fetch(`https://api.github.com/repos/${repo}`, cacheOpts),
     fetch(`https://api.github.com/repos/${repo}/contributors?per_page=100`, cacheOpts),
-    fetch(`https://api.github.com/repos/${repo}/pulls?state=closed&sort=updated&direction=desc&per_page=10`, cacheOpts),
+    fetch(`https://api.github.com/repos/${repo}/pulls?state=all&sort=updated&direction=desc&per_page=20`, cacheOpts),
     fetch(`https://api.github.com/repos/${repo}/issues?state=open&sort=created&direction=desc&per_page=20`, cacheOpts),
   ]);
 
@@ -214,10 +214,10 @@ async function fetchGitHubData() {
         { name: "Tomi A.", username: "tomi-a", avatar: "", commits: 70, profileUrl: "" },
       ],
       pullRequests: [
-        { number: 1042, title: "feat: add account-level escrow analytics", author: "contributor1", mergedAt: "2 days ago", url: "", status: "Merged" },
-        { number: 1039, title: "refactor: simplify wallet sync flow", author: "contributor2", mergedAt: "3 days ago", url: "", status: "Merged" },
-        { number: 1036, title: "fix: resolve pagination edge case in jobs feed", author: "contributor3", mergedAt: "5 days ago", url: "", status: "Merged" },
-        { number: 1033, title: "docs: add validator onboarding guide", author: "contributor4", mergedAt: "1 week ago", url: "", status: "Merged" },
+        { number: 1042, title: "feat: add account-level escrow analytics", author: "contributor1", timestamp: "2 days ago", url: "", status: "Merged" },
+        { number: 1039, title: "refactor: simplify wallet sync flow", author: "contributor2", timestamp: "3 days ago", url: "", status: "Merged" },
+        { number: 1036, title: "fix: resolve pagination edge case in jobs feed", author: "contributor3", timestamp: "5 days ago", url: "", status: "Merged" },
+        { number: 1033, title: "docs: add validator onboarding guide", author: "contributor4", timestamp: "1 week ago", url: "", status: "Merged" },
       ],
       issues: [
         { number: 1055, title: "Improve CI cache invalidation strategy", priority: "Medium", url: "", labels: [] },
@@ -225,7 +225,7 @@ async function fetchGitHubData() {
         { number: 1048, title: "Expose webhook replay in dashboard", priority: "Low", url: "", labels: [] },
         { number: 1046, title: "Polish mobile nav focus styles", priority: "Low", url: "", labels: [] },
       ],
-    };
+    } as { stats: RepoStats; contributors: ContributorData[]; pullRequests: PullRequestData[]; issues: IssueData[] };
   }
 }
 
