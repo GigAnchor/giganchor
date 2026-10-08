@@ -203,13 +203,14 @@ export function InteractiveDotGrid({
     return (
         <canvas
             ref={canvasRef}
+            aria-hidden="true"
             className="pointer-events-none"
             style={{
                 position: "fixed",
                 inset: 0,
-                width: "100vw",
-                height: "100vh",
-                zIndex: 0,
+                width: "100%",
+                height: "100%",
+                zIndex: -10,
                 display: "block",
             }}
         />

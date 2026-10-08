@@ -1,73 +1,37 @@
-import HeroRepoStatsSection from "@/components/community/HeroRepoStatsSection";
-import ContributorsSection from "@/components/community/ContributorsSection";
-import HowToContribute from "@/components/community/HowToContribute";
-import RecentPRsSection, { PullRequestData } from "@/components/community/RecentPRsSection";
-import OpenIssuesSection from "@/components/community/OpenIssuesSection";
-import RepoLinksSection from "@/components/community/RepoLinksSection";
-import CommunityChannelsSection from "@/components/community/CommunityChannelsSection";
-import RegistrationForm from "@/components/community/RegistrationForm";
-import LoadingBar from "@/components/ui/LoadingBar";
+import type { Metadata } from "next";
+import { HeroRepoStatsSection } from "@/components/community/HeroRepoStatsSection";
+import { ContributorsSection } from "@/components/community/ContributorsSection";
+import { HowToContribute } from "@/components/community/HowToContribute";
+import { RecentPRsSection } from "@/components/community/RecentPRsSection";
+import { OpenIssuesSection } from "@/components/community/OpenIssuesSection";
+import { RepoLinksSection } from "@/components/community/RepoLinksSection";
+import { CommunityChannelsSection } from "@/components/community/CommunityChannelsSection";
+import { RegistrationForm } from "@/components/community/RegistrationForm";
+import { LoadingBar } from "@/components/ui/LoadingBar";
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
+import { buildPageMetadata } from "@/lib/seo";
+import type { PullRequestData } from "@/types/community";
+import type { RepoStats, ContributorData, IssueData, CommunityData } from "@/types/community";
+import type { Contributor, GitHubRepo, GitHubPullRequest, GitHubIssue } from "@/types/github";
 
-interface RepoStats {
-  stars: string;
-  forks: string;
-  contributors: string;
-  openIssues: string;
-}
+export const revalidate = 600;
 
-interface Contributor {
-  login: string;
-  avatar_url: string;
-  contributions: number;
-  html_url: string;
-}
-
-interface ContributorData {
-  name: string;
-  username: string;
-  avatar: string;
-  commits: number;
-  profileUrl: string;
-}
-
-interface IssueData {
-  number: number;
-  title: string;
-  priority: string;
-  url: string;
-  labels: string[];
-}
-
-interface GitHubRepo {
-  stargazers_count: number;
-  forks_count: number;
-  open_issues_count: number;
-}
-
-interface GitHubPullRequest {
-  number: number;
-  title: string;
-  html_url: string;
-  state: string;
-  created_at: string;
-  merged_at: string | null;
-  user: {
-    login: string;
-  } | null;
-}
-
-interface GitHubIssue {
-  number: number;
-  title: string;
-  html_url: string;
-  pull_request?: object;
-  created_at?: string;
-  labels: Array<{
-    name: string;
-  }>;
-}
+export const metadata: Metadata = buildPageMetadata({
+  title: "Community",
+  description:
+    "Join the OFFER-HUB open-source community. Explore contributors, open issues, recent pull requests, and learn how to get involved.",
+  keywords: [
+    "community",
+    "open source",
+    "contributors",
+    "GitHub",
+    "OFFER-HUB",
+    "contribute",
+  ],
+  path: "/community",
+  ogImageAlt: "OFFER-HUB Community — contributors, issues, and pull requests",
+});
 
 const formatNumber = (num: number): string => {
   if (num >= 1000) {
@@ -94,17 +58,10 @@ function formatTimeAgo(dateString: string): string {
 const REPOS = [
   'OFFER-HUB/offer-hub-monorepo',
   'OFFER-HUB/OFFER-HUB',
-  'OFFER-HUB/OFFER-HUB-Frontend'
+  'OFFER-HUB/OFFER-HUB-Frontend',
 ];
 
-// In-memory cache for GitHub data (survives hot reloads in dev)
-let githubCache: { data: ReturnType<typeof processGitHubData> | null; timestamp: number } = {
-  data: null,
-  timestamp: 0,
-};
-const CACHE_TTL = 10 * 60 * 1000; // 10 minutes
-
-function processGitHubData(validData: NonNullable<Awaited<ReturnType<typeof fetchRepoData>>>[]) {
+function processGitHubData(validData: NonNullable<Awaited<ReturnType<typeof fetchRepoData>>>[]): CommunityData {
   const totalStars = validData.reduce((acc, d) => acc + d.repo.stargazers_count, 0);
   const totalForks = validData.reduce((acc, d) => acc + d.repo.forks_count, 0);
   const totalOpenIssues = validData.reduce((acc, d) => acc + d.repo.open_issues_count, 0);
@@ -156,13 +113,19 @@ function processGitHubData(validData: NonNullable<Awaited<ReturnType<typeof fetc
       return { number: issue.number, title: issue.title, priority, url: issue.html_url, labels: issue.labels.map(l => l.name), createdAt: issue.created_at || "" };
     })
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-  const issues: IssueData[] = allIssues.slice(0, 50).map(({ createdAt: _createdAt, ...rest }) => rest);
+  const issues: IssueData[] = allIssues.slice(0, 50).map(({ number, title, priority, url, labels }) => ({
+    number,
+    title,
+    priority,
+    url,
+    labels,
+  }));
 
   return { stats, contributors, pullRequests, issues };
 }
 
 async function fetchRepoData(repo: string) {
-  const cacheOpts = { next: { revalidate: 7200 } };
+  const cacheOpts = { next: { revalidate: 600 } };
   const [repoRes, contribRes, prRes, issueRes] = await Promise.all([
     fetch(`https://api.github.com/repos/${repo}`, cacheOpts),
     fetch(`https://api.github.com/repos/${repo}/contributors?per_page=100`, cacheOpts),
@@ -181,11 +144,6 @@ async function fetchRepoData(repo: string) {
 }
 
 async function fetchGitHubData() {
-  // Return cached data if still fresh
-  if (githubCache.data && Date.now() - githubCache.timestamp < CACHE_TTL) {
-    return githubCache.data;
-  }
-
   try {
     const allPills = await Promise.all(REPOS.map(fetchRepoData));
 
@@ -193,39 +151,15 @@ async function fetchGitHubData() {
 
     if (validData.length === 0) throw new Error('Failed to fetch any repo data');
 
-    const result = processGitHubData(validData);
-    githubCache = { data: result, timestamp: Date.now() };
-    return result;
+    return processGitHubData(validData);
   } catch (error) {
     console.error('Error fetching GitHub data:', error);
     return {
-      stats: {
-        stars: "8.2k",
-        forks: "1.4k",
-        contributors: "168",
-        openIssues: "128",
-      },
-      contributors: [
-        { name: "Ada M.", username: "ada-m", avatar: "", commits: 248, profileUrl: "" },
-        { name: "Dami O.", username: "dami-o", avatar: "", commits: 133, profileUrl: "" },
-        { name: "Hassan K.", username: "hassan-k", avatar: "", commits: 92, profileUrl: "" },
-        { name: "Lina S.", username: "lina-s", avatar: "", commits: 87, profileUrl: "" },
-        { name: "Marta P.", username: "marta-p", avatar: "", commits: 76, profileUrl: "" },
-        { name: "Tomi A.", username: "tomi-a", avatar: "", commits: 70, profileUrl: "" },
-      ],
-      pullRequests: [
-        { number: 1042, title: "feat: add account-level escrow analytics", author: "contributor1", timestamp: "2 days ago", url: "", status: "Merged" },
-        { number: 1039, title: "refactor: simplify wallet sync flow", author: "contributor2", timestamp: "3 days ago", url: "", status: "Merged" },
-        { number: 1036, title: "fix: resolve pagination edge case in jobs feed", author: "contributor3", timestamp: "5 days ago", url: "", status: "Merged" },
-        { number: 1033, title: "docs: add validator onboarding guide", author: "contributor4", timestamp: "1 week ago", url: "", status: "Merged" },
-      ],
-      issues: [
-        { number: 1055, title: "Improve CI cache invalidation strategy", priority: "Medium", url: "", labels: [] },
-        { number: 1051, title: "Add e2e tests for payout cancellation", priority: "High", url: "", labels: [] },
-        { number: 1048, title: "Expose webhook replay in dashboard", priority: "Low", url: "", labels: [] },
-        { number: 1046, title: "Polish mobile nav focus styles", priority: "Low", url: "", labels: [] },
-      ],
-    } as { stats: RepoStats; contributors: ContributorData[]; pullRequests: PullRequestData[]; issues: IssueData[] };
+      stats: null,
+      contributors: [],
+      pullRequests: [],
+      issues: [],
+    } as CommunityData;
   }
 }
 
@@ -233,10 +167,10 @@ export default async function CommunityPage() {
   const { stats, contributors, pullRequests, issues } = await fetchGitHubData();
 
   return (
-    <>
+    <div className="w-full max-w-full overflow-x-hidden min-w-0">
       <LoadingBar />
       <Navbar />
-      <main className="pt-28">
+      <main className="pt-28 w-full max-w-full overflow-x-hidden min-w-0">
         <HeroRepoStatsSection stats={stats} />
         <RepoLinksSection />
         <ContributorsSection contributors={contributors} />
@@ -247,6 +181,6 @@ export default async function CommunityPage() {
         <RegistrationForm />
       </main>
       <Footer />
-    </>
+    </div>
   );
 }
