@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { SITE_URL_FALLBACK, SITE_NAME } from "@/constants/site";
+import { SITE_URL, SITE_NAME } from "@/constants/site";
 
-export const SITE_URL = SITE_URL_FALLBACK;
+export { SITE_URL };
 
 type PageSeoInput = {
   /** Feeds `metadata.title`, so the root layout's "%s | OFFER-HUB" template applies */

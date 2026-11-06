@@ -1,9 +1,9 @@
 import { MetadataRoute } from 'next';
 import docsIndex from '@/data/docs-index.json';
-import { SITE_URL_FALLBACK } from '@/constants/site';
+import { SITE_URL } from '@/constants/site';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = SITE_URL_FALLBACK;
+  const baseUrl = SITE_URL;
 
   const staticRoutes = [
     '',

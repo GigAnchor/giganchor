@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { buildPageMetadata, SITE_URL } from "../seo";
-import { SITE_URL_FALLBACK, SITE_NAME } from "@/constants/site";
+import { SITE_URL_FALLBACK, SITE_NAME, normalizeSiteUrl } from "@/constants/site";
 
 const INPUT = {
   title: "Privacy Policy",
@@ -11,7 +11,8 @@ const INPUT = {
 };
 
 describe("SITE_URL", () => {
-  it("re-exports the shared site constant", () => {
+  it("falls back to the default origin when NEXT_PUBLIC_SITE_URL is unset", () => {
+    expect(process.env.NEXT_PUBLIC_SITE_URL).toBeUndefined();
     expect(SITE_URL).toBe(SITE_URL_FALLBACK);
   });
 
@@ -19,6 +20,33 @@ describe("SITE_URL", () => {
     expect(SITE_URL).toMatch(/^https:\/\//);
     expect(SITE_URL.endsWith("/")).toBe(false);
   });
+});
+
+describe("normalizeSiteUrl", () => {
+  it("keeps a valid origin as-is", () => {
+    expect(normalizeSiteUrl("https://giganchor.example")).toBe(
+      "https://giganchor.example",
+    );
+  });
+
+  it("drops a trailing slash so path concatenation cannot double up", () => {
+    expect(normalizeSiteUrl("https://giganchor.example/")).toBe(
+      "https://giganchor.example",
+    );
+  });
+
+  it("trims surrounding whitespace", () => {
+    expect(normalizeSiteUrl("  https://giganchor.example  ")).toBe(
+      "https://giganchor.example",
+    );
+  });
+
+  it.each([undefined, null, "", "   ", "giganchor.example", "ftp://giganchor.example"])(
+    "rejects %j instead of emitting a broken origin",
+    (value) => {
+      expect(normalizeSiteUrl(value)).toBeNull();
+    },
+  );
 });
 
 describe("buildPageMetadata", () => {

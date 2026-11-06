@@ -8,7 +8,7 @@ import { NavigationProgress } from "@/components/ui/NavigationProgress";
 import { FloatingCTA } from "@/components/ui/FloatingCTA";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { CookieConsentBanner } from "@/components/CookieConsentBanner";
-import { SITE_URL_FALLBACK, SITE_NAME } from "@/constants/site";
+import { SITE_URL, SITE_NAME } from "@/constants/site";
 import { THEME_STORAGE_KEY } from "@/constants/storage";
 
 const themeInitScript = `(function () {
@@ -55,7 +55,7 @@ export const metadata: Metadata = {
   // Eliminates the "metadataBase property in metadata export is not set" build
   // warning and prevents search engines from indexing duplicate versions of the
   // site (e.g. www subdomain, Vercel preview URLs).
-  metadataBase: new URL(SITE_URL_FALLBACK),
+  metadataBase: new URL(SITE_URL),
 
   // ── Canonical URL ─────────────────────────────────────────────────────────
   // Next.js resolves '/' against metadataBase and injects
@@ -100,7 +100,7 @@ export const metadata: Metadata = {
     title: "OFFER-HUB | The Future of On-Chain Bounties",
     description:
       "OFFER-HUB empowers marketplaces to provide secure, non-custodial escrow payments without building complex payment infrastructure.",
-    url: SITE_URL_FALLBACK,
+    url: SITE_URL,
     siteName: SITE_NAME,
     images: [
       {

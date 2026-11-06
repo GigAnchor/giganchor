@@ -1,17 +1,20 @@
 import type { NextConfig } from "next";
 import { getSecurityHeaders } from "./config/security-headers";
 import { logger } from "./src/utils/logger";
-import { SITE_URL_FALLBACK } from "./src/constants/site";
+import { SITE_URL, normalizeSiteUrl } from "./src/constants/site";
 
-if (process.env.NODE_ENV === "production" && !process.env.NEXT_PUBLIC_SITE_URL) {
+if (
+  process.env.NODE_ENV === "production" &&
+  !normalizeSiteUrl(process.env.NEXT_PUBLIC_SITE_URL)
+) {
   logger.warn(
     "\x1b[33m%s\x1b[0m",
-    `⚠️ WARNING: NEXT_PUBLIC_SITE_URL is not set in the production environment. ` +
-    `CORS will fall back to '${SITE_URL_FALLBACK}' which may cause client-side issues if the site is hosted elsewhere.`
+    `⚠️ WARNING: NEXT_PUBLIC_SITE_URL is missing or invalid in the production environment. ` +
+    `Canonical URLs and CORS will fall back to '${SITE_URL}', which is wrong if the site is hosted elsewhere.`
   );
 }
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || SITE_URL_FALLBACK;
+const siteUrl = SITE_URL;
 
 const corsHeaders = [
   { key: "Access-Control-Allow-Credentials", value: "true" },

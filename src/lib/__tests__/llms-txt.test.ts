@@ -34,7 +34,7 @@ vi.mock("@/lib/mdx", () => ({
 }));
 
 vi.mock("@/constants/site", () => ({
-  SITE_URL_FALLBACK: "https://offer-hub.tech",
+  SITE_URL: "https://offer-hub.tech",
   SITE_NAME: "OFFER-HUB",
 }));
 
