@@ -1,5 +1,5 @@
 import { Server, Monitor } from "lucide-react";
-import { DOCS_REPO_BLOB_BASE } from "@/constants/github";
+import { repoDocUrl } from "@/constants/repo-docs";
 import type {
   CodeIntegrationShowcaseProps,
   CodeTab,
@@ -17,8 +17,7 @@ export const tabs: CodeTab[] = [
     icon: Server,
     description:
       "Service contract creation and budget funding on the server side.",
-    docHref:
-      `${DOCS_REPO_BLOB_BASE}/docs/api/overview.md`,
+    docHref: repoDocUrl("apiReferenceOverview"),
     docLabel: "API Reference",
     code: `import { OfferHub } from "@offerhub/sdk";
 
@@ -53,8 +52,7 @@ console.log("Contract funded:", escrow.status);
     icon: Monitor,
     description:
       "Milestone approval from the client side — releases the matching payment.",
-    docHref:
-      `${DOCS_REPO_BLOB_BASE}/docs/sdk/integration-guide.md`,
+    docHref: repoDocUrl("sdkQuickStart"),
     docLabel: "SDK Guide",
     code: `import { OfferHub } from "@offerhub/sdk";
 

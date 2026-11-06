@@ -4,7 +4,7 @@ import type {
   CodeTab,
   SdkCard,
 } from "@/components/use-cases/shared/CodeIntegrationShowcase";
-import { DOCS_REPO_BLOB_BASE } from "@/constants/github";
+import { repoDocUrl } from "@/constants/repo-docs";
 
 export const description: CodeIntegrationShowcaseProps["description"] =
   "handles DAO payroll creation, treasury funding, and atomic contributor distribution in three explicit calls — no manual payroll management required.";
@@ -17,8 +17,7 @@ export const tabs: CodeTab[] = [
     icon: Server,
     description:
       "Payroll epoch creation and treasury escrow funding on the server side.",
-    docHref:
-      `${DOCS_REPO_BLOB_BASE}/docs/api/overview.md`,
+    docHref: repoDocUrl("apiReferenceOverview"),
     docLabel: "API Reference",
     code: `import { OfferHub } from "@offerhub/sdk";
 
@@ -49,8 +48,7 @@ await oh.escrows.fund(payroll.id, {
     icon: Monitor,
     description:
       "Milestone verification and payroll distribution — triggers on-chain settlement.",
-    docHref:
-      `${DOCS_REPO_BLOB_BASE}/docs/sdk/integration-guide.md`,
+    docHref: repoDocUrl("sdkQuickStart"),
     docLabel: "SDK Guide",
     code: `import { OfferHub } from "@offerhub/sdk";
 
