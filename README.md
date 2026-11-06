@@ -73,6 +73,13 @@ npm ci
 npm run dev      # http://localhost:4000
 ```
 
+Two environment variables configure the API:
+
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `PORT` | `4000` | Port to listen on. Invalid values fail at startup. |
+| `CORS_ORIGINS` | unset | Comma-separated list of browser origins allowed to call the API, e.g. `https://giganchor.tech`. Unset allows any origin outside production and none in production. |
+
 The MCP server in `mcp/` is an npm workspace of the root package, so the root
 `npm ci` installs it too; see [`mcp/README.md`](./mcp/README.md) for its build
 and usage instructions.
