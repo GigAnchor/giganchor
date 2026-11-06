@@ -1,21 +1,11 @@
 import { Github, FolderGit2 } from "lucide-react";
-import { GITHUB_CORE_URL, GITHUB_UI_URL, GITHUB_REPO_URL } from "@/constants/github";
+import { GITHUB_REPO_SLUG, GITHUB_REPO_URL } from "@/constants/github";
 
 const repos = [
     {
-        name: "OFFER-HUB Core",
-        url: GITHUB_CORE_URL,
-        description: "The decentralized payment engine",
-    },
-    {
-        name: "OFFER-HUB UI",
-        url: GITHUB_UI_URL,
-        description: "The primary workspace portal",
-    },
-    {
-        name: "OFFER-HUB Mono",
+        name: GITHUB_REPO_SLUG,
         url: GITHUB_REPO_URL,
-        description: "Modern marketplace orchestrator",
+        description: "Payments orchestrator, documentation and MCP server",
     },
 ];
 
