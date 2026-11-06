@@ -1,6 +1,6 @@
 import type { RepoStats, ContributorData, IssueData, PullRequestData, CommunityData } from "@/types/community";
 import type { Contributor, GitHubRepo, GitHubPullRequest, GitHubIssue, GitHubRelease } from "@/types/github";
-import { GITHUB_RELEASES_API_URL } from "@/constants/github";
+import { GITHUB_RELEASES_API_URL, GITHUB_TRACKED_REPOS } from "@/constants/github";
 import { logger } from '@/utils/logger';
 
 export interface ChangelogEntry {
@@ -16,12 +16,6 @@ export interface ChangelogEntry {
 /* -------------------------------------------------------------------------- */
 /*                                  Community                                  */
 /* -------------------------------------------------------------------------- */
-
-const REPOS = [
-  'OFFER-HUB/offer-hub-monorepo',
-  'OFFER-HUB/OFFER-HUB',
-  'OFFER-HUB/OFFER-HUB-Frontend'
-];
 
 const formatNumber = (num: number): string => {
   if (num >= 1000) {
@@ -127,9 +121,11 @@ function processGitHubData(validData: NonNullable<Awaited<ReturnType<typeof fetc
   return { stats, contributors, pullRequests, issues };
 }
 
-export async function fetchCommunityData() {
+export async function fetchCommunityData(
+  repos: readonly string[] = GITHUB_TRACKED_REPOS,
+) {
   try {
-    const allPills = await Promise.all(REPOS.map(fetchRepoData));
+    const allPills = await Promise.all(repos.map(fetchRepoData));
 
     const validData = allPills.filter((d): d is NonNullable<typeof d> => d !== null);
 

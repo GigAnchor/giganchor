@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { GITHUB_RELEASES_API_URL } from "@/constants/github";
+import { GITHUB_RELEASES_API_URL, GITHUB_TRACKED_REPOS } from "@/constants/github";
 
 vi.mock("@/utils/logger", () => ({
   logger: {
@@ -18,11 +18,7 @@ import { logger } from "@/utils/logger";
 /*                                  Fixtures                                   */
 /* -------------------------------------------------------------------------- */
 
-const REPOS = [
-  "OFFER-HUB/offer-hub-monorepo",
-  "OFFER-HUB/OFFER-HUB",
-  "OFFER-HUB/OFFER-HUB-Frontend",
-];
+const REPOS = ["acme/core", "acme/app", "acme/app-frontend"];
 
 /** A day in ms — used to build deterministic "N days ago" timestamps. */
 const DAY = 24 * 60 * 60 * 1000;
@@ -88,8 +84,8 @@ const notOk = { ok: false, json: async () => ({}) };
  */
 function stubCommunityFetch(fixtures: Record<string, RepoFixture>) {
   const fetchMock = vi.fn(async (url: string) => {
-    // Match the owner/name pair exactly — "OFFER-HUB/OFFER-HUB" is a prefix of
-    // "OFFER-HUB/OFFER-HUB-Frontend", so a substring check mixes up the repos.
+    // Match the owner/name pair exactly — "acme/app" is a prefix of
+    // "acme/app-frontend", so a substring check would mix up the repos.
     const path = url.split("/repos/")[1] ?? "";
     const repo = path.split("?")[0].split("/").slice(0, 2).join("/");
     const f = fixtures[repo];
@@ -114,6 +110,18 @@ afterEach(() => {
 });
 
 describe("fetchCommunityData", () => {
+  it("falls back to the tracked repository list when none is supplied", async () => {
+    const fetchMock = stubCommunityFetch({ [GITHUB_TRACKED_REPOS[0]]: {} });
+
+    await fetchCommunityData();
+
+    expect(GITHUB_TRACKED_REPOS.length).toBeGreaterThan(0);
+    expect(fetchMock).toHaveBeenCalledWith(
+      `https://api.github.com/repos/${GITHUB_TRACKED_REPOS[0]}`,
+      { next: { revalidate: 600 } },
+    );
+  });
+
   it("queries the four endpoints for each of the three repos with revalidation", async () => {
     const fetchMock = stubCommunityFetch({
       [REPOS[0]]: {},
@@ -121,7 +129,7 @@ describe("fetchCommunityData", () => {
       [REPOS[2]]: {},
     });
 
-    await fetchCommunityData();
+    await fetchCommunityData(REPOS);
 
     expect(fetchMock).toHaveBeenCalledTimes(12);
     for (const repo of REPOS) {
@@ -139,7 +147,7 @@ describe("fetchCommunityData", () => {
       [REPOS[2]]: { repo: repoPayload({ stargazers_count: 300 }) },
     });
 
-    const data = await fetchCommunityData();
+    const data = await fetchCommunityData(REPOS);
 
     // 600 + 600 + 300 = 1500 -> "1.5k"; 200 * 3 = 600 stays plain.
     expect(data.stats).toEqual({
@@ -157,7 +165,7 @@ describe("fetchCommunityData", () => {
       [REPOS[2]]: {},
     });
 
-    const { contributors } = await fetchCommunityData();
+    const { contributors } = await fetchCommunityData(REPOS);
 
     expect(contributors).toEqual([
       {
@@ -188,7 +196,7 @@ describe("fetchCommunityData", () => {
       [REPOS[2]]: {},
     });
 
-    const { pullRequests } = await fetchCommunityData();
+    const { pullRequests } = await fetchCommunityData(REPOS);
 
     expect(pullRequests.map((pr) => [pr.number, pr.status, pr.timestamp])).toEqual([
       [2, "Merged", "today"],
@@ -203,7 +211,7 @@ describe("fetchCommunityData", () => {
       [REPOS[2]]: {},
     });
 
-    const { pullRequests } = await fetchCommunityData();
+    const { pullRequests } = await fetchCommunityData(REPOS);
 
     expect(pullRequests[0].author).toBe("Unknown");
   });
@@ -220,7 +228,7 @@ describe("fetchCommunityData", () => {
       [REPOS[2]]: {},
     });
 
-    const { issues } = await fetchCommunityData();
+    const { issues } = await fetchCommunityData(REPOS);
 
     expect(issues.map((i) => i.number)).toEqual([10]);
   });
@@ -238,7 +246,7 @@ describe("fetchCommunityData", () => {
       [REPOS[2]]: {},
     });
 
-    const { issues } = await fetchCommunityData();
+    const { issues } = await fetchCommunityData(REPOS);
 
     expect(issues[0].priority).toBe(expected);
     expect(issues[0].labels).toEqual([label]);
@@ -254,7 +262,7 @@ describe("fetchCommunityData", () => {
       [REPOS[2]]: {},
     });
 
-    const { pullRequests, issues } = await fetchCommunityData();
+    const { pullRequests, issues } = await fetchCommunityData(REPOS);
 
     expect(pullRequests).toHaveLength(30);
     expect(issues).toHaveLength(50);
@@ -267,7 +275,7 @@ describe("fetchCommunityData", () => {
       [REPOS[2]]: { repo: repoPayload({ stargazers_count: 7 }) },
     });
 
-    const { stats } = await fetchCommunityData();
+    const { stats } = await fetchCommunityData(REPOS);
 
     expect(stats?.stars).toBe("12");
   });
@@ -279,7 +287,7 @@ describe("fetchCommunityData", () => {
       [REPOS[2]]: { failing: true },
     });
 
-    await expect(fetchCommunityData()).resolves.toEqual({
+    await expect(fetchCommunityData(REPOS)).resolves.toEqual({
       stats: null,
       contributors: [],
       pullRequests: [],
@@ -299,7 +307,7 @@ describe("fetchCommunityData", () => {
       }),
     );
 
-    const data = await fetchCommunityData();
+    const data = await fetchCommunityData(REPOS);
 
     expect(data.stats).toBeNull();
     expect(logger.error).toHaveBeenCalled();
