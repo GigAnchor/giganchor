@@ -1,7 +1,5 @@
 import { getSidebarNav, getDocBySlug } from "@/lib/mdx";
-import { SITE_URL_FALLBACK, SITE_NAME } from "@/constants/site";
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || SITE_URL_FALLBACK;
+import { SITE_URL, SITE_NAME } from "@/constants/site";
 
 /** Build the llms.txt index per the https://llmstxt.org/ convention. */
 export function buildLlmsIndex(): string {

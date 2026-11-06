@@ -5,5 +5,7 @@
  * production URL. Every one-click "Connect to …" action in the docs
  * page-actions menu points here — never at a local stdio server.
  */
+import { SITE_URL } from "./site";
+
 export const MCP_SERVER_NAME = "offer-hub-docs";
-export const MCP_SERVER_URL = "https://offer-hub.tech/api/mcp";
+export const MCP_SERVER_URL = `${SITE_URL}/api/mcp`;

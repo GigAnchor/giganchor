@@ -27,13 +27,11 @@ import {
   copyTextToClipboard,
 } from "@/utils/mcp-connect";
 import { logger } from "@/utils/logger";
-import { SITE_URL_FALLBACK } from "@/constants/site";
+import { SITE_URL } from "@/constants/site";
 import { DOCS_EDIT_BASE } from "@/constants/github";
 import { exportDocMarkdown } from "@/lib/docs/export-doc-markdown";
 import { exportDocJson } from "@/lib/docs/export-doc-json";
 import { exportDocPdf } from "@/lib/docs/export-doc-pdf";
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || SITE_URL_FALLBACK;
 
 const MENU_ITEM_CLASS =
   "w-full flex items-center gap-2 px-4 py-2 text-sm text-content-primary " +
