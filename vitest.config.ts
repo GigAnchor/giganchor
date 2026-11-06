@@ -17,7 +17,10 @@ export default defineConfig({
     css: true,
     // e2e/ holds Playwright specs (run via `npm run test:e2e`), which use
     // an incompatible test()/expect() from @playwright/test.
-    exclude: [...configDefaults.exclude, "**/e2e/**"],
+    // backend/ is a separate package whose node:test suite runs via its own
+    // `npm test` (and in CI's Backend Build job); vitest cannot bundle
+    // node:test, so keep it out of this runner.
+    exclude: [...configDefaults.exclude, "**/e2e/**", "backend/**", "mcp/build/**"],
     coverage: {
       provider: "v8",
       reporter: ["text", "html", "lcov"],
