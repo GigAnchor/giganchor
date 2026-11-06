@@ -41,54 +41,60 @@
 
 1. **Clone and Prepare**:
    ```bash
-   git clone https://github.com/your-org/OFFER-HUB-Orchestrator.git
-   cd OFFER-HUB-Orchestrator
-   cp .env.example .env
+   git clone https://github.com/GigAnchor/giganchor.git
+   cd giganchor
    ```
 
 2. **Install Dependencies**:
    ```bash
-   npm install
+   npm ci
    ```
 
-3. **Generate Database Client**:
-   ```bash
-   npm run prisma:generate
-   ```
-
-4. **Start Infrastructure (Optional)**:
-   If you don't have local Postgres/Redis, use Docker:
-   ```bash
-   docker compose up -d
-   ```
-
-5. **Run in Development**:
-   You can start both the API and the Worker concurrently:
+3. **Run the Docs Site in Development**:
    ```bash
    npm run dev
    ```
-   *Note: This starts the API on port 4000 and the Worker in the same terminal.*
+   The site is served at <http://localhost:3000>. No database, Docker or
+   credentials are needed for the docs site; every page is built from
+   `content/docs/` and the local `src/` code.
+
+4. **Run the Tests** (optional but recommended before a PR):
+   ```bash
+   npm test
+   ```
+
+To work on the standalone API instead, install its dependencies inside
+`backend/` and start it separately — `npm run dev` from the repository root
+only starts the Next.js app:
+
+```bash
+cd backend
+npm ci
+npm run dev      # http://localhost:4000
+```
+
+The MCP server in `mcp/` is an npm workspace of the root package, so the root
+`npm ci` installs it too; see [`mcp/README.md`](./mcp/README.md) for its build
+and usage instructions.
 
 ## 🏗️ Project Structure
 
 ```
-offer-hub-monorepo/
-├── src/              # Next.js frontend (this app: marketing site + docs website)
-├── backend/          # Standalone Express backend (own package.json, installed separately)
-├── mcp/              # Standalone MCP server exposing docs/ + content/docs/ to AI assistants
-│                     # (own package.json; not an npm workspace — run `npm install` inside mcp/)
-├── content/docs/     # Public docs website content (MDX, rendered at offer-hub.tech/docs)
+giganchor/
+├── src/              # Next.js app: marketing site + docs website
+├── backend/          # Standalone Express API (own package.json, installed separately)
+├── mcp/              # MCP server exposing content/docs/ to AI assistants
+│                     # (npm workspace of the root package)
+├── content/docs/     # Public docs website content (MDX, rendered under /docs)
 ├── docs/             # Internal engineering documentation (Markdown, read on GitHub)
 ├── config/           # Shared app-level config (e.g. security headers)
-├── scripts/          # Build/codegen scripts (OpenAPI, docs search index)
-└── supabase/         # Supabase schema/config
+└── scripts/          # Build/codegen scripts (OpenAPI, docs search index)
 ```
 
-The root `package.json` has no `workspaces` field, so `npm install` at the
-repo root only installs the frontend's dependencies. `backend/` and `mcp/`
-are independent packages — each has its own `package.json` and needs its
-own `npm install` (see [`mcp/README.md`](./mcp/README.md) for the MCP
-server's setup and usage).
+The root `package.json` declares `mcp` as a workspace, so `npm ci` at the
+repository root installs the docs site and the MCP server. `backend/` is not
+a workspace: it has its own `package.json` and lockfile and must be installed
+separately.
 
 ## 📚 Documentation
 
@@ -148,8 +154,9 @@ npm run test:coverage # run the suite and enforce coverage thresholds
 ```
 
 Tests live in `__tests__/` folders beside the code they cover. CI runs
-`npm run lint`, `npm run build` and `npm run test:coverage`, and fails when
-coverage drops below the thresholds in `vitest.config.ts`. See the
+`npm run typecheck`, `npm run lint`, `npm run build` and
+`npm run test:coverage`, and fails when coverage drops below the thresholds
+in `vitest.config.ts`. See the
 [Testing section of the contribution guide](./docs/CONTRIBUTING.md#testing)
 for conventions and what is expected of a PR.
 
@@ -160,8 +167,8 @@ This project is licensed under the MIT License - see the [LICENSE](./LICENSE) fi
 ## 🆘 Support
 
 - **Documentation**: [/docs](./docs/)
-- **Issues**: [GitHub Issues](https://github.com/your-org/OFFER-HUB-Orchestrator/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/your-org/OFFER-HUB-Orchestrator/discussions)
+- **Issues**: [GitHub Issues](https://github.com/GigAnchor/giganchor/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/GigAnchor/giganchor/discussions)
 
 ## 👥 Maintainers
 
