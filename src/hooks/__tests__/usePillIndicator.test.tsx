@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, act } from "@testing-library/react";
 import { usePillIndicator, type PillStyle } from "../usePillIndicator";
@@ -24,7 +25,12 @@ let latest: {
 
 function Harness({ activeId, items = ITEMS }: { activeId: string; items?: string[] }) {
   const { containerRef, setItemRef, pillStyle } = usePillIndicator(activeId);
-  latest = { pillStyle, setItemRef };
+
+  // Capture the latest hook output from an effect: reassigning a module-level
+  // variable during render is a side effect (react-hooks/globals).
+  useEffect(() => {
+    latest = { pillStyle, setItemRef };
+  }, [pillStyle, setItemRef]);
 
   return (
     <div
