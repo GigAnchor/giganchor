@@ -13,6 +13,7 @@
     "start": "next start",
     "lint": "next lint",
     "lint:classes": "node scripts/check-undefined-utility-classes.js",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
