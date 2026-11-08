@@ -1,15 +1,15 @@
 ---
 title: Disputes Guide
-description: How to handle disputes in OFFER-HUB — opening, resolving, and managing disagreements between buyers and sellers.
+description: How to handle disputes in GIGANCHOR — opening, resolving, and managing disagreements between buyers and sellers.
 order: 21
 section: Guides
 ---
 
 <Callout type="note">
-  This is the public API/SDK guide for integrators. For internal implementation detail (Orchestrator state machine, signer roles), see [`docs/guides/disputes.md`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/docs/guides/disputes.md) in the repo.
+  This is the public API/SDK guide for integrators. For internal implementation detail (Orchestrator state machine, signer roles), see [`docs/guides/disputes.md`](https://github.com/GigAnchor/giganchor/blob/main/docs/guides/disputes.md) in the repo.
 </Callout>
 
-Disputes are a critical part of any marketplace. When a buyer and seller disagree, OFFER-HUB provides a structured process to resolve conflicts fairly while funds remain safely locked in escrow.
+Disputes are a critical part of any marketplace. When a buyer and seller disagree, GIGANCHOR provides a structured process to resolve conflicts fairly while funds remain safely locked in escrow.
 
 <Callout type="tip">
   Disputes only apply to orders that have funded escrow. For orders still in `FUNDS_RESERVED`, use the cancel flow instead.
@@ -85,7 +85,7 @@ Only the buyer can initiate a dispute on an `IN_PROGRESS` order:
 
 ```bash
 curl -X POST http://localhost:4000/api/v1/orders/ord_xyz789/resolution/dispute \
-  -H "Authorization: Bearer ohk_live_your_api_key" \
+  -H "Authorization: Bearer gak_live_your_api_key" \
   -H "Content-Type: application/json" \
   -d '{
     "openedBy": "BUYER",
@@ -149,7 +149,7 @@ If the dispute is valid, refund the buyer:
 
 ```bash
 curl -X POST http://localhost:4000/api/v1/disputes/dsp_abc123/resolve \
-  -H "Authorization: Bearer ohk_live_your_api_key" \
+  -H "Authorization: Bearer gak_live_your_api_key" \
   -H "Content-Type: application/json" \
   -d '{
     "decision": "FULL_REFUND",
@@ -163,7 +163,7 @@ If the seller did deliver properly:
 
 ```bash
 curl -X POST http://localhost:4000/api/v1/disputes/dsp_abc123/resolve \
-  -H "Authorization: Bearer ohk_live_your_api_key" \
+  -H "Authorization: Bearer gak_live_your_api_key" \
   -H "Content-Type: application/json" \
   -d '{
     "decision": "FULL_RELEASE",
@@ -177,7 +177,7 @@ For partial delivery, split the funds:
 
 ```bash
 curl -X POST http://localhost:4000/api/v1/disputes/dsp_abc123/resolve \
-  -H "Authorization: Bearer ohk_live_your_api_key" \
+  -H "Authorization: Bearer gak_live_your_api_key" \
   -H "Content-Type: application/json" \
   -d '{
     "decision": "SPLIT",
@@ -225,7 +225,7 @@ Both parties and support can add comments during the dispute:
 
 ```bash
 curl -X POST http://localhost:4000/api/v1/disputes/dsp_abc123/comments \
-  -H "Authorization: Bearer ohk_live_your_api_key" \
+  -H "Authorization: Bearer gak_live_your_api_key" \
   -H "Content-Type: application/json" \
   -d '{
     "userId": "usr_buyer123",
@@ -256,15 +256,15 @@ curl -X POST http://localhost:4000/api/v1/disputes/dsp_abc123/comments \
 ```bash
 # All open disputes
 curl "http://localhost:4000/api/v1/disputes?status=OPEN" \
-  -H "Authorization: Bearer ohk_live_your_api_key"
+  -H "Authorization: Bearer gak_live_your_api_key"
 
 # The dispute on one order
 curl "http://localhost:4000/api/v1/disputes?orderId=ord_xyz789" \
-  -H "Authorization: Bearer ohk_live_your_api_key"
+  -H "Authorization: Bearer gak_live_your_api_key"
 
 # Disputes opened by buyers
 curl "http://localhost:4000/api/v1/disputes?openedBy=BUYER" \
-  -H "Authorization: Bearer ohk_live_your_api_key"
+  -H "Authorization: Bearer gak_live_your_api_key"
 ```
 
 ### Response
@@ -294,7 +294,7 @@ The controller returns `{ success, data }`, which the response interceptor wraps
 
 ```bash
 curl http://localhost:4000/api/v1/disputes/dsp_abc123 \
-  -H "Authorization: Bearer ohk_live_your_api_key"
+  -H "Authorization: Bearer gak_live_your_api_key"
 ```
 
 ### Response
@@ -331,11 +331,11 @@ curl http://localhost:4000/api/v1/disputes/dsp_abc123 \
 ## Using the SDK
 
 ```typescript
-import { OfferHubSDK } from '@offerhub/sdk';
+import { GiganchorSDK } from '@giganchor/sdk';
 
-const sdk = new OfferHubSDK({
+const sdk = new GiganchorSDK({
   apiUrl: 'http://localhost:4000',
-  apiKey: 'ohk_live_your_api_key'
+  apiKey: 'gak_live_your_api_key'
 });
 
 // Open a dispute
@@ -381,7 +381,7 @@ Dispute lifecycle events are delivered over the [SSE event stream](/docs/api-ref
 
 ```bash
 curl -N "http://localhost:4000/api/v1/events?types=order.disputed,dispute.opened,dispute.resolved" \
-  -H "Authorization: Bearer ohk_live_your_api_key"
+  -H "Authorization: Bearer gak_live_your_api_key"
 ```
 
 Or with the SDK:
@@ -453,7 +453,7 @@ Dispute operations support idempotency keys:
 
 ```bash
 curl -X POST http://localhost:4000/api/v1/orders/ord_xyz789/resolution/dispute \
-  -H "Authorization: Bearer ohk_live_your_api_key" \
+  -H "Authorization: Bearer gak_live_your_api_key" \
   -H "Idempotency-Key: 550e8400-e29b-41d4-a716-446655440012" \
   -H "Content-Type: application/json" \
   -d '{"openedBy": "BUYER", "reason": "NOT_DELIVERED"}'

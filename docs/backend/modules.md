@@ -1,6 +1,6 @@
 # Backend Modules Overview
 
-This document provides an overview of the core modules in the OFFER-HUB Orchestrator backend.
+This document provides an overview of the core modules in the GIGANCHOR Orchestrator backend.
 
 ## Architecture
 

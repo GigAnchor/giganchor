@@ -40,9 +40,9 @@ function generateOpenApiSpec(): OpenApiSpec {
   const openapi: OpenApiSpec = {
     openapi: "3.0.0",
     info: {
-      title: "OFFER-HUB API",
+      title: "GIGANCHOR API",
       version: "1.0.0",
-      description: "Auto-generated OpenAPI specification for OFFER-HUB",
+      description: "Auto-generated OpenAPI specification for GIGANCHOR",
       license: {
         name: "MIT",
         url: "https://opensource.org/licenses/MIT"
@@ -50,7 +50,7 @@ function generateOpenApiSpec(): OpenApiSpec {
     },
     servers: [
       {
-        url: "https://api.offer-hub.com",
+        url: "https://api.giganchor.tech",
         description: "Production Server"
       }
     ],

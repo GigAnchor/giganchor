@@ -22,7 +22,7 @@ vi.mock("@/lib/mdx", () => ({
 import { GET } from "../route";
 
 function request(slugParts: string[]) {
-  return GET(new Request(`https://offer-hub.tech/docs/${slugParts.join("/")}/raw`), {
+  return GET(new Request(`https://giganchor.tech/docs/${slugParts.join("/")}/raw`), {
     params: Promise.resolve({ slug: slugParts }),
   });
 }

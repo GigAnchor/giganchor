@@ -1,14 +1,14 @@
 ---
-title: Scaffolder (create-offer-hub-orchestrator)
-description: Interactive setup wizard for OFFER-HUB Orchestrator — prompts, environment configuration, database migrations, and platform user bootstrapping.
+title: Scaffolder (create-giganchor-orchestrator)
+description: Interactive setup wizard for GIGANCHOR Orchestrator — prompts, environment configuration, database migrations, and platform user bootstrapping.
 order: 27
 section: Guides
 ---
 
-The `create-offer-hub-orchestrator` package is the official interactive setup wizard for the OFFER-HUB Orchestrator. It automates environment configuration, cryptographic key generation, database migrations, and platform user bootstrapping into a guided terminal workflow.
+The `create-giganchor-orchestrator` package is the official interactive setup wizard for the GIGANCHOR Orchestrator. It automates environment configuration, cryptographic key generation, database migrations, and platform user bootstrapping into a guided terminal workflow.
 
 <Callout type="tip">
-  For developers setting up a new Orchestrator instance, the scaffolder replaces manual `.env` file editing and multi-step terminal setup. Running `npx create-offer-hub-orchestrator` gets you a configured, fully bootstrapped instance in about two minutes.
+  For developers setting up a new Orchestrator instance, the scaffolder replaces manual `.env` file editing and multi-step terminal setup. Running `npx create-giganchor-orchestrator` gets you a configured, fully bootstrapped instance in about two minutes.
 </Callout>
 
 ## Prerequisites
@@ -17,13 +17,13 @@ Before running the scaffolder, ensure your development or host environment has t
 
 | Requirement | Minimum Version | Purpose |
 |-------------|-----------------|---------|
-| Node.js | `20.x` or higher | Runtime for orchestrator and installer (`packages/create-offerhub/package.json`) |
+| Node.js | `20.x` or higher | Runtime for orchestrator and installer (`packages/create-giganchor/package.json`) |
 | npm | `10.x` or higher | Package execution |
 | PostgreSQL | `14+` | Primary database (Supabase, Railway, Docker, or self-hosted) |
 | Redis | `6+` | Caching, idempotency store, and BullMQ queues (Upstash or Redis local) |
 | Trustless Work Account | — | Escrow contract integration ([dapp.trustlesswork.com](https://dapp.trustlesswork.com)) |
 
-The wizard must be executed inside the root directory of a cloned Orchestrator repository (`OFFER-HUB/OFFER-HUB`), where the root `package.json` resides.
+The wizard must be executed inside the root directory of a cloned Orchestrator repository (`GigAnchor/giganchor`), where the root `package.json` resides.
 
 ## Installation & Execution
 
@@ -31,14 +31,14 @@ To clone the Orchestrator and run the setup wizard:
 
 ```bash
 # 1. Clone the Orchestrator repository
-git clone https://github.com/OFFER-HUB/OFFER-HUB.git
-cd OFFER-HUB
+git clone https://github.com/GigAnchor/giganchor.git
+cd GIGANCHOR
 
 # 2. Install workspace dependencies
 npm install
 
 # 3. Run the interactive setup wizard
-npx create-offer-hub-orchestrator
+npx create-giganchor-orchestrator
 ```
 
 ### Overwrite Protection
@@ -55,12 +55,12 @@ Selecting `No` immediately exits without mutating your existing configuration, s
 
 ## Interactive Prompts
 
-The scaffolder presents an interactive prompt sequence defined in `packages/create-offerhub/src/index.ts`. Each input is validated in real time:
+The scaffolder presents an interactive prompt sequence defined in `packages/create-giganchor/src/index.ts`. Each input is validated in real time:
 
 | Prompt | Type | Default Value | Validation & Details |
 |--------|------|---------------|----------------------|
 | **API Port** | Number | `4000` | Port must be an integer between `1` and `65535`. |
-| **PostgreSQL Database URL** | String | `postgresql://postgres:postgres@localhost:5432/offerhub` | Must start with `postgres` or `postgresql://`. For Supabase, use the direct connection on port `5432` for initial migrations. |
+| **PostgreSQL Database URL** | String | `postgresql://postgres:postgres@localhost:5432/giganchor` | Must start with `postgres` or `postgresql://`. For Supabase, use the direct connection on port `5432` for initial migrations. |
 | **Redis URL** | String | `redis://localhost:6379` | Must start with `redis://` or `rediss://` (TLS). |
 | **Payment Provider** | List | `crypto` | Choice between `crypto` (Stellar invisible wallets, recommended) and `airtm` (fiat on/off-ramp, requires Enterprise credentials). |
 | **AirTM API Key** *(conditional)* | String | — | Prompted only when `airtm` is selected. Required non-empty string. |
@@ -79,10 +79,10 @@ The scaffolder presents an interactive prompt sequence defined in `packages/crea
 
 Before writing any configuration files, the wizard generates high-entropy cryptographic keys in memory using Node.js `crypto.randomBytes`:
 
-### 1. `OFFERHUB_MASTER_KEY`
+### 1. `GIGANCHOR_MASTER_KEY`
 
 ```typescript
-const masterKey = `ohk_master_${randomBytes(24).toString("hex")}`;
+const masterKey = `gak_master_${randomBytes(24).toString("hex")}`;
 ```
 
 The master key is the administrative credential used to provision API keys. It gives full authority to call `POST /api/v1/auth/api-keys`.
@@ -103,18 +103,18 @@ In `crypto` mode, the Orchestrator manages invisible Stellar wallets for buyers,
 
 ## Generated Environment Configuration (`.env`)
 
-The wizard formats and writes the root `.env` file using `packages/create-offerhub/src/env-generator.ts`. The resulting file is organized into modular sections:
+The wizard formats and writes the root `.env` file using `packages/create-giganchor/src/env-generator.ts`. The resulting file is organized into modular sections:
 
 ```env
 # ============================================
-# OFFER-HUB Orchestrator Configuration
+# GIGANCHOR Orchestrator Configuration
 # Generated on 2026-09-27T22:00:00.000Z
 # ============================================
 
 # Server
 NODE_ENV=development
 PORT=4000
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/offerhub
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/giganchor
 REDIS_URL=redis://localhost:6379
 
 # Payment Provider
@@ -124,7 +124,7 @@ PAYMENT_PROVIDER=crypto
 WALLET_ENCRYPTION_KEY=1a2b3c4d...
 
 # Marketplace Auth
-OFFERHUB_MASTER_KEY=ohk_master_5e6f7a...
+GIGANCHOR_MASTER_KEY=gak_master_5e6f7a...
 
 # Trustless Work
 TRUSTLESS_API_KEY=tw_live_api_key_xxx
@@ -159,11 +159,11 @@ Depending on the `stellarNetwork` selection, the scaffolder automatically config
 
 ## Automated Post-Setup Workflow
 
-When the prompts complete, `create-offer-hub-orchestrator` executes the following sequence:
+When the prompts complete, `create-giganchor-orchestrator` executes the following sequence:
 
 ```mermaid
 flowchart TD
-    A[Start Scaffolder: npx create-offer-hub-orchestrator] --> B[Interactive Prompts]
+    A[Start Scaffolder: npx create-giganchor-orchestrator] --> B[Interactive Prompts]
     B --> C[Generate Cryptographic Keys]
     C --> D[Write .env Configuration File]
     D --> E[Prisma Client Generation: npx prisma generate]
@@ -204,7 +204,7 @@ The scaffolder runs:
 
 The bootstrap script performs the following actions:
 
-1. **Idempotency Check**: Queries `User` where `externalUserId = "offerhub-platform"`. If the platform user already exists, it skips creation and outputs the existing `PLATFORM_USER_ID`.
+1. **Idempotency Check**: Queries `User` where `externalUserId = "giganchor-platform"`. If the platform user already exists, it skips creation and outputs the existing `PLATFORM_USER_ID`.
 2. **User & Balance Record Creation**: In a single database transaction, creates the platform `User` entity (`status: "ACTIVE"`, `type: "BOTH"`) and initializes an associated `Balance` record (`available: "0.00"`, `reserved: "0.00"`, `currency: "USD"`).
 3. **Stellar Keypair & Wallet Encryption**: Generates a cryptographically random Stellar keypair (`Keypair.random()`), encrypts the secret key using AES-256-GCM with `WALLET_ENCRYPTION_KEY`, and persists the wallet record in PostgreSQL.
 4. **Testnet Account Funding**: On `testnet`, automatically requests test XLM from Stellar Friendbot (`https://friendbot.stellar.org?addr=<publicKey>`).
@@ -225,7 +225,7 @@ If `generateApiKey` is selected and the local API is accessible, the wizard issu
 
 ```bash
 curl -X POST http://localhost:4000/api/v1/auth/api-keys \
-  -H "Authorization: Bearer <OFFERHUB_MASTER_KEY>" \
+  -H "Authorization: Bearer <GIGANCHOR_MASTER_KEY>" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Admin Key",

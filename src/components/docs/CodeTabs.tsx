@@ -23,7 +23,7 @@ export type CodeTabsProps = {
   className?: string;
 };
 
-const CODE_TAB_SYNC_EVENT = "offer-hub-code-tab-change";
+const CODE_TAB_SYNC_EVENT = "giganchor-code-tab-change";
 
 /**
  * Tabbed code samples for docs pages (cURL / TypeScript SDK pairs).

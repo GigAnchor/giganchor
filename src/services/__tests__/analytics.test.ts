@@ -283,13 +283,13 @@ describe("trackPageView - happy path", () => {
 
   it("falls back to document.title when no page title is passed", async () => {
     grantConsent();
-    document.title = "OFFER-HUB Home";
+    document.title = "GIGANCHOR Home";
 
     await trackPageView("/");
     await flush();
 
     expect(insert).toHaveBeenCalledWith([
-      expect.objectContaining({ page_title: "OFFER-HUB Home" }),
+      expect.objectContaining({ page_title: "GIGANCHOR Home" }),
     ]);
   });
 

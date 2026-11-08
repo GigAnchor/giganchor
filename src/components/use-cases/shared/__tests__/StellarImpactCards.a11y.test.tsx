@@ -10,7 +10,7 @@ import { axe } from "@/test/axe";
 const simpleCards: SimpleMetricCard[] = [
   {
     label: "Settlement Time",
-    offerhub: "5s",
+    giganchor: "5s",
     traditional: "3-5 days",
     icon: Zap,
     savingsLabel: "Faster",

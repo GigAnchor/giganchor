@@ -5,7 +5,7 @@ order: 33
 section: SDK
 ---
 
-The `sdk.wallet` resource provides access to OFFER-HUB's invisible custodial wallet infrastructure. When running in crypto mode (`PAYMENT_PROVIDER=crypto`), every registered user has an automatically provisioned Stellar keypair with AES-256-GCM encrypted private keys. This resource allows integrators to fetch wallet status, permanent deposit addresses, and on-chain transaction history.
+The `sdk.wallet` resource provides access to GIGANCHOR's invisible custodial wallet infrastructure. When running in crypto mode (`PAYMENT_PROVIDER=crypto`), every registered user has an automatically provisioned Stellar keypair with AES-256-GCM encrypted private keys. This resource allows integrators to fetch wallet status, permanent deposit addresses, and on-chain transaction history.
 
 <Callout type="note">
   **Orchestrator Source References:**
@@ -58,7 +58,7 @@ async getInfo(userId: string): Promise<WalletInfo>
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `userId` | `string` | **Yes** | Target OFFER-HUB user ID (`usr_...`) |
+| `userId` | `string` | **Yes** | Target GIGANCHOR user ID (`usr_...`) |
 
 #### Return Type
 
@@ -78,16 +78,16 @@ interface WalletInfo {
 | Error Class | HTTP Status | Code | Cause |
 |---|---|---|---|
 | `NotFoundError` | `404` | `WALLET_NOT_FOUND` | User or wallet does not exist, or running in AirTM-only mode |
-| `OfferHubError` | `500` | `INTERNAL_ERROR` | Server failure querying wallet record |
+| `GiganchorError` | `500` | `INTERNAL_ERROR` | Server failure querying wallet record |
 
 #### Example
 
 ```typescript
-import { OfferHubSDK } from '@offerhub/sdk';
+import { GiganchorSDK } from '@giganchor/sdk';
 
-const sdk = new OfferHubSDK({
-  apiUrl: process.env.OFFERHUB_API_URL!,
-  apiKey: process.env.OFFERHUB_API_KEY!,
+const sdk = new GiganchorSDK({
+  apiUrl: process.env.GIGANCHOR_API_URL!,
+  apiKey: process.env.GIGANCHOR_API_KEY!,
 });
 
 const walletInfo = await sdk.wallet.getInfo('usr_abc123');
@@ -112,7 +112,7 @@ async getDepositAddress(userId: string): Promise<DepositAddress>
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `userId` | `string` | **Yes** | Target OFFER-HUB user ID |
+| `userId` | `string` | **Yes** | Target GIGANCHOR user ID |
 
 #### Return Type
 
@@ -168,7 +168,7 @@ async getTransactions(
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `userId` | `string` | **Yes** | Target OFFER-HUB user ID |
+| `userId` | `string` | **Yes** | Target GIGANCHOR user ID |
 | `params.limit` | `number` | No | Number of transactions per page (default: `20`, max: `100`) |
 | `params.cursor` | `string` | No | Cursor identifier for pagination |
 | `params.order` | `'asc' \| 'desc'` | No | Sorting order by creation time (default: `'desc'`) |

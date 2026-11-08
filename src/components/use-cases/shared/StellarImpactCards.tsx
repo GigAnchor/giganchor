@@ -19,7 +19,7 @@ export interface DetailedMetricCard {
   id: string;
   label: string;
   icon: React.FC<{ size?: number; className?: string }>;
-  offerHub: { value: string; unit: string; sublabel: string };
+  giganchor: { value: string; unit: string; sublabel: string };
   traditional: { value: string; unit: string; sublabel: string };
   savingsLabel: string;
   savingsValue: string;
@@ -29,7 +29,7 @@ export interface DetailedMetricCard {
 
 export interface SimpleMetricCard {
   label: string;
-  offerhub: string;
+  giganchor: string;
   traditional: string;
   icon: React.FC<{ size?: number; className?: string }>;
   savingsLabel: string;
@@ -46,7 +46,7 @@ export interface StellarImpactCardsProps {
   toggleId: string;
   showHeader?: boolean;
   summaryContent?: {
-    offerhub?: { icon?: React.FC<{ size?: number; className?: string }>; text: React.ReactNode };
+    giganchor?: { icon?: React.FC<{ size?: number; className?: string }>; text: React.ReactNode };
     traditional?: { icon?: React.FC<{ size?: number; className?: string }>; text: React.ReactNode };
   };
 }
@@ -54,7 +54,7 @@ export interface StellarImpactCardsProps {
 /* ── Helpers ── */
 
 function isDetailed(card: MetricCard): card is DetailedMetricCard {
-  return "id" in card && "offerHub" in card;
+  return "id" in card && "giganchor" in card;
 }
 
 /* ── Animated Counter (detailed variant) ── */
@@ -108,8 +108,8 @@ function AnimatedNumberDetailed({ value, suffix }: { value: string; suffix: stri
 
 /* ── Animated Text (simple variant) ── */
 
-function AnimatedText({ value, mode }: { value: string; mode: "offerhub" | "traditional" }) {
-  const prevModeRef = useRef<"offerhub" | "traditional">(mode);
+function AnimatedText({ value, mode }: { value: string; mode: "giganchor" | "traditional" }) {
+  const prevModeRef = useRef<"giganchor" | "traditional">(mode);
   const [display, setDisplay] = useState(value);
 
   useEffect(() => {
@@ -164,15 +164,15 @@ function ModeToggleDetailed({
   onChange,
   toggleId,
 }: {
-  mode: "offerhub" | "traditional";
-  onChange: (m: "offerhub" | "traditional") => void;
+  mode: "giganchor" | "traditional";
+  onChange: (m: "giganchor" | "traditional") => void;
   toggleId: string;
 }) {
   return (
     <div className="inline-flex max-w-full min-w-0 flex-wrap items-center bg-bg-sunken shadow-neu-sunken rounded-2xl p-1 gap-1">
       {(
         [
-          { key: "offerhub" as const, label: "OFFER-HUB Engine", icon: Zap },
+          { key: "giganchor" as const, label: "GIGANCHOR Engine", icon: Zap },
           { key: "traditional" as const, label: "Standard Platform", icon: BarChart3 },
         ]
       ).map(({ key, label, icon: Icon }) => (
@@ -210,13 +210,13 @@ function ModeToggleSimple({
   onChange,
   toggleId,
 }: {
-  mode: "offerhub" | "traditional";
-  onChange: (m: "offerhub" | "traditional") => void;
+  mode: "giganchor" | "traditional";
+  onChange: (m: "giganchor" | "traditional") => void;
   toggleId: string;
 }) {
   return (
     <div className="inline-flex items-center rounded-full shadow-neu-raised-sm bg-bg-elevated p-1 gap-1">
-      {(["offerhub", "traditional"] as const).map((m) => (
+      {(["giganchor", "traditional"] as const).map((m) => (
         <button
           key={m}
           onClick={() => onChange(m)}
@@ -235,7 +235,7 @@ function ModeToggleSimple({
             />
           )}
           <span className="relative">
-            {m === "offerhub" ? "Offer Hub" : "Traditional"}
+            {m === "giganchor" ? "Giganchor" : "Traditional"}
           </span>
         </button>
       ))}
@@ -249,15 +249,15 @@ function SummaryBarDetailed({
   mode,
   content,
 }: {
-  mode: "offerhub" | "traditional";
+  mode: "giganchor" | "traditional";
   content?: {
-    offerhub?: { icon?: React.FC<{ size?: number; className?: string }>; text: React.ReactNode };
+    giganchor?: { icon?: React.FC<{ size?: number; className?: string }>; text: React.ReactNode };
     traditional?: { icon?: React.FC<{ size?: number; className?: string }>; text: React.ReactNode };
   };
 }) {
-  if (mode !== "offerhub") return null;
+  if (mode !== "giganchor") return null;
 
-  const Icon = content?.offerhub?.icon ?? ShieldCheck;
+  const Icon = content?.giganchor?.icon ?? ShieldCheck;
 
   return (
     <motion.div
@@ -272,7 +272,7 @@ function SummaryBarDetailed({
           <Icon size={16} className="text-theme-success" />
         </div>
         <p className="text-sm font-bold text-content-primary">
-          {content?.offerhub?.text}
+          {content?.giganchor?.text}
         </p>
       </div>
       <span className="min-w-0 max-w-full text-center text-[10px] font-bold uppercase tracking-widest text-content-muted bg-bg-base shadow-neu-sunken-subtle rounded-full px-3 py-1 md:flex-shrink-0">
@@ -288,18 +288,18 @@ function SummaryBarSimple({
   mode,
   content,
 }: {
-  mode: "offerhub" | "traditional";
+  mode: "giganchor" | "traditional";
   content?: {
-    offerhub?: { icon?: React.FC<{ size?: number; className?: string }>; text: React.ReactNode };
+    giganchor?: { icon?: React.FC<{ size?: number; className?: string }>; text: React.ReactNode };
     traditional?: { icon?: React.FC<{ size?: number; className?: string }>; text: React.ReactNode };
   };
 }) {
   return (
     <div className="flex items-center gap-3 py-4 px-6 md:px-8 rounded-2xl shadow-neu-sunken-subtle bg-bg-sunken">
       <div className="w-2 h-2 rounded-full bg-theme-primary animate-pulse flex-shrink-0" />
-      {mode === "offerhub" ? (
+      {mode === "giganchor" ? (
         <p className="text-xs md:text-sm text-content-secondary leading-relaxed">
-          {content?.offerhub?.text}
+          {content?.giganchor?.text}
         </p>
       ) : (
         <p className="text-xs md:text-sm text-content-secondary leading-relaxed">
@@ -318,13 +318,13 @@ function DetailedMetricCardComponent({
   index,
 }: {
   metric: DetailedMetricCard;
-  mode: "offerhub" | "traditional";
+  mode: "giganchor" | "traditional";
   index: number;
 }) {
   const [expanded, setExpanded] = useState(false);
   const Icon = metric.icon;
-  const active = mode === "offerhub" ? metric.offerHub : metric.traditional;
-  const isOfferHub = mode === "offerhub";
+  const active = mode === "giganchor" ? metric.giganchor : metric.traditional;
+  const isGiganchor = mode === "giganchor";
 
   return (
     <motion.div
@@ -344,7 +344,7 @@ function DetailedMetricCardComponent({
         "overflow-hidden",
       )}
     >
-      {isOfferHub && (
+      {isGiganchor && (
         <div
           className="absolute inset-0 rounded-[1.75rem] pointer-events-none"
           style={{
@@ -391,7 +391,7 @@ function DetailedMetricCardComponent({
             <p
               className={cn(
                 "text-4xl md:text-5xl font-black leading-none tracking-tight",
-                isOfferHub ? "text-theme-primary" : "text-content-secondary",
+                isGiganchor ? "text-theme-primary" : "text-content-secondary",
               )}
             >
               <AnimatedNumberDetailed value={active.value} suffix={active.unit} />
@@ -402,14 +402,14 @@ function DetailedMetricCardComponent({
           </motion.div>
         </AnimatePresence>
 
-        {isOfferHub && (
+        {isGiganchor && (
           <GrowthBadge
             label={metric.savingsLabel}
             value={metric.savingsValue}
           />
         )}
 
-        {isOfferHub && (
+        {isGiganchor && (
           <div className="flex items-center gap-2 bg-bg-sunken shadow-neu-sunken-subtle rounded-xl px-3 py-2">
             <span className="text-[10px] uppercase font-bold tracking-wider text-content-muted">
               vs
@@ -452,16 +452,16 @@ function SimpleMetricCardComponent({
   index,
 }: {
   metric: SimpleMetricCard;
-  mode: "offerhub" | "traditional";
+  mode: "giganchor" | "traditional";
   index: number;
 }) {
   const Icon = metric.icon;
-  const value = mode === "offerhub" ? metric.offerhub : metric.traditional;
+  const value = mode === "giganchor" ? metric.giganchor : metric.traditional;
   const isGood =
-    mode === "offerhub"
+    mode === "giganchor"
       ? metric.higherIsBetter ||
-        metric.offerhub === "0%" ||
-        metric.offerhub === "100%"
+        metric.giganchor === "0%" ||
+        metric.giganchor === "100%"
       : false;
 
   return (
@@ -494,7 +494,7 @@ function SimpleMetricCardComponent({
         <p
           className={cn(
             "text-3xl md:text-4xl font-extrabold tabular-nums leading-none",
-            mode === "offerhub" ? "text-theme-primary" : "text-content-muted",
+            mode === "giganchor" ? "text-theme-primary" : "text-content-muted",
           )}
         >
           <AnimatedText value={value} mode={mode} />
@@ -529,7 +529,7 @@ export function StellarImpactCards({
   showHeader = true,
   summaryContent,
 }: StellarImpactCardsProps) {
-  const [mode, setMode] = useState<"offerhub" | "traditional">("offerhub");
+  const [mode, setMode] = useState<"giganchor" | "traditional">("giganchor");
 
   return (
     <div
@@ -552,7 +552,7 @@ export function StellarImpactCards({
             <p className="text-sm text-content-secondary mt-1 max-w-md">
               Hard data that answers{" "}
               <em className="not-italic font-semibold text-content-primary">
-                &ldquo;Why switch to OFFER-HUB?&rdquo;
+                &ldquo;Why switch to GIGANCHOR?&rdquo;
               </em>
             </p>
           </div>
@@ -571,7 +571,7 @@ export function StellarImpactCards({
             <DetailedMetricCardComponent
               key={metric.id}
               metric={metric}
-              mode={mode as "offerhub" | "traditional"}
+              mode={mode as "giganchor" | "traditional"}
               index={i}
             />
           ))}
@@ -582,7 +582,7 @@ export function StellarImpactCards({
             <SimpleMetricCardComponent
               key={metric.label}
               metric={metric}
-              mode={mode as "offerhub" | "traditional"}
+              mode={mode as "giganchor" | "traditional"}
               index={i}
             />
           ))}
@@ -591,7 +591,7 @@ export function StellarImpactCards({
 
       {variant === "detailed" && (
         <AnimatePresence>
-          {mode === "offerhub" && summaryContent && (
+          {mode === "giganchor" && summaryContent && (
             <SummaryBarDetailed mode={mode} content={summaryContent} />
           )}
         </AnimatePresence>

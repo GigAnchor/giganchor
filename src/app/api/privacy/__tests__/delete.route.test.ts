@@ -30,7 +30,7 @@ const del = vi.fn(() => ({ eq: deleteEq }));
 const from = vi.fn(() => ({ select, delete: del }));
 
 function request(body: unknown, raw = false) {
-  return new NextRequest("https://offer-hub.tech/api/privacy/delete", {
+  return new NextRequest("https://giganchor.tech/api/privacy/delete", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: raw ? (body as string) : JSON.stringify(body),

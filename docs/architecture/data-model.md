@@ -1,6 +1,6 @@
 # Data Model
 
-This document defines the core data entities, relationships, and state machines in the OFFER-HUB system.
+This document defines the core data entities, relationships, and state machines in the GIGANCHOR system.
 
 ## Entity Relationship Overview
 

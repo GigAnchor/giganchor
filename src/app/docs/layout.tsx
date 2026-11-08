@@ -5,14 +5,14 @@ import { DocsLayoutShell } from "@/components/docs/DocsLayoutShell";
 export const metadata: Metadata = {
   title: "Documentation",
   description:
-    "Explore OFFER-HUB documentation: getting started guides, API reference, TypeScript SDK, escrow workflows, and self-hosting instructions.",
+    "Explore GIGANCHOR documentation: getting started guides, API reference, TypeScript SDK, escrow workflows, and self-hosting instructions.",
   keywords: [
     "documentation",
     "API reference",
     "SDK",
     "escrow",
     "getting started",
-    "OFFER-HUB",
+    "GIGANCHOR",
     "self-hosting",
   ],
 };

@@ -1,17 +1,17 @@
 ---
 title: Crypto-Native (Stellar) Provider
-description: Comprehensive architecture, security model, and operations guide for OFFER-HUB's default crypto-native payment provider using invisible Stellar wallets and Trustless Work escrow.
+description: Comprehensive architecture, security model, and operations guide for GIGANCHOR's default crypto-native payment provider using invisible Stellar wallets and Trustless Work escrow.
 order: 28
 section: Guides
 ---
 
 <Callout type="note">
-  This guide covers the default `PAYMENT_PROVIDER=crypto` architecture in the OFFER-HUB Orchestrator. Every workflow, controller, DTO, and database model described below is verified directly against the production implementation in [`apps/api`](https://github.com/OFFER-HUB/OFFER-HUB/tree/main/apps/api) and [`packages/database`](https://github.com/OFFER-HUB/OFFER-HUB/tree/main/packages/database).
+  This guide covers the default `PAYMENT_PROVIDER=crypto` architecture in the GIGANCHOR Orchestrator. Every workflow, controller, DTO, and database model described below is verified directly against the production implementation in [`apps/api`](https://github.com/GigAnchor/giganchor/tree/main/apps/api) and [`packages/database`](https://github.com/GigAnchor/giganchor/tree/main/packages/database).
 </Callout>
 
 ## Overview
 
-OFFER-HUB is built around a provider-agnostic core governed by the `PaymentProvider` interface (Strategy Pattern). While traditional fiat rails often demand complex underwriting or enterprise volume commitments, OFFER-HUB ships with **Crypto-Native (`PAYMENT_PROVIDER=crypto`)** as its default implemented payment rail.
+GIGANCHOR is built around a provider-agnostic core governed by the `PaymentProvider` interface (Strategy Pattern). While traditional fiat rails often demand complex underwriting or enterprise volume commitments, GIGANCHOR ships with **Crypto-Native (`PAYMENT_PROVIDER=crypto`)** as its default implemented payment rail.
 
 The architecture combines **server-managed invisible Stellar wallets** (while exposing a familiar USD-denominated balance experience to users) with **decentralized smart contracts on the Stellar Network** via [Trustless Work](https://trustlesswork.com) (for non-custodial escrow settlement).
 
@@ -19,7 +19,7 @@ The architecture combines **server-managed invisible Stellar wallets** (while ex
 
 ## Provider Comparison: AirTM vs. Crypto-Native
 
-OFFER-HUB abstracts payment provider mechanics through the `PaymentProvider` strategy interface. Below is an architectural comparison between the default crypto-native provider and the AirTM fiat integration:
+GIGANCHOR abstracts payment provider mechanics through the `PaymentProvider` strategy interface. Below is an architectural comparison between the default crypto-native provider and the AirTM fiat integration:
 
 | Feature / Dimension | Crypto-Native | AirTM |
 |:--------------------|:-------------:|:-----:|
@@ -43,7 +43,7 @@ OFFER-HUB abstracts payment provider mechanics through the `PaymentProvider` str
 
 A primary design challenge of decentralized marketplace payments is user experience. Traditional Web3 workflows often require users to install wallet software, manage recovery credentials, hold native gas tokens (XLM), and manually approve transaction signatures.
 
-OFFER-HUB addresses this with **Invisible Wallets** managed server-side by [`WalletService`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/modules/wallet/wallet.service.ts).
+GIGANCHOR addresses this with **Invisible Wallets** managed server-side by [`WalletService`](https://github.com/GigAnchor/giganchor/blob/main/apps/api/src/modules/wallet/wallet.service.ts).
 
 ### Why Server-Side Wallets Instead of Browser Extensions?
 
@@ -80,10 +80,10 @@ WalletService.createWallet(userId)
 Wallet record saved to PostgreSQL (iv:authTag:ciphertext)
 ```
 
-1. **Registration:** When a user is created via `POST /api/v1/users` ([`UsersController`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/modules/users/users.controller.ts) validating with `CreateUserDto`), `UsersService.createUser()` delegates to `WalletService.createWallet()`.
+1. **Registration:** When a user is created via `POST /api/v1/users` ([`UsersController`](https://github.com/GigAnchor/giganchor/blob/main/apps/api/src/modules/users/users.controller.ts) validating with `CreateUserDto`), `UsersService.createUser()` delegates to `WalletService.createWallet()`.
 2. **Stellar Keypair Generation:** The service generates a fresh Stellar keypair using the official `stellar-sdk`.
 3. **Encryption at Rest:** The secret seed is encrypted immediately before hitting the database (`model Wallet` in Prisma, stored in the `secretEncrypted` field).
-4. **Permanent Deposit Address:** The user's public key becomes their permanent deposit address, queryable via `GET /api/v1/users/{userId}/wallet/deposit` ([`WalletController`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/modules/wallet/wallet.controller.ts)).
+4. **Permanent Deposit Address:** The user's public key becomes their permanent deposit address, queryable via `GET /api/v1/users/{userId}/wallet/deposit` ([`WalletController`](https://github.com/GigAnchor/giganchor/blob/main/apps/api/src/modules/wallet/wallet.controller.ts)).
 
 ---
 
@@ -93,7 +93,7 @@ The security of the crypto-native provider relies on strict separation between t
 
 ### Encryption Architecture
 
-The encryption utility in [`apps/api/src/utils/crypto.ts`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/utils/crypto.ts) implements:
+The encryption utility in [`apps/api/src/utils/crypto.ts`](https://github.com/GigAnchor/giganchor/blob/main/apps/api/src/utils/crypto.ts) implements:
 
 * **Algorithm:** Advanced Encryption Standard in Galois/Counter Mode (**AES-256-GCM**), providing authenticated encryption with associated data (AEAD).
 * **Key Length:** 256 bits (32 bytes, represented as a 64-character hexadecimal string).
@@ -148,11 +148,11 @@ WALLET_ENCRYPTION_KEY=<your-64-character-hex-key>
 
 ## Horizon Monitoring & Deposit Detection
 
-OFFER-HUB automatically tracks incoming deposits without asking users to submit transaction hashes or proofs of payment.
+GIGANCHOR automatically tracks incoming deposits without asking users to submit transaction hashes or proofs of payment.
 
 ### `BlockchainMonitorService` Flow
 
-The orchestrator includes a background listener service ([`BlockchainMonitorService`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/modules/wallet/blockchain-monitor.service.ts)) that subscribes to Stellar's Horizon Server to detect incoming deposits and credit user balances:
+The orchestrator includes a background listener service ([`BlockchainMonitorService`](https://github.com/GigAnchor/giganchor/blob/main/apps/api/src/modules/wallet/blockchain-monitor.service.ts)) that subscribes to Stellar's Horizon Server to detect incoming deposits and credit user balances:
 
 1. **Horizon Stream:** During module initialization (`onModuleInit`), `BlockchainMonitorService` queries existing active wallets in the database and establishes a connection to the Horizon SSE payment stream endpoint (`/accounts/:publicKey/payments?cursor=now`) for each account.
 2. **Asset Validation:** The stream processor verifies that:
@@ -175,7 +175,7 @@ The orchestrator includes a background listener service ([`BlockchainMonitorServ
 
 ## USDC Asset & Network Settings
 
-OFFER-HUB uses USDC issued on the Stellar network. Stellar uses specific account addresses to identify non-native asset issuers.
+GIGANCHOR uses USDC issued on the Stellar network. Stellar uses specific account addresses to identify non-native asset issuers.
 
 ### Network Configuration Matrix
 
@@ -193,7 +193,7 @@ OFFER-HUB uses USDC issued on the Stellar network. Stellar uses specific account
 Before any Stellar account can hold a custom token like USDC, it must establish a trustline with the token's issuing account using the `changeTrust` operation.
 
 * **Testnet Automation:** When a wallet is initialized or funded in testnet, `WalletService.createWallet()` invokes Friendbot and calls `setupTestTrustline()` from `testnet.utils.ts`, executing a `changeTrust` operation targeting the configured `STELLAR_USDC_ISSUER`.
-* **Mainnet Operational Procedure:** In production mainnet, `WalletService.setupTrustline(userId)` exists on `WalletService` as an independent helper containing the logic to sign and submit a `changeTrust` operation for an active user, but [`WalletController`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/modules/wallet/wallet.controller.ts) intentionally does not expose an unauthenticated public route for trustlines. On Mainnet, operators have two execution options:
+* **Mainnet Operational Procedure:** In production mainnet, `WalletService.setupTrustline(userId)` exists on `WalletService` as an independent helper containing the logic to sign and submit a `changeTrust` operation for an active user, but [`WalletController`](https://github.com/GigAnchor/giganchor/blob/main/apps/api/src/modules/wallet/wallet.controller.ts) intentionally does not expose an unauthenticated public route for trustlines. On Mainnet, operators have two execution options:
   1. **Programmatic / Internal Script:** Invoke `WalletService.setupTrustline(userId)` within an internal onboarding worker or provisioning script using the Orchestrator's internal service container.
   2. **External Transaction / Relayer:** Submit a Stellar transaction envelope containing a `ChangeTrustOperation` signed by the user's secret key (or funded via a sponsor account) using the `stellar-sdk`.
 
@@ -201,7 +201,7 @@ Before any Stellar account can hold a custom token like USDC, it must establish 
 
 ## Testnet to Mainnet Migration Guide
 
-Follow this step-by-step checklist when promoting your OFFER-HUB Orchestrator deployment from staging/testnet to production mainnet.
+Follow this step-by-step checklist when promoting your GIGANCHOR Orchestrator deployment from staging/testnet to production mainnet.
 
 <Callout type="warning">
   **Network Isolation:** Switching from testnet to mainnet does not transfer testnet balances or automatically recreate accounts on the public ledger. Mainnet deployment should occur in an isolated production environment with a clean database and dedicated production keys.
@@ -257,16 +257,16 @@ Before onboarding live buyers:
 1. **Bootstrap an API Key:** Generate a scoped API key using your master key:
    ```bash
    curl -X POST https://api.yourmarketplace.com/api/v1/auth/api-keys \
-     -H "Authorization: Bearer $OFFERHUB_MASTER_KEY" \
+     -H "Authorization: Bearer $GIGANCHOR_MASTER_KEY" \
      -H "Content-Type: application/json" \
      -d '{
        "name": "Mainnet Smoke Test",
        "scopes": ["read", "write"]
      }'
    ```
-   Save the returned key (e.g., `ohk_live_...`) to your shell environment:
+   Save the returned key (e.g., `gak_live_...`) to your shell environment:
    ```bash
-   export API_KEY="ohk_live_..."
+   export API_KEY="gak_live_..."
    ```
 2. **Create Test Account:** Register a test user via `POST /api/v1/users`:
    ```bash
@@ -295,7 +295,7 @@ Before onboarding live buyers:
    curl https://api.yourmarketplace.com/api/v1/users/usr_test123/balance \
      -H "Authorization: Bearer $API_KEY"
    ```
-7. **Execute Test Withdrawal:** Submit a test withdrawal of **$0.50 USDC** via `POST /api/v1/withdrawals` ([`WithdrawalsController`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/modules/withdrawals/withdrawals.controller.ts) validating with [`CreateWithdrawalDto`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/modules/withdrawals/dto/create-withdrawal.dto.ts) under `ApiKeyGuard`). Ensure that the destination wallet address (`destinationRef`) is also an active account on Stellar Mainnet with an established USDC trustline (`STELLAR_USDC_ISSUER`); otherwise, the outbound transfer will fail on-chain with `op_no_trust`:
+7. **Execute Test Withdrawal:** Submit a test withdrawal of **$0.50 USDC** via `POST /api/v1/withdrawals` ([`WithdrawalsController`](https://github.com/GigAnchor/giganchor/blob/main/apps/api/src/modules/withdrawals/withdrawals.controller.ts) validating with [`CreateWithdrawalDto`](https://github.com/GigAnchor/giganchor/blob/main/apps/api/src/modules/withdrawals/dto/create-withdrawal.dto.ts) under `ApiKeyGuard`). Ensure that the destination wallet address (`destinationRef`) is also an active account on Stellar Mainnet with an established USDC trustline (`STELLAR_USDC_ISSUER`); otherwise, the outbound transfer will fail on-chain with `op_no_trust`:
    ```bash
    curl -X POST https://api.yourmarketplace.com/api/v1/withdrawals \
      -H "Authorization: Bearer $API_KEY" \

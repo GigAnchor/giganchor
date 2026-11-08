@@ -166,7 +166,7 @@ export function MarketplaceTemplate() {
                   <span className="w-2.5 h-2.5 rounded-full bg-green-400/70" />
                 </div>
                 <div className="flex-1 mx-2 px-3 py-0.5 rounded-full text-[10px] text-content-muted font-mono bg-bg-base shadow-neu-sunken-subtle">
-                  app.offerhub.io/{view}
+                  app.giganchor.tech/{view}
                 </div>
               </div>
 
@@ -198,10 +198,10 @@ export function MarketplaceTemplate() {
               >
                 <p className="text-content-muted select-none mb-1">
                   $ <span className="text-theme-primary">npx</span>{" "}
-                  <span className="text-content-primary">create-offer-hub-app@latest</span>
+                  <span className="text-content-primary">create-giganchor-app@latest</span>
                 </p>
                 <p className="text-content-muted text-[10px] mt-3">
-                  ↳ Scaffolds a full marketplace with Buyer &amp; Seller routes, escrow hooks, and the @offerhub/sdk pre-configured.
+                  ↳ Scaffolds a full marketplace with Buyer &amp; Seller routes, escrow hooks, and the @giganchor/sdk pre-configured.
                 </p>
               </div>
             </div>
@@ -212,15 +212,15 @@ export function MarketplaceTemplate() {
                   <Layers size={16} className="text-theme-primary" />
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-content-primary font-mono">@offerhub/sdk</p>
+                  <p className="text-sm font-bold text-content-primary font-mono">@giganchor/sdk</p>
                   <p className="text-xs text-content-muted mt-0.5">The official JavaScript/TypeScript SDK</p>
                 </div>
               </div>
               <p className="text-xs text-content-secondary leading-relaxed mb-5">
-                The <span className="font-mono text-content-primary">@offerhub/sdk</span> bridges the Marketplace Template and the Orchestrator. It exposes typed hooks for escrow lifecycle management, real-time payout tracking, and asset resolution — so your frontend stays synced with the payment engine without writing a single REST call by hand.
+                The <span className="font-mono text-content-primary">@giganchor/sdk</span> bridges the Marketplace Template and the Orchestrator. It exposes typed hooks for escrow lifecycle management, real-time payout tracking, and asset resolution — so your frontend stays synced with the payment engine without writing a single REST call by hand.
               </p>
               <a
-                href="https://docs.offerhub.io/sdk"
+                href="https://giganchor.tech/docs/sdk"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold btn-neumorphic-primary transition-[background-color,box-shadow,transform]"

@@ -3,11 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Twitter, Send, Github, Disc3 } from "lucide-react";
+import { Github, MessageSquare } from "lucide-react";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { COOKIE_PREFERENCES_EVENT } from "@/constants/events";
-import { SOCIAL_X, SOCIAL_TELEGRAM, SOCIAL_DISCORD } from "@/constants/social";
-import { GITHUB_ORG_URL } from "@/constants/github";
+import { SOCIAL_DISCUSSIONS, SOCIAL_GITHUB } from "@/constants/social";
 
 const navColumns = [
   {
@@ -39,10 +38,8 @@ const navColumns = [
 ];
 
 const socialLinks = [
-  { href: SOCIAL_X, icon: Twitter, label: "X" },
-  { href: SOCIAL_TELEGRAM, icon: Send, label: "Telegram" },
-  { href: SOCIAL_DISCORD, icon: Disc3, label: "Discord" },
-  { href: GITHUB_ORG_URL, icon: Github, label: "GitHub" },
+  { href: SOCIAL_GITHUB, icon: Github, label: "GitHub" },
+  { href: SOCIAL_DISCUSSIONS, icon: MessageSquare, label: "Discussions" },
 ];
 
 export function Footer() {
@@ -87,10 +84,10 @@ export function Footer() {
                 <Image
                   src={
                     resolvedTheme === "dark"
-                      ? "/OFFER-HUB-logo-to-darkmode.png"
-                      : "/OFFER-HUB-logo.png"
+                      ? "/giganchor-logo-to-darkmode.png"
+                      : "/giganchor-logo.png"
                   }
-                  alt="OFFER-HUB"
+                  alt="GIGANCHOR"
                   width={160}
                   height={42}
                   className="h-9 w-auto object-contain"
@@ -163,7 +160,7 @@ export function Footer() {
 
           <div className="mt-10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-theme-border">
             <p className="text-xs text-content-muted">
-              © {year ?? ""} OFFER-HUB. All rights reserved.
+              © {year ?? ""} GIGANCHOR. All rights reserved.
             </p>
 
             <p className="text-xs text-content-muted">
@@ -190,7 +187,7 @@ export function Footer() {
               "linear-gradient(to bottom, black 0%, black 30%, transparent 75%)",
           }}
         >
-          _OFFER-HUB
+          _GIGANCHOR
         </div>
       </div>
     </footer>

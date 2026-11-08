@@ -15,7 +15,7 @@ vi.mock("@/data/docs-index.json", () => ({
       id: "getting-started",
       title: "Getting Started",
       section: "Guides",
-      content: "How to install and configure OFFER-HUB.",
+      content: "How to install and configure GIGANCHOR.",
       link: "/docs/getting-started",
     },
     {

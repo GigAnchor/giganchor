@@ -18,10 +18,10 @@ export const tabs: CodeTab[] = [
     description: "Order creation and escrow funding on the server side.",
     docHref: repoDocUrl("apiReferenceOverview"),
     docLabel: "API Reference",
-    code: `import { OfferHub } from "@offerhub/sdk";
+    code: `import { Giganchor } from "@giganchor/sdk";
 
 // Initialize SDK — The Orchestrator mirrors your backend state
-const oh = new OfferHub({ apiKey: process.env.OFFERHUB_API_KEY! });
+const oh = new Giganchor({ apiKey: process.env.GIGANCHOR_API_KEY! });
 
 // Order Creation: single call creates an escrow-safe payment intent
 const order = await oh.orders.create({
@@ -49,10 +49,10 @@ await oh.escrows.fund(order.id, {
       "Milestone approval from the client side — triggers on-chain settlement.",
     docHref: repoDocUrl("sdkQuickStart"),
     docLabel: "SDK Guide",
-    code: `import { OfferHub } from "@offerhub/sdk";
+    code: `import { Giganchor } from "@giganchor/sdk";
 
 // Client-side SDK use a public/restricted key.
-const oh = new OfferHub({
+const oh = new Giganchor({
   apiKey: "oh_demo_xxxxxxxxxxxx",
 });
 

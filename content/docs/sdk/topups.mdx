@@ -5,7 +5,7 @@ order: 34
 section: SDK
 ---
 
-The `sdk.topups` resource manages fiat-to-balance deposits when OFFER-HUB is configured with `PAYMENT_PROVIDER=airtm`. AirTM top-ups allow users to fund their balances using 200+ local payment methods (bank transfers, mobile money, cash points). The top-up flow is asynchronous: the SDK generates a checkout URL, the user confirms payment in AirTM, and the Orchestrator receives an inbound webhook to credit the user's balance.
+The `sdk.topups` resource manages fiat-to-balance deposits when GIGANCHOR is configured with `PAYMENT_PROVIDER=airtm`. AirTM top-ups allow users to fund their balances using 200+ local payment methods (bank transfers, mobile money, cash points). The top-up flow is asynchronous: the SDK generates a checkout URL, the user confirms payment in AirTM, and the Orchestrator receives an inbound webhook to credit the user's balance.
 
 <Callout type="note">
   **Orchestrator Source References:**
@@ -124,7 +124,7 @@ async create(params: CreateTopupParams): Promise<Topup>
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `userId` | `string` | **Yes** | Target OFFER-HUB user ID (must have a linked AirTM account) |
+| `userId` | `string` | **Yes** | Target GIGANCHOR user ID (must have a linked AirTM account) |
 | `amount` | `string` | **Yes** | Amount to deposit (minimum `$5.00 USD`) |
 | `currency` | `string` | **Yes** | Currency code (e.g. `'USD'`) |
 
@@ -139,16 +139,16 @@ async create(params: CreateTopupParams): Promise<Topup>
 | `ValidationError` | `400` | `AMOUNT_BELOW_MINIMUM` | Requested amount is below the AirTM minimum threshold ($5.00) |
 | `ValidationError` | `422` | `AIRTM_USER_NOT_LINKED` | User has not linked an AirTM account via `sdk.users.linkAirtm()` |
 | `NotFoundError` | `404` | `USER_NOT_FOUND` | Specified `userId` does not exist |
-| `OfferHubError` | `503` | `AIRTM_UNAVAILABLE` | AirTM Enterprise API endpoint unreachable or returned an error |
+| `GiganchorError` | `503` | `AIRTM_UNAVAILABLE` | AirTM Enterprise API endpoint unreachable or returned an error |
 
 #### Example
 
 ```typescript
-import { OfferHubSDK, ValidationError } from '@offerhub/sdk';
+import { GiganchorSDK, ValidationError } from '@giganchor/sdk';
 
-const sdk = new OfferHubSDK({
-  apiUrl: process.env.OFFERHUB_API_URL!,
-  apiKey: process.env.OFFERHUB_API_KEY!,
+const sdk = new GiganchorSDK({
+  apiUrl: process.env.GIGANCHOR_API_URL!,
+  apiKey: process.env.GIGANCHOR_API_KEY!,
 });
 
 async function startDeposit(userId: string, amount: string) {
@@ -343,7 +343,7 @@ async cancel(id: string): Promise<Topup>
 #### Example
 
 ```typescript
-import { OfferHubSDK, InvalidTransitionError } from '@offerhub/sdk';
+import { GiganchorSDK, InvalidTransitionError } from '@giganchor/sdk';
 
 try {
   const canceledTopup = await sdk.topups.cancel('top_xyz789');

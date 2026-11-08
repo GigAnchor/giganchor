@@ -4,8 +4,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { LoadingBar } from "@/components/ui/LoadingBar";
 import { Mail, AlertCircle, CheckCircle, ExternalLink, Headphones, Eye, Hand, Brain, MessageSquare } from "lucide-react";
-import { SOCIAL_TELEGRAM, SOCIAL_DISCORD } from "@/constants/social";
-import { GITHUB_REPO_URL } from "@/constants/github";
+import { SOCIAL_DISCUSSIONS, SOCIAL_ISSUES } from "@/constants/social";
 
 const features = [
      {
@@ -26,7 +25,7 @@ const features = [
           icon: Mail,
           title: "Report Accessibility Issues",
           description:
-               "Encountered an accessibility barrier? Email support@offerhub.io with details about the issue. We respond within 2 business days and work to resolve problems as quickly as possible.",
+               "Encountered an accessibility barrier? Email support@giganchor.tech with details about the issue. We respond within 2 business days and work to resolve problems as quickly as possible.",
           iconColor: "var(--color-primary)",
      },
 ];
@@ -58,28 +57,21 @@ const contactMethods = [
      {
           method: "Email",
           description: "Primary method for detailed accessibility reports",
-          value: "support@offerhub.io",
-          href: "mailto:support@offerhub.io?subject=Accessibility%20Issue%20Report",
-     },
-     {
-          method: "Telegram",
-          description: "For users who cannot use email",
-          value: "@offer_hub_contributors",
-           href: SOCIAL_TELEGRAM,
-          external: true,
-     },
-     {
-          method: "Discord",
-          description: "Community support in #support channel",
-          value: "OFFER-HUB Community Server",
-           href: SOCIAL_DISCORD,
-          external: true,
+          value: "support@giganchor.tech",
+          href: "mailto:support@giganchor.tech?subject=Accessibility%20Issue%20Report",
      },
      {
           method: "GitHub Issues",
           description: "For technical accessibility problems",
           value: "Label with 'accessibility' tag",
-           href: `${GITHUB_REPO_URL}/issues`,
+          href: SOCIAL_ISSUES,
+          external: true,
+     },
+     {
+          method: "GitHub Discussions",
+          description: "For questions about using the site with assistive technology",
+          value: "Open a thread in Discussions",
+          href: SOCIAL_DISCUSSIONS,
           external: true,
      },
 ];
@@ -106,7 +98,7 @@ export default function AccessibilityPage() {
                          <p
                               className="mt-4 text-lg sm:text-xl font-medium max-w-2xl mx-auto px-2 text-content-secondary leading-relaxed"
                          >
-                              OFFER-HUB is committed to ensuring digital accessibility for all users, including those with disabilities. We continuously work to meet WCAG 2.1 Level AA standards.
+                              GIGANCHOR is committed to ensuring digital accessibility for all users, including those with disabilities. We continuously work to meet WCAG 2.1 Level AA standards.
                          </p>
                          <div className="mt-8 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-bg-elevated shadow-neu-raised-sm text-xs font-bold text-content-secondary">
                               Last updated: <span className="text-theme-primary">May 27, 2026</span>
@@ -151,7 +143,7 @@ export default function AccessibilityPage() {
                                    Accessibility <span className="text-theme-primary">Features</span>
                               </h2>
                               <p className="text-lg font-medium text-content-secondary max-w-3xl leading-relaxed">
-                                   We provide multiple accessibility features to ensure all users can interact with OFFER-HUB effectively.
+                                   We provide multiple accessibility features to ensure all users can interact with GIGANCHOR effectively.
                               </p>
                          </div>
 
@@ -297,7 +289,7 @@ export default function AccessibilityPage() {
                                    Legal <span className="text-theme-primary">Compliance</span>
                               </h2>
                               <p className="text-lg font-medium text-content-secondary max-w-3xl leading-relaxed">
-                                   OFFER-HUB complies with or works toward compliance with the following accessibility standards and regulations.
+                                   GIGANCHOR complies with or works toward compliance with the following accessibility standards and regulations.
                               </p>
                          </div>
 
@@ -343,7 +335,7 @@ export default function AccessibilityPage() {
                               Our team is here to help. Contact us with any accessibility concerns or suggestions for improvement.
                          </p>
                          <a
-                              href="mailto:support@offerhub.io?subject=Accessibility%20Question"
+                              href="mailto:support@giganchor.tech?subject=Accessibility%20Question"
                               className="inline-flex items-center gap-2 px-8 py-3 rounded-xl bg-theme-primary text-white font-bold text-sm uppercase tracking-wider hover:bg-theme-primary-hover transition-colors shadow-lg"
                          >
                               <Mail size={18} />

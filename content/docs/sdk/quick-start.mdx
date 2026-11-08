@@ -1,30 +1,30 @@
 ---
 title: SDK Quick Start
-description: Get started with the OFFER-HUB TypeScript SDK in minutes.
+description: Get started with the GIGANCHOR TypeScript SDK in minutes.
 order: 30
 section: SDK
 ---
 
-The OFFER-HUB SDK provides a type-safe TypeScript client for integrating with the Orchestrator API. It handles authentication, retries, and provides typed errors for better error handling.
+The GIGANCHOR SDK provides a type-safe TypeScript client for integrating with the Orchestrator API. It handles authentication, retries, and provides typed errors for better error handling.
 
 ## Installation
 
-<CommandLine>npm install @offerhub/sdk</CommandLine>
+<CommandLine>npm install @giganchor/sdk</CommandLine>
 
 Or with yarn:
 
-<CommandLine>yarn add @offerhub/sdk</CommandLine>
+<CommandLine>yarn add @giganchor/sdk</CommandLine>
 
 ## Configuration
 
 ### Initialize the SDK
 
 ```typescript
-import { OfferHubSDK } from '@offerhub/sdk';
+import { GiganchorSDK } from '@giganchor/sdk';
 
-const sdk = new OfferHubSDK({
-  apiUrl: process.env.OFFERHUB_API_URL,    // e.g., http://localhost:4000
-  apiKey: process.env.OFFERHUB_API_KEY,    // e.g., ohk_live_xxx
+const sdk = new GiganchorSDK({
+  apiUrl: process.env.GIGANCHOR_API_URL,    // e.g., http://localhost:4000
+  apiKey: process.env.GIGANCHOR_API_KEY,    // e.g., gak_live_xxx
   timeout: 30000,                           // Optional: request timeout (default: 30s)
   retryAttempts: 3,                         // Optional: retry count (default: 3)
 });
@@ -35,8 +35,8 @@ const sdk = new OfferHubSDK({
 Add to your `.env` file:
 
 ```env
-OFFERHUB_API_URL=http://localhost:4000
-OFFERHUB_API_KEY=ohk_live_your_api_key_here
+GIGANCHOR_API_URL=http://localhost:4000
+GIGANCHOR_API_KEY=gak_live_your_api_key_here
 ```
 
 <Callout type="danger">
@@ -158,8 +158,8 @@ import {
   NotFoundError,
   ValidationError,
   InvalidTransitionError,
-  OfferHubError
-} from '@offerhub/sdk';
+  GiganchorError
+} from '@giganchor/sdk';
 
 try {
   await sdk.orders.reserve('ord_123');
@@ -172,7 +172,7 @@ try {
     console.error('Validation errors:', error.errors);
   } else if (error instanceof InvalidTransitionError) {
     console.error(`Cannot transition from ${error.currentState}`);
-  } else if (error instanceof OfferHubError) {
+  } else if (error instanceof GiganchorError) {
     console.error('API error:', error.message);
   }
 }
@@ -183,7 +183,7 @@ try {
 The SDK is fully typed. You get autocomplete and type checking:
 
 ```typescript
-import type { User, Order, Balance } from '@offerhub/sdk';
+import type { User, Order, Balance } from '@giganchor/sdk';
 
 async function processOrder(user: User): Promise<Order> {
   const balance: Balance = await sdk.balance.get(user.id);

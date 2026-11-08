@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     template: `%s | ${SITE_NAME}`,
   },
   description:
-    "OFFER-HUB empowers marketplaces to provide secure, non-custodial escrow payments without building complex payment infrastructure.",
+    "GIGANCHOR empowers marketplaces to provide secure, non-custodial escrow payments without building complex payment infrastructure.",
 
   // ── Canonical base URL ────────────────────────────────────────────────────
   // Required so Next.js can resolve all relative image/icon URLs in metadata
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
 
   // ── Canonical URL ─────────────────────────────────────────────────────────
   // Next.js resolves '/' against metadataBase and injects
-  //   <link rel="canonical" href="https://offer-hub.tech/" />
+  //   <link rel="canonical" href="https://giganchor.tech/" />
   // on every page that inherits this root layout metadata, consolidating link
   // equity and preventing duplicate-content penalties from alternate hostnames.
   alternates: {
@@ -97,9 +97,9 @@ export const metadata: Metadata = {
 
   // ── Open Graph ────────────────────────────────────────────────────────────
   openGraph: {
-    title: "OFFER-HUB | The Future of On-Chain Bounties",
+    title: "GIGANCHOR | The Future of On-Chain Bounties",
     description:
-      "OFFER-HUB empowers marketplaces to provide secure, non-custodial escrow payments without building complex payment infrastructure.",
+      "GIGANCHOR empowers marketplaces to provide secure, non-custodial escrow payments without building complex payment infrastructure.",
     url: SITE_URL,
     siteName: SITE_NAME,
     images: [
@@ -107,7 +107,7 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "OFFER-HUB - Secure, non-custodial escrow for your marketplace",
+        alt: "GIGANCHOR - Secure, non-custodial escrow for your marketplace",
       },
     ],
     locale: "en_US",
@@ -117,9 +117,9 @@ export const metadata: Metadata = {
   // ── Twitter / X card ─────────────────────────────────────────────────────
   twitter: {
     card: "summary_large_image",
-    title: "OFFER-HUB | The Future of On-Chain Bounties",
+    title: "GIGANCHOR | The Future of On-Chain Bounties",
     description:
-      "OFFER-HUB empowers marketplaces to provide secure, non-custodial escrow payments without building complex payment infrastructure.",
+      "GIGANCHOR empowers marketplaces to provide secure, non-custodial escrow payments without building complex payment infrastructure.",
     images: ["/og-image.png"],
   },
 };

@@ -1,11 +1,11 @@
 # Brand Guidelines
 
-This document defines the OFFER-HUB brand identity, visual language, and usage guidelines.
+This document defines the GIGANCHOR brand identity, visual language, and usage guidelines.
 
 ## Brand Identity
 
 ### Mission Statement
-OFFER-HUB empowers marketplaces to provide secure, non-custodial escrow payments without building complex payment infrastructure.
+GIGANCHOR empowers marketplaces to provide secure, non-custodial escrow payments without building complex payment infrastructure.
 
 ### Brand Values
 1. **Trust:** Non-custodial, transparent, and secure
@@ -18,10 +18,10 @@ OFFER-HUB empowers marketplaces to provide secure, non-custodial escrow payments
 ## Visual Identity
 
 ### Logo
-The OFFER-HUB logo consists of the wordmark "OFFER-HUB" in a modern sans-serif typeface.
+The GIGANCHOR logo consists of the wordmark "GIGANCHOR" in a modern sans-serif typeface.
 
 **Primary Logo:** Full wordmark  
-**Secondary Logo:** "OH" monogram (for small spaces)
+**Secondary Logo:** "GA" monogram (for small spaces)
 
 **File Formats:**
 - SVG (preferred for web)
@@ -134,10 +134,10 @@ Roboto, Outfit, system fonts
 ### Example Messaging
 
 **Good:**
-> "OFFER-HUB provides secure, non-custodial escrow for your marketplace. Get started in minutes with our simple API."
+> "GIGANCHOR provides secure, non-custodial escrow for your marketplace. Get started in minutes with our simple API."
 
 **Bad:**
-> "OFFER-HUB is the best payment orchestrator ever! You'll never need anything else!"
+> "GIGANCHOR is the best payment orchestrator ever! You'll never need anything else!"
 
 ---
 
@@ -176,7 +176,7 @@ Roboto, Outfit, system fonts
 ## Design Principles
 
 ### Neumorphism
-OFFER-HUB uses a neumorphic design language with soft shadows and tactile depth.
+GIGANCHOR uses a neumorphic design language with soft shadows and tactile depth.
 
 **Key Elements:**
 - Dual shadows (dark + light)
@@ -245,7 +245,7 @@ See [Neumorphism Guide](../design/neumorphism.md) for details.
 ## Legal & Compliance
 
 ### Trademark
-OFFER-HUB™ is a trademark of [Company Name]. Unauthorized use is prohibited.
+GIGANCHOR™ is a trademark of [Company Name]. Unauthorized use is prohibited.
 
 ### Copyright
 © 2026 [Company Name]. All rights reserved.
@@ -260,7 +260,7 @@ OFFER-HUB™ is a trademark of [Company Name]. Unauthorized use is prohibited.
 ## Contact
 
 For brand asset requests or usage questions:
-- **Email:** brand@offerhub.com
+- **Email:** brand@giganchor.tech
 - **Documentation:** See `/brand/` directory
 
 ---

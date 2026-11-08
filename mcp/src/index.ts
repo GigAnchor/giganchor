@@ -6,7 +6,7 @@ import { z } from "zod";
 import { loadDocumentation, searchDocs, getDocBySlug, listSections } from "./docs-loader.ts";
 
 const server = new McpServer({
-  name: "offer-hub-docs",
+  name: "giganchor-docs",
   version: "1.0.0",
 });
 
@@ -23,7 +23,7 @@ async function ensureDocsLoaded() {
 // Tool 1: List all documentation sections
 server.tool(
   "list_doc_sections",
-  "List all available documentation sections and their pages. Returns a structured overview of the OFFER-HUB documentation.",
+  "List all available documentation sections and their pages. Returns a structured overview of the GIGANCHOR documentation.",
   {},
   async () => {
     await ensureDocsLoaded();
@@ -43,7 +43,7 @@ server.tool(
 // Tool 2: Search documentation
 server.tool(
   "search_docs",
-  "Search OFFER-HUB documentation by query. Returns matching documents with titles, descriptions, and content snippets.",
+  "Search GIGANCHOR documentation by query. Returns matching documents with titles, descriptions, and content snippets.",
   {
     query: z.string().describe("Search query to find relevant documentation"),
     maxResults: z.number().optional().default(10).describe("Maximum number of results to return (default: 10)"),
@@ -126,7 +126,7 @@ export async function handleMcpRequest(req: Request) {
 async function runStdio() {
   const stdioTransport = new StdioServerTransport();
   await server.connect(stdioTransport);
-  console.error("OFFER-HUB MCP Documentation Server running on stdio");
+  console.error("GIGANCHOR MCP Documentation Server running on stdio");
 }
 
 // Check if running directly as a script (stdio mode)

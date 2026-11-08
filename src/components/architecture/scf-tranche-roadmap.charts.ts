@@ -1,7 +1,7 @@
 /** Mermaid chart sources for SCFTrancheRoadmap (extracted). */
 export const SCF_GANTT_CHART = `
 gantt
-  title OfferHub SCF Build #44 — Delivery Roadmap
+  title Giganchor SCF Build #44 — Delivery Roadmap
   dateFormat YYYY-MM-DD
   axisFormat %b %d
 

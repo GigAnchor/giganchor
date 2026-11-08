@@ -1,12 +1,12 @@
 # Overview
 
-> What is OFFER-HUB Orchestrator, what problems it solves, and who it's for.
+> What is GIGANCHOR Orchestrator, what problems it solves, and who it's for.
 
 ---
 
 ## Table of Contents
 
-- [What Is OFFER-HUB Orchestrator?](#what-is-offer-hub-orchestrator)
+- [What Is GIGANCHOR Orchestrator?](#what-is-giganchor-orchestrator)
 - [What Problems It Solves](#what-problems-it-solves)
 - [Who It's For](#who-its-for)
 - [What You Can Build](#what-you-can-build)
@@ -18,9 +18,9 @@
 
 ---
 
-## What Is OFFER-HUB Orchestrator?
+## What Is GIGANCHOR Orchestrator?
 
-OFFER-HUB Orchestrator is a **self-hosted payments middleware** for service marketplaces. It handles the financial plumbing — escrow, balance management, dispute resolution, USDC transactions on Stellar — so you can focus on your marketplace product.
+GIGANCHOR Orchestrator is a **self-hosted payments middleware** for service marketplaces. It handles the financial plumbing — escrow, balance management, dispute resolution, USDC transactions on Stellar — so you can focus on your marketplace product.
 
 It is NOT a SaaS. You deploy it on your own infrastructure and call its REST API from your marketplace backend.
 
@@ -29,7 +29,7 @@ Your Marketplace Frontend
          ↓
 Your Marketplace Backend
          ↓
-  OFFER-HUB Orchestrator  ← You deploy this
+  GIGANCHOR Orchestrator  ← You deploy this
          ↓              ↓
    Stellar + USDC    Trustless Work
    (blockchain)      (smart contracts)
@@ -186,17 +186,17 @@ The Orchestrator is intentionally narrow: it handles payments, escrow, and balan
 ```bash
 # 1. Create a user
 curl -X POST http://localhost:4000/api/v1/users \
-  -H "Authorization: Bearer ohk_live_..." \
+  -H "Authorization: Bearer gak_live_..." \
   -H "Content-Type: application/json" \
   -d '{"externalUserId": "user-001", "email": "buyer@example.com"}'
 
 # 2. Get their deposit address
 curl http://localhost:4000/api/v1/wallet/deposit-address \
-  -H "Authorization: Bearer ohk_live_..."
+  -H "Authorization: Bearer gak_live_..."
 
 # 3. Check their balance
 curl http://localhost:4000/api/v1/balances/usr_abc123 \
-  -H "Authorization: Bearer ohk_live_..."
+  -H "Authorization: Bearer gak_live_..."
 ```
 
 ---

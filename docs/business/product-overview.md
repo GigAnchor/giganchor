@@ -2,7 +2,7 @@
 
 ## Vision
 
-OFFER-HUB empowers marketplaces to provide secure, non-custodial escrow payments without the complexity of building payment infrastructure from scratch.
+GIGANCHOR empowers marketplaces to provide secure, non-custodial escrow payments without the complexity of building payment infrastructure from scratch.
 
 ## Problem Statement
 
@@ -15,7 +15,7 @@ Marketplaces face significant challenges when implementing payment systems:
 
 ## Solution
 
-OFFER-HUB provides a **self-hosted payments orchestrator** that:
+GIGANCHOR provides a **self-hosted payments orchestrator** that:
 
 - **Orchestrates** user balances, orders, and escrow workflows
 - **Integrates** with Trustless Work (escrow), Stellar (crypto), and Airtm (fiat)
@@ -66,7 +66,7 @@ Immutable audit logs for all state-changing actions, with correlation IDs for tr
 
 ## Value Proposition
 
-| Traditional Approach | OFFER-HUB |
+| Traditional Approach | GIGANCHOR |
 |:---------------------|:----------|
 | Build payment infrastructure from scratch | Integrate via REST API in days |
 | Hold user funds (custodial) | Non-custodial (funds in smart contracts) |
@@ -111,16 +111,16 @@ See [Use Cases](./use-cases.md) for detailed scenarios.
 
 1. **Deploy Orchestrator:** Self-host on your infrastructure
 2. **Configure Providers:** Set up Trustless Work and Stellar credentials
-3. **Integrate SDK:** Use `@offerhub/sdk` or direct REST API
+3. **Integrate SDK:** Use `@giganchor/sdk` or direct REST API
 4. **Test:** Use testnet for development and testing
 5. **Go Live:** Switch to mainnet for production
 
 ## Support
 
 - **Documentation:** [docs/](../README.md)
-- **GitHub:** [github.com/offerhub/orchestrator](https://github.com)
+- **GitHub:** [github.com/giganchor/orchestrator](https://github.com)
 - **Community:** [Discord/Slack]
-- **Email:** support@offerhub.com
+- **Email:** support@giganchor.tech
 
 ---
 

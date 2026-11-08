@@ -1,11 +1,11 @@
 ---
 title: Self-Hosting
-description: Complete instructions for deploying OFFER-HUB Orchestrator on your own infrastructure using Docker.
+description: Complete instructions for deploying GIGANCHOR Orchestrator on your own infrastructure using Docker.
 order: 25
 section: Guides
 ---
 
-Run OFFER-HUB Orchestrator on your own server with full control over data, uptime, and configuration. This guide covers everything from initial setup to ongoing maintenance using Docker.
+Run GIGANCHOR Orchestrator on your own server with full control over data, uptime, and configuration. This guide covers everything from initial setup to ongoing maintenance using Docker.
 
 <Callout type="tip">
   If you haven't configured your environment variables yet, review the [Configuration](/docs/configuration) page first.
@@ -57,12 +57,12 @@ The topology is verified against the Orchestrator root `docker-compose.yml`, `ap
 
 Create a deployment directory:
 
-<CommandLine>mkdir offer-hub-deploy && cd offer-hub-deploy</CommandLine>
+<CommandLine>mkdir giganchor-deploy && cd giganchor-deploy</CommandLine>
 
 Your directory will contain:
 
 ```
-offer-hub-deploy/
+giganchor-deploy/
 ├── docker-compose.yml
 ├── .env
 ├── nginx.conf (optional)
@@ -82,19 +82,19 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: offerhub
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-offerhub_secret}
-      POSTGRES_DB: offerhub_db
+      POSTGRES_USER: giganchor
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-giganchor_secret}
+      POSTGRES_DB: giganchor_db
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U offerhub"]
+      test: ["CMD-SHELL", "pg_isready -U giganchor"]
       interval: 10s
       timeout: 5s
       retries: 5
     restart: unless-stopped
     networks:
-      - offerhub
+      - giganchor
 
   redis:
     image: redis:7-alpine
@@ -135,9 +135,9 @@ services:
 Clone the source repository, install its dependencies, and run the API directly. No published
 application images are required.
 
-<CommandLine>git clone https://github.com/OFFER-HUB/OFFER-HUB.git && cd OFFER-HUB</CommandLine>
+<CommandLine>git clone https://github.com/GigAnchor/giganchor.git && cd GIGANCHOR</CommandLine>
 
-<CommandLine>npm ci && npm run build && npm start -w @offerhub/api</CommandLine>
+<CommandLine>npm ci && npm run build && npm start -w @giganchor/api</CommandLine>
 
 ## Environment Variables
 
@@ -150,7 +150,7 @@ Create a `.env` file in the same directory as your `docker-compose.yml`.
 | `NODE_ENV` | Runtime environment: `development`, `staging`, `production` |
 | `DATABASE_URL` | PostgreSQL connection string |
 | `REDIS_URL` | Redis connection string |
-| `OFFERHUB_MASTER_KEY` | Master key for creating API keys |
+| `GIGANCHOR_MASTER_KEY` | Master key for creating API keys |
 | `WALLET_ENCRYPTION_KEY` | 64 hex chars - AES-256-GCM key for wallet encryption |
 | `TRUSTLESS_API_KEY` | Trustless Work API key for escrow |
 | `PLATFORM_USER_ID` | Platform user ID for escrow operations |
@@ -179,14 +179,14 @@ PORT=4000
 LOG_LEVEL=info
 
 # Database (PostgreSQL)
-DATABASE_URL=postgresql://offerhub:your_password@postgres:5432/offerhub_db
+DATABASE_URL=postgresql://giganchor:your_password@postgres:5432/giganchor_db
 POSTGRES_PASSWORD=your_password
 
 # Redis
 REDIS_URL=redis://redis:6379
 
 # Authentication
-OFFERHUB_MASTER_KEY=your-secure-master-key-at-least-32-chars
+GIGANCHOR_MASTER_KEY=your-secure-master-key-at-least-32-chars
 
 # Payment Provider
 PAYMENT_PROVIDER=crypto
@@ -214,7 +214,7 @@ NEXT_PUBLIC_STELLAR_NETWORK=mainnet
 ### Generating Secure Keys
 
 ```bash
-# Generate OFFERHUB_MASTER_KEY
+# Generate GIGANCHOR_MASTER_KEY
 openssl rand -base64 32
 
 # Generate WALLET_ENCRYPTION_KEY (64 hex characters)
@@ -400,7 +400,7 @@ The recommended update procedure:
 
 ```bash
 # 1. Backup database
-docker compose exec postgres pg_dump -U offerhub offerhub_db > backup-$(date +%Y%m%d).sql
+docker compose exec postgres pg_dump -U giganchor giganchor_db > backup-$(date +%Y%m%d).sql
 
 # 2. Pull the latest source
 git pull --ff-only
@@ -427,14 +427,14 @@ npm ci && npm run build
 
 Then restart the API:
 
-<CommandLine>npm start -w @offerhub/api</CommandLine>
+<CommandLine>npm start -w @giganchor/api</CommandLine>
 
 ## Security Checklist
 
 Before going to production, verify:
 
 - [ ] `NODE_ENV=production` is set
-- [ ] `OFFERHUB_MASTER_KEY` is a strong, unique value
+- [ ] `GIGANCHOR_MASTER_KEY` is a strong, unique value
 - [ ] `WALLET_ENCRYPTION_KEY` is backed up securely
 - [ ] Database uses SSL (`?sslmode=require`)
 - [ ] Redis uses TLS (`rediss://`)
@@ -450,7 +450,7 @@ Before going to production, verify:
 
 ```bash
 # Check logs
-npm start -w @offerhub/api
+npm start -w @giganchor/api
 
 # Common issues:
 # - DATABASE_URL invalid

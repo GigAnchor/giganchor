@@ -1,11 +1,11 @@
 ---
 title: Orchestrator
-description: Understand OFFER-HUB's core payment orchestration architecture and how it processes transactions.
+description: Understand GIGANCHOR's core payment orchestration architecture and how it processes transactions.
 order: 12
 section: Guides
 ---
 
-The Orchestrator is the central engine of OFFER-HUB. It coordinates every step of a transaction — from the moment a buyer deposits USDC to the moment a seller withdraws funds — enforcing rules, managing state, and communicating with the Stellar blockchain so your marketplace never has to.
+The Orchestrator is the central engine of GIGANCHOR. It coordinates every step of a transaction — from the moment a buyer deposits USDC to the moment a seller withdraws funds — enforcing rules, managing state, and communicating with the Stellar blockchain so your marketplace never has to.
 
 <Callout type="tip">
   This guide covers the internal architecture. If you just want to make your first API call, go to [Quick Start](/docs/guide/quick-start) instead.
@@ -43,7 +43,7 @@ flowchart TB
 
     Backend -->|REST API| Orchestrator
 
-    subgraph Orchestrator["OFFER-HUB Orchestrator"]
+    subgraph Orchestrator["GIGANCHOR Orchestrator"]
         Ledger[Balance Ledger]
         Escrow[Escrow Engine State Machine]
         SSE[SSE Event Stream]
@@ -97,7 +97,7 @@ const order = await client.orders.create({
 The Orchestrator signs and submits a Stellar transaction that locks the USDC into a Soroban smart contract via Trustless Work. The escrow state moves to `FUNDED`.
 
 <Callout type="note">
-  At this point funds are held by the smart contract — not by OFFER-HUB. The Orchestrator cannot unilaterally move them. Only valid contract calls can release, dispute, or refund.
+  At this point funds are held by the smart contract — not by GIGANCHOR. The Orchestrator cannot unilaterally move them. Only valid contract calls can release, dispute, or refund.
 </Callout>
 
 ### 4. Work is Delivered

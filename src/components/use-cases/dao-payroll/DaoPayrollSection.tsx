@@ -43,7 +43,7 @@ export function DaoPayrollSection({
           variant="detailed"
           cards={stellarImpactCardsData}
           toggleId="dao-payroll"
-          summaryContent={{ offerhub: stellarImpactSummary }}
+          summaryContent={{ giganchor: stellarImpactSummary }}
         />
       </MetricsSection>
 

@@ -19,10 +19,10 @@ export const tabs: CodeTab[] = [
       "Deposit escrow initialization and vault funding on the server side.",
     docHref: repoDocUrl("apiReferenceOverview"),
     docLabel: "API Reference",
-    code: `import { OfferHub } from "@offerhub/sdk";
+    code: `import { Giganchor } from "@giganchor/sdk";
 
 // Initialize SDK — The Orchestrator mirrors your property platform state
-const oh = new OfferHub({ apiKey: process.env.OFFERHUB_API_KEY! });
+const oh = new Giganchor({ apiKey: process.env.GIGANCHOR_API_KEY! });
 
 // Deposit Escrow: initialize a non-custodial security deposit
 const deposit = await oh.escrows.init({
@@ -50,10 +50,10 @@ await oh.escrows.fund(deposit.id, {
       "Inspection verification and deposit settlement at lease end.",
     docHref: repoDocUrl("sdkQuickStart"),
     docLabel: "SDK Guide",
-    code: `import { OfferHub } from "@offerhub/sdk";
+    code: `import { Giganchor } from "@giganchor/sdk";
 
 // Client-side SDK use a public/restricted key.
-const oh = new OfferHub({
+const oh = new Giganchor({
   apiKey: "oh_demo_xxxxxxxxxxxx",
 });
 

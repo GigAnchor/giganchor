@@ -1,6 +1,6 @@
 # API Standards
 
-> Conventions, response formats, naming rules, validation constraints, and integration standards for the OFFER-HUB Orchestrator API.
+> Conventions, response formats, naming rules, validation constraints, and integration standards for the GIGANCHOR Orchestrator API.
 
 ---
 
@@ -46,17 +46,17 @@ GET    https://api.example.com/api/v1/events
 All endpoints require an API key in the `Authorization` header:
 
 ```
-Authorization: Bearer ohk_live_...
+Authorization: Bearer gak_live_...
 ```
 
 API keys have prefixes by type:
-- `ohk_live_` — production key
-- `ohk_test_` — test/sandbox key
+- `gak_live_` — production key
+- `gak_test_` — test/sandbox key
 
 Create API keys via the master key bootstrap endpoint:
 ```bash
 POST /api/v1/auth/api-keys
-Authorization: Bearer $OFFERHUB_MASTER_KEY
+Authorization: Bearer $GIGANCHOR_MASTER_KEY
 ```
 
 ### API Key Scopes
@@ -90,7 +90,7 @@ Request bodies must be valid JSON. Nested objects and arrays are supported.
 
 | Header | When | Example |
 |--------|------|---------|
-| `Authorization` | Always | `Bearer ohk_live_...` |
+| `Authorization` | Always | `Bearer gak_live_...` |
 | `Content-Type` | POST/PATCH | `application/json` |
 | `Idempotency-Key` | All state-mutating POSTs | `550e8400-e29b-41d4-a716-446655440000` |
 | `Accept` | SSE subscriptions | `text/event-stream` |

@@ -1,11 +1,11 @@
 ---
 title: Escrow Endpoints
-description: Per-endpoint reference for the OFFER-HUB escrow API — contract creation and funding — with request parameters, contract signer roles, valid state transitions, error codes, and cURL plus TypeScript SDK examples.
+description: Per-endpoint reference for the GIGANCHOR escrow API — contract creation and funding — with request parameters, contract signer roles, valid state transitions, error codes, and cURL plus TypeScript SDK examples.
 order: 45
 section: API Reference
 ---
 
-An OFFER-HUB escrow is a Stellar smart contract, deployed through Trustless Work, that holds a buyer's funds until the order is resolved. Two endpoints create that contract and move money into it; three more (`release`, `refund`, `dispute`) settle it — see [Resolution Endpoints](/docs/api-reference/resolution).
+An GIGANCHOR escrow is a Stellar smart contract, deployed through Trustless Work, that holds a buyer's funds until the order is resolved. Two endpoints create that contract and move money into it; three more (`release`, `refund`, `dispute`) settle it — see [Resolution Endpoints](/docs/api-reference/resolution).
 
 | Method | Path | Success status | Controller handler |
 | --- | --- | --- | --- |
@@ -282,18 +282,18 @@ If any step after the state change fails, the catch block moves the order back t
       code: `# No request body: the amount, currency, and milestones come from the order.
 # The order must be in FUNDS_RESERVED — call POST /orders/{id}/reserve first.
 curl -X POST "http://localhost:4000/api/v1/orders/ord_abc123/escrow" \\
-  -H "Authorization: Bearer ohk_live_xxxxxxxxxxxxxxxxxxxxxxxx" \\
+  -H "Authorization: Bearer gak_live_xxxxxxxxxxxxxxxxxxxxxxxx" \\
   -H "X-Request-ID: req_2c8a10"`
     },
     {
       id: "sdk",
       label: "TypeScript SDK",
       language: "typescript",
-      code: `import { OfferHubSDK } from "@offerhub/sdk";
+      code: `import { GiganchorSDK } from "@giganchor/sdk";
 
-const sdk = new OfferHubSDK({
+const sdk = new GiganchorSDK({
   apiUrl: "https://your-orchestrator.example.com",
-  apiKey: "ohk_live_xxxxxxxxxxxxxxxxxxxxxxxx",
+  apiKey: "gak_live_xxxxxxxxxxxxxxxxxxxxxxxx",
 });
 
 // Funds must be reserved first: await sdk.orders.reserve("ord_abc123");
@@ -431,18 +431,18 @@ If the provider call fails, the catch block reserves the buyer's balance again, 
       code: `# No request body: the amount is the order amount, debited from the
 # buyer's reserved balance. The order must be in ESCROW_FUNDING.
 curl -X POST "http://localhost:4000/api/v1/orders/ord_abc123/escrow/fund" \\
-  -H "Authorization: Bearer ohk_live_xxxxxxxxxxxxxxxxxxxxxxxx" \\
+  -H "Authorization: Bearer gak_live_xxxxxxxxxxxxxxxxxxxxxxxx" \\
   -H "X-Request-ID: req_2c8a11"`
     },
     {
       id: "sdk",
       label: "TypeScript SDK",
       language: "typescript",
-      code: `import { OfferHubSDK } from "@offerhub/sdk";
+      code: `import { GiganchorSDK } from "@giganchor/sdk";
 
-const sdk = new OfferHubSDK({
+const sdk = new GiganchorSDK({
   apiUrl: "https://your-orchestrator.example.com",
-  apiKey: "ohk_live_xxxxxxxxxxxxxxxxxxxxxxxx",
+  apiKey: "gak_live_xxxxxxxxxxxxxxxxxxxxxxxx",
 });
 
 const result = await sdk.orders.fundEscrow("ord_abc123");

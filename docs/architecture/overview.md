@@ -313,7 +313,7 @@ backend/
 NEXT_PUBLIC_API_URL=http://localhost:4000
 
 # Backend (.env)
-DATABASE_URL=postgresql://user:password@localhost:5432/offerhub
+DATABASE_URL=postgresql://user:password@localhost:5432/giganchor
 JWT_SECRET=your-secret-key
 JWT_EXPIRES_IN=7d
 CORS_ORIGIN=http://localhost:3000

@@ -1,10 +1,10 @@
-# AI Context for OFFER-HUB
+# AI Context for GIGANCHOR
 
-This document provides essential context for AI assistants working on the OFFER-HUB project. Read this document FIRST before making any changes.
+This document provides essential context for AI assistants working on the GIGANCHOR project. Read this document FIRST before making any changes.
 
 ## Project Overview
 
-OFFER-HUB is a **self-hosted payments orchestrator** for marketplaces that provides escrow-protected payments and user balances without requiring marketplaces to build payment infrastructure. It's a monorepo containing both backend (NestJS) and frontend (Next.js) applications.
+GIGANCHOR is a **self-hosted payments orchestrator** for marketplaces that provides escrow-protected payments and user balances without requiring marketplaces to build payment infrastructure. It's a monorepo containing both backend (NestJS) and frontend (Next.js) applications.
 
 **What it provides:**
 - User Balance (Web2)
@@ -69,7 +69,7 @@ Before contributing, you **MUST** read these documents:
 ## Project Structure
 
 ```
-offer-hub-monorepo/              # Frontend & Documentation
+giganchor-monorepo/              # Frontend & Documentation
 ├── src/
 │   ├── app/                     # Next.js App Router pages
 │   ├── components/              # React components
@@ -81,7 +81,7 @@ offer-hub-monorepo/              # Frontend & Documentation
 ├── public/                      # Static assets
 └── backend/                     # Backend utilities
 
-offer-hub-orchestrator/          # Backend API (separate repo)
+giganchor-orchestrator/          # Backend API (separate repo)
 ├── apps/
 │   ├── api/                     # NestJS API (main server)
 │   │   └── src/
@@ -93,8 +93,8 @@ offer-hub-orchestrator/          # Backend API (separate repo)
 ├── packages/
 │   ├── database/                # Prisma schema and client
 │   ├── shared/                  # Shared DTOs, types, enums
-│   ├── sdk/                     # @offerhub/sdk client
-│   └── cli/                     # @offerhub/cli tool
+│   ├── sdk/                     # @giganchor/sdk client
+│   └── cli/                     # @giganchor/cli tool
 └── docs/                        # Backend documentation
 ```
 

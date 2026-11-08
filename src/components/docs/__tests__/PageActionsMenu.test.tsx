@@ -53,7 +53,7 @@ function renderMenu(markdownContent = "# Title\n\nBody copy.") {
 }
 
 const EXPECTED_PROMPT =
-  "Read Getting Started at https://offer-hub.tech/docs/getting-started/raw and help me understand it.";
+  "Read Getting Started at https://giganchor.tech/docs/getting-started/raw and help me understand it.";
 
 async function openMenu(user: ReturnType<typeof userEvent.setup>) {
   const trigger = screen.getByRole("button", { name: /copy page/i });

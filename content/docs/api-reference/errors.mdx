@@ -1,11 +1,11 @@
 ---
 title: Error Codes
-description: Complete error code catalog for the OFFER-HUB Orchestrator — 40+ domain-specific codes, HTTP status mapping, error envelope format, correlation headers, and SDK error mappings.
+description: Complete error code catalog for the GIGANCHOR Orchestrator — 40+ domain-specific codes, HTTP status mapping, error envelope format, correlation headers, and SDK error mappings.
 order: 47
 section: API Reference
 ---
 
-The OFFER-HUB Orchestrator returns standard, machine-readable JSON error envelopes for all failed requests. Every error includes a persistent machine code, a human-readable message, an optional domain-specific details payload, and a correlation request identifier.
+The GIGANCHOR Orchestrator returns standard, machine-readable JSON error envelopes for all failed requests. Every error includes a persistent machine code, a human-readable message, an optional domain-specific details payload, and a correlation request identifier.
 
 All error responses are generated centrally by `GlobalExceptionFilter` (`apps/api/src/common/filters/global-exception.filter.ts`) using the canonical code catalog defined in `packages/shared/src/constants/error-codes.ts`.
 
@@ -113,7 +113,7 @@ sequenceDiagram
 
 ## SDK Error Mapping
 
-When using `@offerhub/sdk`, the HTTP client inspects `error.code` and `statusCode` to raise typed JavaScript/TypeScript exception subclasses extending `OfferHubError`.
+When using `@giganchor/sdk`, the HTTP client inspects `error.code` and `statusCode` to raise typed JavaScript/TypeScript exception subclasses extending `GiganchorError`.
 
 For the complete SDK exception class hierarchy, retry options, and client catching patterns, see [SDK Errors](/docs/sdk/errors).
 
@@ -123,7 +123,7 @@ For the complete SDK exception class hierarchy, retry options, and client catchi
 | `INSUFFICIENT_SCOPE`, `USER_INACTIVE`, `UNAUTHORIZED_DISPUTE` | `403` | `AuthorizationError` | Valid credentials, but lacking permissions for resource or action. |
 | `USER_NOT_FOUND`, `ORDER_NOT_FOUND`, `ESCROW_NOT_FOUND`, `DISPUTE_NOT_FOUND`, `TOPUP_NOT_FOUND`, `WITHDRAWAL_NOT_FOUND`, `RESERVE_NOT_FOUND`, `WALLET_NOT_FOUND` | `404` | `NotFoundError` | The requested entity ID does not exist. |
 | `VALIDATION_ERROR`, `INVALID_AMOUNT_FORMAT`, `INVALID_CURRENCY`, `MISSING_REQUIRED_FIELD`, `INVALID_PAGINATION`, `INVALID_RESOLUTION` | `400` | `ValidationError` | Request payload failed DTO field or format constraints. |
-| `INSUFFICIENT_FUNDS`, `RESERVE_MISMATCH_AMOUNT`, `TOPUP_EXPIRED`, `WITHDRAWAL_DESTINATION_INVALID`, `TRUSTLINE_MISSING`, `AIRTM_USER_NOT_LINKED`, `AIRTM_USER_INVALID` | `422` | `InsufficientFundsError` / `OfferHubError` | Business rule rejected the transaction. |
+| `INSUFFICIENT_FUNDS`, `RESERVE_MISMATCH_AMOUNT`, `TOPUP_EXPIRED`, `WITHDRAWAL_DESTINATION_INVALID`, `TRUSTLINE_MISSING`, `AIRTM_USER_NOT_LINKED`, `AIRTM_USER_INVALID` | `422` | `InsufficientFundsError` / `GiganchorError` | Business rule rejected the transaction. |
 | `INVALID_STATE`, `INVALID_STATE_TRANSITION`, `ORDER_NOT_IN_PROGRESS`, `ESCROW_NOT_READY`, `ESCROW_NOT_FUNDED` | `409` / `400` | `InvalidTransitionError` | State machine rejected the requested status transition. |
 | `IDEMPOTENCY_KEY_REUSED`, `IDEMPOTENCY_KEY_IN_PROGRESS`, `IDEMPOTENCY_CONFLICT` | `409` | `IdempotencyError` | Replay key collision or concurrent execution in progress. |
 | `PROVIDER_ERROR`, `PROVIDER_TIMEOUT`, `PROVIDER_RATE_LIMITED`, `ESCROW_CREATE_FAILED`, `ESCROW_FUNDING_FAILED`, `TOPUP_FAILED`, `WITHDRAWAL_FAILED` | `502` / `504` | `ProviderError` | Upstream provider (Trustless Work, Airtm, Stellar Horizon) failed. |
@@ -143,7 +143,7 @@ Implemented in `apps/api/src/common/guards/api-key.guard.ts`, `apps/api/src/comm
 | Code | HTTP | Cause | How to Fix | Implementation Citation |
 | --- | --- | --- | --- | --- |
 | `UNAUTHORIZED` | `401` | Missing, malformed, or empty `Authorization` header. | Supply header `Authorization: Bearer <key>` with a valid API key or Bearer JWT token. | `ApiKeyGuard`, `JwtAuthGuard` |
-| `INVALID_API_KEY` | `401` | The API key token was not found in the database or has been deactivated/revoked. | Verify the key prefix (`ohk_live_`) or create a new key via `POST /api/v1/auth/api-keys`. | `ApiKeyGuard`, `AuthService.validateApiKey` |
+| `INVALID_API_KEY` | `401` | The API key token was not found in the database or has been deactivated/revoked. | Verify the key prefix (`gak_live_`) or create a new key via `POST /api/v1/auth/api-keys`. | `ApiKeyGuard`, `AuthService.validateApiKey` |
 | `INSUFFICIENT_SCOPE` | `403` | The authenticated API key lacks the scope required by the route (`read`, `write`, `support`, or `admin`). | Issue or use an API key containing the required scope string. | `ScopesGuard`, `@Scopes()` decorator |
 | `TOKEN_EXPIRED` | `401` | JWT session token has passed its expiration timestamp. | Call `POST /api/v1/auth/refresh` with the valid refresh token to obtain a fresh access token. | `JwtStrategy`, `AuthService.refreshToken` |
 
@@ -290,7 +290,7 @@ Implemented in `apps/api/src/common/filters/global-exception.filter.ts`, `apps/a
 ## Related Documentation
 
 - [API Reference Overview](/docs/api-reference/overview) — Base URL, authentication, headers, error envelope, and idempotency
-- [SDK Errors](/docs/sdk/errors) — `@offerhub/sdk` error classes, exception inheritance, and retry strategies
+- [SDK Errors](/docs/sdk/errors) — `@giganchor/sdk` error classes, exception inheritance, and retry strategies
 - [Escrow Endpoints](/docs/api-reference/escrow) — On-chain smart contract creation and funding error flows
 - [Resolution Endpoints](/docs/api-reference/resolution) — `release`, `refund`, and `dispute` error scenarios
 - [Events Reference](/docs/api-reference/events) — Real-time SSE event catalog for tracking failed operations

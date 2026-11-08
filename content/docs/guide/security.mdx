@@ -6,10 +6,10 @@ section: Guides
 ---
 
 <Callout type="note">
-  This is the public API/SDK guide for integrators. For internal implementation detail (Orchestrator state machine, signer roles), see [`docs/deployment/security-hardening.md`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/docs/deployment/security-hardening.md) in the repo.
+  This is the public API/SDK guide for integrators. For internal implementation detail (Orchestrator state machine, signer roles), see [`docs/deployment/security-hardening.md`](https://github.com/GigAnchor/giganchor/blob/main/docs/deployment/security-hardening.md) in the repo.
 </Callout>
 
-Integrating OFFER-HUB into your marketplace means handling real USDC transactions on a public blockchain. A misconfiguration can expose user funds or allow spoofed payment events to reach your system. This guide gives you concrete, OFFER-HUB-specific security practices — not generic web security advice.
+Integrating GIGANCHOR into your marketplace means handling real USDC transactions on a public blockchain. A misconfiguration can expose user funds or allow spoofed payment events to reach your system. This guide gives you concrete, GIGANCHOR-specific security practices — not generic web security advice.
 
 <Callout type="warning">
   This guide focuses on threats specific to payment orchestration and blockchain escrow. Read it before going to production.
@@ -17,7 +17,7 @@ Integrating OFFER-HUB into your marketplace means handling real USDC transaction
 
 ## API Key Management
 
-OFFER-HUB API keys follow the format `ohk_live_xxx` (production) and `ohk_test_xxx` (sandbox). A leaked live key gives full control over all payment operations — including releasing escrow funds and initiating withdrawals.
+GIGANCHOR API keys follow the format `gak_live_xxx` (production) and `gak_test_xxx` (sandbox). A leaked live key gives full control over all payment operations — including releasing escrow funds and initiating withdrawals.
 
 ### Store Keys in Environment Variables
 
@@ -27,32 +27,32 @@ OFFER-HUB API keys follow the format `ohk_live_xxx` (production) and `ohk_test_x
 
 ```bash
 # .env — never commit this file
-OFFER_HUB_API_KEY=ohk_live_abc123...
+GIGANCHOR_API_KEY=gak_live_abc123...
 ```
 
 ```typescript
 // ✅ Read from the environment at runtime — server-side only
-const apiKey = process.env.OFFER_HUB_API_KEY;
-if (!apiKey) throw new Error('OFFER_HUB_API_KEY is not set');
+const apiKey = process.env.GIGANCHOR_API_KEY;
+if (!apiKey) throw new Error('GIGANCHOR_API_KEY is not set');
 ```
 
 ```typescript
 // ❌ Never hardcode keys in source code
-const apiKey = 'ohk_live_abc123...'; // Will end up in git history
+const apiKey = 'gak_live_abc123...'; // Will end up in git history
 
 // ❌ Never embed keys in client-side bundles
 const response = await fetch('/api/orders', {
-  headers: { Authorization: `Bearer ohk_live_abc123...` },
+  headers: { Authorization: `Bearer gak_live_abc123...` },
 });
 ```
 
 ### API Key Transport
 
-API keys must **only** travel server-to-server. Your marketplace backend calls OFFER-HUB; your frontend never does.
+API keys must **only** travel server-to-server. Your marketplace backend calls GIGANCHOR; your frontend never does.
 
 ```
-❌ Browser → OFFER-HUB API  (exposes key via DevTools)
-✅ Browser → Your Backend → OFFER-HUB API
+❌ Browser → GIGANCHOR API  (exposes key via DevTools)
+✅ Browser → Your Backend → GIGANCHOR API
 ```
 
 ### Rotation
@@ -77,7 +77,7 @@ Use the minimum scope each service needs:
 
 ## Real-Time Event Security
 
-OFFER-HUB does **not** send outbound webhooks, so there is no webhook signature for you to verify and no `X-OfferHub-Signature` header. Real-time events arrive over the **SSE stream** (`GET /api/v1/events`), which is authenticated with your API key over HTTPS.
+GIGANCHOR does **not** send outbound webhooks, so there is no webhook signature for you to verify and no `X-Giganchor-Signature` header. Real-time events arrive over the **SSE stream** (`GET /api/v1/events`), which is authenticated with your API key over HTTPS.
 
 ### Protecting Your Event Consumers
 
@@ -108,7 +108,7 @@ function onEvent(event: { eventId: string }) {
 
 ## Wallet Private Key Management
 
-OFFER-HUB manages Stellar invisible wallets for your users. Private keys are encrypted with AES-256-GCM at rest. As an integrator, you call the Orchestrator API — **you should never handle raw private keys directly.**
+GIGANCHOR manages Stellar invisible wallets for your users. Private keys are encrypted with AES-256-GCM at rest. As an integrator, you call the Orchestrator API — **you should never handle raw private keys directly.**
 
 ### What the Orchestrator Handles
 
@@ -151,7 +151,7 @@ WALLET_ENCRYPTION_KEY=$(openssl rand -hex 32)
 
 ## Escrow Integration Security
 
-The escrow flow is the highest-risk operation in OFFER-HUB. A bug here can result in funds being released to the wrong party or funds being permanently locked.
+The escrow flow is the highest-risk operation in GIGANCHOR. A bug here can result in funds being released to the wrong party or funds being permanently locked.
 
 ### Verify State Before Releasing Funds
 
@@ -159,7 +159,7 @@ Always verify order and escrow state from the API before triggering a resolution
 
 ```typescript
 async function releaseEscrow(orderId: string, requestedBy: string) {
-  const order = await offerHubClient.orders.get(orderId);
+  const order = await giganchorClient.orders.get(orderId);
 
   if (order.status !== 'IN_PROGRESS') {
     throw new Error(`Cannot release order in state: ${order.status}`);
@@ -171,7 +171,7 @@ async function releaseEscrow(orderId: string, requestedBy: string) {
     throw new Error('Escrow is not in FUNDED state');
   }
 
-  return offerHubClient.orders.release(orderId, 'Buyer approved release');
+  return giganchorClient.orders.release(orderId, 'Buyer approved release');
 }
 ```
 
@@ -192,7 +192,7 @@ Before calling `POST /orders/:id/resolution/release`:
 Protect against double-releases caused by network retries:
 
 ```typescript
-const idempotentClient = offerHubClient.withIdempotencyKey(
+const idempotentClient = giganchorClient.withIdempotencyKey(
   '550e8400-e29b-41d4-a716-446655440003'
 );
 await idempotentClient.orders.release(orderId, 'Buyer approved release');
@@ -248,7 +248,7 @@ Content-Security-Policy:
 
 **Risk:** A signed Stellar transaction is resubmitted to process the same payment twice.
 
-**Mitigation by OFFER-HUB:** Stellar transactions include a sequence number — each transaction can only be processed once. Replaying it returns `tx_bad_seq`.
+**Mitigation by GIGANCHOR:** Stellar transactions include a sequence number — each transaction can only be processed once. Replaying it returns `tx_bad_seq`.
 
 **Your responsibility:** Use idempotency keys on all API calls. If a release succeeds but the network drops before you receive the response, retry with the same idempotency key to get the cached result instead of a second release.
 
@@ -262,13 +262,13 @@ Content-Security-Policy:
 
 ### Balance Desynchronization
 
-**Risk:** OFFER-HUB's off-chain balance (PostgreSQL) diverges from the on-chain USDC balance (Stellar ledger).
+**Risk:** GIGANCHOR's off-chain balance (PostgreSQL) diverges from the on-chain USDC balance (Stellar ledger).
 
 **How to detect it:**
 
 ```typescript
 async function reconcileBalance(userId: string) {
-  const offChain = await offerHubClient.balances.get(userId);
+  const offChain = await giganchorClient.balances.get(userId);
   const account = await stellarServer.loadAccount(wallet.publicKey);
   const usdcBalance = account.balances.find(b => b.asset_code === 'USDC');
 
@@ -289,7 +289,7 @@ async function reconcileBalance(userId: string) {
 
 ```typescript
 // ✅ Always fetch deposit addresses from the API — never from user-supplied input
-const { data } = await offerHubClient.wallet.getDepositAddress(userId);
+const { data } = await giganchorClient.wallet.getDepositAddress(userId);
 displayAddress(data.address);
 
 // ❌ Never trust an address from the request body

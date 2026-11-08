@@ -6,7 +6,7 @@ import { buildPageMetadata } from "@/lib/seo";
 export const metadata: Metadata = buildPageMetadata({
     title: "Industry Use Cases",
     description:
-        "Explore how OFFER-HUB's non-custodial escrow orchestrates payment workflows across Freelance, eCommerce, DAO payroll, Real Estate, and service platforms.",
+        "Explore how GIGANCHOR's non-custodial escrow orchestrates payment workflows across Freelance, eCommerce, DAO payroll, Real Estate, and service platforms.",
     keywords: [
         "use cases",
         "freelance",
@@ -14,12 +14,12 @@ export const metadata: Metadata = buildPageMetadata({
         "DAO payroll",
         "real estate",
         "escrow",
-        "OFFER-HUB",
+        "GIGANCHOR",
         "marketplace",
     ],
     path: "/use-cases",
     ogImageAlt:
-        "OFFER-HUB use cases across freelance, eCommerce, DAO payroll, and real estate",
+        "GIGANCHOR use cases across freelance, eCommerce, DAO payroll, and real estate",
 });
 
 export default function UseCasesLayout({

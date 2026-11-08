@@ -34,7 +34,7 @@ const ROW = {
 };
 
 function request(body: unknown, raw = false) {
-  return new NextRequest("https://offer-hub.tech/api/privacy/export", {
+  return new NextRequest("https://giganchor.tech/api/privacy/export", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: raw ? (body as string) : JSON.stringify(body),

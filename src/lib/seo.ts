@@ -4,7 +4,7 @@ import { SITE_URL, SITE_NAME } from "@/constants/site";
 export { SITE_URL };
 
 type PageSeoInput = {
-  /** Feeds `metadata.title`, so the root layout's "%s | OFFER-HUB" template applies */
+  /** Feeds `metadata.title`, so the root layout's "%s | GIGANCHOR" template applies */
   title: string;
   description: string;
   keywords: string[];

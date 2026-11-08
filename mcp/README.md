@@ -1,6 +1,6 @@
-# OFFER-HUB MCP Documentation Server
+# GIGANCHOR MCP Documentation Server
 
-A [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server that exposes OFFER-HUB documentation to AI assistants like Claude, ChatGPT, Cursor, and Codex. This allows developers to query the official documentation directly from their AI assistant.
+A [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server that exposes GIGANCHOR documentation to AI assistants like Claude, ChatGPT, Cursor, and Codex. This allows developers to query the official documentation directly from their AI assistant.
 
 The server is hosted and reachable over MCP's **Streamable HTTP** transport at a stable production URL, so there is no local installation or stdio setup required — the docs site's page-actions menu ("Connect with MCP", "Connect to VSCode", "Connect to Claude Code", "Connect to Codex") wires these up with one click.
 
@@ -15,10 +15,10 @@ The server is hosted and reachable over MCP's **Streamable HTTP** transport at a
 The recommended way to connect is the hosted server — no clone, build, or absolute-path config needed:
 
 ```
-https://offer-hub.tech/api/mcp
+https://giganchor.tech/api/mcp
 ```
 
-The server is deployed within the main OFFER-HUB Next.js application as a serverless Streamable HTTP endpoint. You can configure your AI assistants to connect to the remote endpoint without running any local servers.
+The server is deployed within the main GIGANCHOR Next.js application as a serverless Streamable HTTP endpoint. You can configure your AI assistants to connect to the remote endpoint without running any local servers.
 
 ### Connect (one click)
 
@@ -27,9 +27,9 @@ The server is deployed within the main OFFER-HUB Next.js application as a server
 ```json
 {
   "mcpServers": {
-    "offer-hub-docs": {
+    "giganchor-docs": {
       "type": "http",
-      "url": "https://offer-hub.tech/api/mcp"
+      "url": "https://giganchor.tech/api/mcp"
     }
   }
 }
@@ -38,20 +38,20 @@ The server is deployed within the main OFFER-HUB Next.js application as a server
 **VS Code** — click the install deep link (or open it in a browser):
 
 ```
-vscode:mcp/install?%7B%22name%22%3A%22offer-hub-docs%22%2C%22transportType%22%3A%22http%22%2C%22url%22%3A%22https%3A%2F%2Foffer-hub.tech%2Fapi%2Fmcp%22%7D
+vscode:mcp/install?%7B%22name%22%3A%22giganchor-docs%22%2C%22transportType%22%3A%22http%22%2C%22url%22%3A%22https%3A%2F%2Fgiganchor.tech%2Fapi%2Fmcp%22%7D
 ```
 
 **Claude Code** — run in your terminal:
 
 ```bash
-claude mcp add --transport http offer-hub-docs https://offer-hub.tech/api/mcp
+claude mcp add --transport http giganchor-docs https://giganchor.tech/api/mcp
 ```
 
 **Codex** — add to `~/.codex/config.toml` (or a project-scoped `.codex/config.toml`):
 
 ```toml
-[mcp_servers.offer-hub-docs]
-url = "https://offer-hub.tech/api/mcp"
+[mcp_servers.giganchor-docs]
+url = "https://giganchor.tech/api/mcp"
 ```
 
 > **Note on remote HTTP transport** — since direct HTTP transport configuration depends on the assistant's implementation, refer to your assistant's latest documentation for connecting to a remote MCP URL. Some clients also support provisioning the hosted endpoint via Smithery.
@@ -79,7 +79,7 @@ npm start
 ### Option 2: Run with npx (After Publishing)
 
 ```bash
-npx @offer-hub/mcp-docs-server
+npx @giganchor/mcp-docs-server
 ```
 
 ## Configuration
@@ -98,9 +98,9 @@ Hosted endpoint:
 ```json
 {
   "mcpServers": {
-    "offer-hub-docs": {
+    "giganchor-docs": {
       "type": "http",
-      "url": "https://offer-hub.tech/api/mcp"
+      "url": "https://giganchor.tech/api/mcp"
     }
   }
 }
@@ -111,9 +111,9 @@ Local stdio (development fallback):
 ```json
 {
   "mcpServers": {
-    "offer-hub-docs": {
+    "giganchor-docs": {
       "command": "node",
-      "args": ["/absolute/path/to/offer-hub/mcp/build/index.js"]
+      "args": ["/absolute/path/to/giganchor/mcp/build/index.js"]
     }
   }
 }
@@ -124,9 +124,9 @@ Or with npx (after publishing):
 ```json
 {
   "mcpServers": {
-    "offer-hub-docs": {
+    "giganchor-docs": {
       "command": "npx",
-      "args": ["-y", "@offer-hub/mcp-docs-server"]
+      "args": ["-y", "@giganchor/mcp-docs-server"]
     }
   }
 }
@@ -137,7 +137,7 @@ Or with npx (after publishing):
 Hosted endpoint (one command):
 
 ```bash
-claude mcp add --transport http offer-hub-docs https://offer-hub.tech/api/mcp
+claude mcp add --transport http giganchor-docs https://giganchor.tech/api/mcp
 ```
 
 Local stdio (development fallback) — add to your `~/.claude.json` or project's `.mcp.json`:
@@ -145,9 +145,9 @@ Local stdio (development fallback) — add to your `~/.claude.json` or project's
 ```json
 {
   "mcpServers": {
-    "offer-hub-docs": {
+    "giganchor-docs": {
       "command": "node",
-      "args": ["/absolute/path/to/offer-hub/mcp/build/index.js"]
+      "args": ["/absolute/path/to/giganchor/mcp/build/index.js"]
     }
   }
 }
@@ -162,9 +162,9 @@ Hosted endpoint:
 ```json
 {
   "mcpServers": {
-    "offer-hub-docs": {
+    "giganchor-docs": {
       "type": "http",
-      "url": "https://offer-hub.tech/api/mcp"
+      "url": "https://giganchor.tech/api/mcp"
     }
   }
 }
@@ -175,9 +175,9 @@ Local stdio (development fallback):
 ```json
 {
   "mcpServers": {
-    "offer-hub-docs": {
+    "giganchor-docs": {
       "command": "node",
-      "args": ["/absolute/path/to/offer-hub/mcp/build/index.js"]
+      "args": ["/absolute/path/to/giganchor/mcp/build/index.js"]
     }
   }
 }
@@ -190,9 +190,9 @@ Click the [one-click install deep link](#connect-one-click), or add to your work
 ```json
 {
   "servers": {
-    "offer-hub-docs": {
+    "giganchor-docs": {
       "type": "http",
-      "url": "https://offer-hub.tech/api/mcp"
+      "url": "https://giganchor.tech/api/mcp"
     }
   }
 }
@@ -203,7 +203,7 @@ Local stdio (development fallback):
 ```json
 {
   "servers": {
-    "offer-hub-docs": {
+    "giganchor-docs": {
       "command": "node",
       "args": ["${workspaceFolder}/mcp/build/index.js"]
     }
@@ -216,18 +216,18 @@ Local stdio (development fallback):
 Add to `~/.codex/config.toml` (or a project-scoped `.codex/config.toml`):
 
 ```toml
-[mcp_servers.offer-hub-docs]
-url = "https://offer-hub.tech/api/mcp"
+[mcp_servers.giganchor-docs]
+url = "https://giganchor.tech/api/mcp"
 ```
 
 ## Usage Examples
 
 Once configured, you can ask your AI assistant questions like:
 
-- "Search OFFER-HUB docs for escrow implementation"
+- "Search GIGANCHOR docs for escrow implementation"
 - "Get the documentation page for deposits"
 - "List all available documentation sections"
-- "How does the balance system work in OFFER-HUB?"
+- "How does the balance system work in GIGANCHOR?"
 - "Show me the API reference for webhooks"
 
 ## Tools Reference
@@ -249,7 +249,7 @@ Lists all available documentation sections with their pages.
       {
         "title": "Installation",
         "slug": "installation",
-        "description": "How to install and set up OFFER-HUB"
+        "description": "How to install and set up GIGANCHOR"
       }
     ]
   }
@@ -291,10 +291,10 @@ Get full content of a specific documentation page.
 ```json
 {
   "title": "Getting Started",
-  "description": "Learn how OFFER-HUB works",
+  "description": "Learn how GIGANCHOR works",
   "section": "Getting Started",
   "slug": "getting-started",
-  "content": "# Getting Started\n\nOFFER-HUB is a non-custodial escrow..."
+  "content": "# Getting Started\n\nGIGANCHOR is a non-custodial escrow..."
 }
 ```
 
@@ -321,7 +321,7 @@ npm start
 ## Requirements
 
 - Node.js >= 18.0.0
-- The server must be run from within the OFFER-HUB repository (or have access to the docs directories)
+- The server must be run from within the GIGANCHOR repository (or have access to the docs directories)
 
 ## License
 

@@ -12,9 +12,9 @@ describe("docs/guide/cli", () => {
 
   it("documents configuration resolution priority order accurately", () => {
     const doc = getDocBySlug("guide/cli")!;
-    expect(doc.content).toContain("OFFERHUB_API_URL");
-    expect(doc.content).toContain("OFFERHUB_API_KEY");
-    expect(doc.content).toContain("~/.offerhub/config.json");
+    expect(doc.content).toContain("GIGANCHOR_API_URL");
+    expect(doc.content).toContain("GIGANCHOR_API_KEY");
+    expect(doc.content).toContain("~/.giganchor/config.json");
     expect(doc.content).toContain(".env");
   });
 

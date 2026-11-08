@@ -30,7 +30,7 @@ function request(method: "GET" | "POST" | "DELETE", url: string, body?: unknown)
     headers["Content-Type"] = "application/json";
     headers["Accept"] = "application/json, text/event-stream";
   }
-  return new NextRequest(`https://offer-hub.tech${url}`, {
+  return new NextRequest(`https://giganchor.tech${url}`, {
     method,
     headers,
     body: body ? JSON.stringify(body) : undefined,

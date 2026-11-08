@@ -111,7 +111,7 @@ describe("CodeTabs", () => {
     expect(tabs[3]).toHaveAttribute("aria-selected", "true");
 
     tabs[0].focus();
-    window.dispatchEvent(new CustomEvent("offer-hub-code-tab-change", { detail: "TypeScript" }));
+    window.dispatchEvent(new CustomEvent("giganchor-code-tab-change", { detail: "TypeScript" }));
     expect(tabs[0]).toHaveFocus();
     expect(tabs[1]).toHaveAttribute("aria-selected", "true");
 

@@ -19,7 +19,7 @@ import { docExportBaseName } from "@/lib/docs/export-filenames";
  *       "codeBlocks": [
  *         {
  *           "language": "ts",
- *           "code": "npm install offer-hub"
+ *           "code": "npm install giganchor"
  *         }
  *       ]
  *     }

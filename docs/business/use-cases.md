@@ -1,6 +1,6 @@
 # Use Cases
 
-This document outlines common marketplace scenarios and how OFFER-HUB handles them.
+This document outlines common marketplace scenarios and how GIGANCHOR handles them.
 
 ## Use Case 1: Freelance Platform
 
@@ -13,7 +13,7 @@ This document outlines common marketplace scenarios and how OFFER-HUB handles th
 - Dispute resolution for disagreements
 - Freelancers withdraw earnings
 
-### OFFER-HUB Implementation
+### GIGANCHOR Implementation
 
 **1. Client Deposits Funds**
 ```
@@ -91,7 +91,7 @@ POST /withdrawals
 - Automatic release after delivery window
 - Refunds for non-delivery or defects
 
-### OFFER-HUB Implementation
+### GIGANCHOR Implementation
 
 **1. Buyer Purchases Item**
 ```
@@ -151,7 +151,7 @@ Buyer reports item damaged
 - Customer approves completion
 - Dispute resolution for quality issues
 
-### OFFER-HUB Implementation
+### GIGANCHOR Implementation
 
 **1. Customer Books Service**
 ```
@@ -204,7 +204,7 @@ POST /disputes
 - High volume of small transactions
 - Instant withdrawals
 
-### OFFER-HUB Implementation
+### GIGANCHOR Implementation
 
 **1. Customer Posts Task**
 ```
@@ -251,7 +251,7 @@ POST /withdrawals
 - Cancel anytime
 - Prorated refunds
 
-### OFFER-HUB Implementation
+### GIGANCHOR Implementation
 
 **1. Customer Subscribes**
 ```
@@ -299,7 +299,7 @@ Customer cancels on March 15 (50% through month)
 - Release to creator if successful
 - Refund backers if goal not met
 
-### OFFER-HUB Implementation
+### GIGANCHOR Implementation
 
 **1. Backers Pledge Funds**
 ```
@@ -369,10 +369,10 @@ POST /resolution/refund
 ### SDK Usage
 
 ```typescript
-import { OfferHubClient } from '@offerhub/sdk';
+import { GiganchorClient } from '@giganchor/sdk';
 
-const client = new OfferHubClient({
-  apiKey: process.env.OFFERHUB_API_KEY,
+const client = new GiganchorClient({
+  apiKey: process.env.GIGANCHOR_API_KEY,
   baseUrl: 'https://orchestrator.marketplace.com',
 });
 

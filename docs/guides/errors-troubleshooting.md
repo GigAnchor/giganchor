@@ -77,7 +77,7 @@ All errors follow a consistent structure:
 
 | Code | HTTP | Description | Fix |
 |------|------|-------------|-----|
-| `UNAUTHORIZED` | 401 | No `Authorization` header provided | Add `Authorization: Bearer ohk_live_...` |
+| `UNAUTHORIZED` | 401 | No `Authorization` header provided | Add `Authorization: Bearer gak_live_...` |
 | `INVALID_API_KEY` | 401 | API key is invalid or expired | Verify key or generate a new one |
 | `INSUFFICIENT_SCOPE` | 403 | Operation requires a scope your key doesn't have | Use a key with `write`, `support`, or `admin` scope |
 
@@ -439,7 +439,7 @@ curl -N \
 ## SDK Error Handling
 
 ```typescript
-import { OfferHubError, InsufficientFundsError, InvalidStateError } from '@offerhub/sdk';
+import { GiganchorError, InsufficientFundsError, InvalidStateError } from '@giganchor/sdk';
 
 try {
   await sdk.orders.reserve(orderId, { amount: '100.00' });
@@ -453,7 +453,7 @@ try {
     if (currentState === 'FUNDS_RESERVED') {
       // Already reserved — proceed to escrow creation
     }
-  } else if (error instanceof OfferHubError) {
+  } else if (error instanceof GiganchorError) {
     console.error(`API Error: ${error.code} — ${error.message}`);
   }
 }

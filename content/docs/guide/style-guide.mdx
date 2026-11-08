@@ -1,16 +1,16 @@
 ---
 title: Internal Style Guide
-description: Internal contributor documentation for the OFFER-HUB documentation site's design system.
+description: Internal contributor documentation for the GIGANCHOR documentation site's design system.
 order: 90
 section: Internal
 ---
 
 <Callout type="warning">
-  This page is for OFFER-HUB contributors working on the documentation site itself. It is not part of
+  This page is for GIGANCHOR contributors working on the documentation site itself. It is not part of
   the public marketplace-integration guidance for teams consuming the Orchestrator API or SDK.
 </Callout>
 
-This guide documents the OFFER-HUB design system, including colors, typography, and component styling for both light and dark modes.
+This guide documents the GIGANCHOR design system, including colors, typography, and component styling for both light and dark modes.
 
 ## API Schema Components
 
@@ -58,7 +58,7 @@ The example below is reviewed against the checked-in Orchestrator contract at `p
 
 ## Color System
 
-OFFER-HUB uses CSS variables for theme-aware colors. All colors automatically adapt when switching between light and dark modes.
+GIGANCHOR uses CSS variables for theme-aware colors. All colors automatically adapt when switching between light and dark modes.
 
 ### Background Colors
 
@@ -176,7 +176,7 @@ Use these Tailwind classes for theme-aware styling:
 
 ### Font Family
 
-OFFER-HUB uses **Inter** as the primary font:
+GIGANCHOR uses **Inter** as the primary font:
 
 ```css
 font-family: var(--font-inter), Roboto, Outfit, sans-serif;
@@ -279,9 +279,9 @@ Rules and behaviour:
 - **Copy per panel** — each selected panel's **Copy** button copies that
   panel's code; inactive panels are hidden from view and the accessibility tree.
 - **Selection is remembered** — the chosen tab label is persisted in
-  `localStorage` under `offer-hub-docs-code-tab` and re-applied on every docs
+  `localStorage` under `giganchor-docs-code-tab` and re-applied on every docs
   page. All `CodeTabs` instances on a page stay in sync (custom `storage` /
-  `offer-hub-code-tab-change` events), so a reader who picks *TypeScript* once
+  `giganchor-code-tab-change` events), so a reader who picks *TypeScript* once
   gets *TypeScript* preselected wherever a matching tab exists.
 - **Styling** — design tokens only (`bg-bg-elevated`, `bg-bg-sunken`,
   `shadow-neu-raised`, `shadow-neu-sunken-subtle`, `shadow-neu-raised-sm`,
@@ -315,7 +315,7 @@ All generated diagrams (Mermaid today — the same token contract is designed to
 
 ### Node Type Reference
 
-Every shape below renders through the shared theme. State names are taken from the Orchestrator's real order lifecycle (`docs/architecture/state-machines.md`, "Order States", in the `OFFER-HUB/OFFER-HUB` repo) instead of placeholder labels.
+Every shape below renders through the shared theme. State names are taken from the Orchestrator's real order lifecycle (`docs/architecture/state-machines.md`, "Order States", in the `GigAnchor/giganchor` repo) instead of placeholder labels.
 
 #### Process
 
@@ -410,7 +410,7 @@ function MyComponent() {
 
 ### Theme Persistence
 
-Theme preference is automatically saved to `localStorage` under the key `offer-hub-theme` and persists across sessions.
+Theme preference is automatically saved to `localStorage` under the key `giganchor-theme` and persists across sessions.
 
 ### System Preference
 

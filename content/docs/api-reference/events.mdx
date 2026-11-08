@@ -1,14 +1,14 @@
 ---
 title: Events
-description: Server-Sent Events (SSE) reference for OFFER-HUB — subscribe, filter, reconnect and replay, plus the complete domain event catalog with a payload example for every event type.
+description: Server-Sent Events (SSE) reference for GIGANCHOR — subscribe, filter, reconnect and replay, plus the complete domain event catalog with a payload example for every event type.
 order: 42
 section: API Reference
 ---
 
-OFFER-HUB delivers real-time domain events over Server-Sent Events (SSE). Connect your marketplace backend once and react to changes such as a credited balance, funded escrow, or resolved dispute without polling.
+GIGANCHOR delivers real-time domain events over Server-Sent Events (SSE). Connect your marketplace backend once and react to changes such as a credited balance, funded escrow, or resolved dispute without polling.
 
 <Callout type="note">
-  This is an outbound stream from the Orchestrator. OFFER-HUB does **not** send outbound webhooks to your application. The only inbound webhook endpoints that exist (`POST /api/v1/webhooks/airtm` and `POST /api/v1/webhooks/trustless-work`) are receivers used by external providers to notify your Orchestrator — see the [Inbound Webhooks](/docs/api-reference/webhooks) reference.
+  This is an outbound stream from the Orchestrator. GIGANCHOR does **not** send outbound webhooks to your application. The only inbound webhook endpoints that exist (`POST /api/v1/webhooks/airtm` and `POST /api/v1/webhooks/trustless-work`) are receivers used by external providers to notify your Orchestrator — see the [Inbound Webhooks](/docs/api-reference/webhooks) reference.
 </Callout>
 
 ## Subscribe to the event stream
@@ -18,14 +18,14 @@ OFFER-HUB delivers real-time domain events over Server-Sent Events (SSE). Connec
 Authenticate with a valid API key in the `Authorization` header:
 
 ```
-Authorization: Bearer ohk_live_...
+Authorization: Bearer gak_live_...
 ```
 
 The route is protected by `ApiKeyGuard` only — no additional scope is required. `EventsController.streamEvents` in the Orchestrator (`apps/api/src/modules/events/events.controller.ts`) does not apply `ScopeGuard`, so any valid API key (or the master key) can connect.
 
 ```bash
 curl -N \
-  -H "Authorization: Bearer ohk_live_..." \
+  -H "Authorization: Bearer gak_live_..." \
   -H "Accept: text/event-stream" \
   "http://localhost:4000/api/v1/events"
 ```
@@ -42,7 +42,7 @@ Use repeated query parameters to filter by exact event or aggregate type:
 
 ```bash
 curl -N \
-  -H "Authorization: Bearer ohk_live_..." \
+  -H "Authorization: Bearer gak_live_..." \
   "http://localhost:4000/api/v1/events?types=order.created&types=order.closed&resources=Order"
 ```
 
@@ -113,7 +113,7 @@ Missed events are replayed from a Redis sorted set (`events:log`) scored by `occ
 
 ```bash
 curl -N \
-  -H "Authorization: Bearer ohk_live_..." \
+  -H "Authorization: Bearer gak_live_..." \
   -H "Last-Event-ID: 2026-02-18T17:37:12.000Z" \
   "http://localhost:4000/api/v1/events"
 ```
@@ -135,7 +135,7 @@ class EventSubscriber {
   private processed = new Set<string>(); // persist this in production
 
   connect() {
-    const headers = { Authorization: 'Bearer ohk_live_...' };
+    const headers = { Authorization: 'Bearer gak_live_...' };
     if (this.lastEventId) {
       (headers as Record<string, string>)['Last-Event-ID'] = this.lastEventId;
     }
@@ -160,11 +160,11 @@ class EventSubscriber {
 ### Using the SDK
 
 ```typescript
-import { OfferHubSDK } from '@offerhub/sdk';
+import { GiganchorSDK } from '@giganchor/sdk';
 
-const sdk = new OfferHubSDK({
+const sdk = new GiganchorSDK({
   apiUrl: 'http://localhost:4000',
-  apiKey: 'ohk_live_your_api_key'
+  apiKey: 'gak_live_your_api_key'
 });
 
 const events = sdk.events.subscribe();

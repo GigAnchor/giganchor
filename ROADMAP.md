@@ -1,6 +1,6 @@
-# Master Roadmap: OFFER-HUB (100% Granular)
+# Master Roadmap: GIGANCHOR (100% Granular)
 
-This roadmap is the definitive guide to building OFFER-HUB. It maps 100% of the requirements from `/docs` into atomic, testable units of work.
+This roadmap is the definitive guide to building GIGANCHOR. It maps 100% of the requirements from `/docs` into atomic, testable units of work.
 
 ---
 
@@ -41,9 +41,9 @@ This roadmap is the definitive guide to building OFFER-HUB. It maps 100% of the 
 
 - [x] **Issue 2.1: Auth System**
     - [x] 2.1.1: API Key hashing logic (SHA-256 + salt).
-    - [x] 2.1.2: `ApiKeyGuard` (Authenticates `ohk_` keys).
+    - [x] 2.1.2: `ApiKeyGuard` (Authenticates `gak_` keys).
     - [x] 2.1.3: `ScopeGuard` (Enforces `read`, `write`, `support`).
-    - [x] 2.1.4: Short-lived token logic (`ohk_tok_`) for frontend use.
+    - [x] 2.1.4: Short-lived token logic (`gak_tok_`) for frontend use.
 
 - [x] **Issue 2.2: Idempotency System (Redis)**
     - [x] 2.2.1: `IdempotencyGuard`: Intercepts `Idempotency-Key` headers.
@@ -131,7 +131,7 @@ This roadmap is the definitive guide to building OFFER-HUB. It maps 100% of the 
 ## Phase 8: SDK & Developer Experience (COMPLETED)
 *Goal: Provide the "Magic" for marketplace developers.*
 
-- [x] **Issue 8.1: NPM Package `@offerhub/sdk`**
+- [x] **Issue 8.1: NPM Package `@giganchor/sdk`**
     - [x] 8.1.1: Base Ky-powered client with retry logic.
     - [x] 8.1.2: Resource mapping (Users, Orders, TopUps, Balance, Disputes, etc.).
     - [x] 8.1.3: Error typing (Proper instance checking for `InsufficientFundsError`, etc.).
@@ -140,9 +140,9 @@ This roadmap is the definitive guide to building OFFER-HUB. It maps 100% of the 
     - [x] 8.1.6: Publishing guide for NPM release.
 
 - [x] **Issue 8.2: Tooling**
-    - [x] 8.2.1: CLI tool for API Key management (`offerhub keys create/list/revoke`).
-    - [x] 8.2.2: Maintenance mode toggle commands (`offerhub maintenance enable/disable/status`).
-    - [x] 8.2.3: Health check command (`offerhub health`).
+    - [x] 8.2.1: CLI tool for API Key management (`giganchor keys create/list/revoke`).
+    - [x] 8.2.2: Maintenance mode toggle commands (`giganchor maintenance enable/disable/status`).
+    - [x] 8.2.3: Health check command (`giganchor health`).
     - [x] 8.2.4: Interactive configuration setup.
 
 ---
@@ -151,7 +151,7 @@ This roadmap is the definitive guide to building OFFER-HUB. It maps 100% of the 
 - [x] 9.1: Comprehensive E2E test suite (API -> DB -> Worker).
 - [x] 9.2: Rate limiting implementation (Redis-based, configurable).
 - [ ] 9.3: Production deployment guide (updated for crypto-native).
-- [ ] 9.4: Installer script `npm create offer-hub-orchestrator@latest`.
+- [ ] 9.4: Installer script `npm create giganchor-orchestrator@latest`.
 - [x] 9.5: Production deployment guide finalized (`docs/deployment/`).
 
 ---
@@ -223,7 +223,7 @@ This roadmap is the definitive guide to building OFFER-HUB. It maps 100% of the 
 
 ### Immediate (Active)
 1. Production Deployment Guide (updated for crypto-native)
-2. Installer Script `npm create offer-hub-orchestrator@latest`
+2. Installer Script `npm create giganchor-orchestrator@latest`
 3. Rate Limit Load Testing (k6/Artillery)
 
 ### After Phase 9

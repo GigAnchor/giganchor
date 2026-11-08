@@ -1,11 +1,11 @@
 ---
 title: Troubleshooting & FAQ
-description: Symptom-cause-fix recipes for the most common OFFER-HUB API failures — auth, idempotency, state transitions, escrow, webhooks, SSE reconnects, and provider timeouts — plus how to use /health/detailed and X-Request-ID when contacting support.
+description: Symptom-cause-fix recipes for the most common GIGANCHOR API failures — auth, idempotency, state transitions, escrow, webhooks, SSE reconnects, and provider timeouts — plus how to use /health/detailed and X-Request-ID when contacting support.
 order: 30
 section: Guides
 ---
 
-This guide maps the most common OFFER-HUB failures to their causes and fixes. Every scenario below was verified against the Orchestrator source in the [OFFER-HUB/OFFER-HUB](https://github.com/OFFER-HUB/OFFER-HUB) repository — each fix cites the guard, service, exception, or DTO file that produces the behavior, so nothing here is guessed.
+This guide maps the most common GIGANCHOR failures to their causes and fixes. Every scenario below was verified against the Orchestrator source in the [GigAnchor/giganchor](https://github.com/GigAnchor/giganchor) repository — each fix cites the guard, service, exception, or DTO file that produces the behavior, so nothing here is guessed.
 
 <Callout type="tip">
   New here? Start with the [Quick Start](/docs/guide/quick-start) flow first — most errors below are state or sequencing issues that disappear once the happy path works.
@@ -13,7 +13,7 @@ This guide maps the most common OFFER-HUB failures to their causes and fixes. Ev
 
 ## How to read an error
 
-Every failed request returns the standard error envelope, produced by the global exception filter ([`global-exception.filter.ts`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/common/filters/global-exception.filter.ts)):
+Every failed request returns the standard error envelope, produced by the global exception filter ([`global-exception.filter.ts`](https://github.com/GigAnchor/giganchor/blob/main/apps/api/src/common/filters/global-exception.filter.ts)):
 
 ```json
 {
@@ -29,9 +29,9 @@ Three things to do with every error:
 
 1. Read `error.code` — it is stable and machine-checkable; `error.message` is human-readable and may change.
 2. Read `error.details` — filters and guards attach context (current state, required scope, field errors) that usually names the exact fix.
-3. Capture the `X-Request-ID` **response header** — the correlation-ID middleware ([`correlation-id.middleware.ts`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/common/middleware/correlation-id.middleware.ts)) echoes your `X-Request-ID` request header or generates a UUID, and you will need it for support (see [Reporting an issue](#reporting-an-issue-with-x-request-id)).
+3. Capture the `X-Request-ID` **response header** — the correlation-ID middleware ([`correlation-id.middleware.ts`](https://github.com/GigAnchor/giganchor/blob/main/apps/api/src/common/middleware/correlation-id.middleware.ts)) echoes your `X-Request-ID` request header or generates a UUID, and you will need it for support (see [Reporting an issue](#reporting-an-issue-with-x-request-id)).
 
-The full code catalog lives in [`docs/api/errors.md`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/docs/api/errors.md) in the Orchestrator repo, and maps to typed SDK exceptions in [SDK Errors](/docs/sdk/errors).
+The full code catalog lives in [`docs/api/errors.md`](https://github.com/GigAnchor/giganchor/blob/main/docs/api/errors.md) in the Orchestrator repo, and maps to typed SDK exceptions in [SDK Errors](/docs/sdk/errors).
 
 ## Quick triage
 
@@ -56,19 +56,19 @@ The full code catalog lives in [`docs/api/errors.md`](https://github.com/OFFER-H
 #### T1 — `401` with "Missing Authorization header"
 
 - **Symptom:** Every request fails immediately with `401 UNAUTHORIZED` and message `Missing Authorization header`.
-- **Cause:** The request has no `Authorization` header at all. The API-key guard ([`api-key.guard.ts`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/common/guards/api-key.guard.ts)) rejects it before any route logic runs.
-- **Fix:** Send `Authorization: Bearer ohk_live_...` on every request. If you use the SDK, check that `apiKey` is set in [Configuration](/docs/sdk/configuration) — an empty string produces exactly this.
+- **Cause:** The request has no `Authorization` header at all. The API-key guard ([`api-key.guard.ts`](https://github.com/GigAnchor/giganchor/blob/main/apps/api/src/common/guards/api-key.guard.ts)) rejects it before any route logic runs.
+- **Fix:** Send `Authorization: Bearer gak_live_...` on every request. If you use the SDK, check that `apiKey` is set in [Configuration](/docs/sdk/configuration) — an empty string produces exactly this.
 
 #### T2 — `401` with "Invalid API Key"
 
 - **Symptom:** `401` and message `Invalid API Key` (or `Invalid API Key format`).
 - **Cause:** The guard parsed the header but the key is malformed, unknown, or expired — the code is `INVALID_API_KEY`.
-- **Fix:** Re-copy the key from your Orchestrator (see [Getting Started](/docs/getting-started)); watch for trailing whitespace/newlines when pasting into env files. If the key was rotated, update `OFFERHUB_API_KEY` everywhere.
+- **Fix:** Re-copy the key from your Orchestrator (see [Getting Started](/docs/getting-started)); watch for trailing whitespace/newlines when pasting into env files. If the key was rotated, update `GIGANCHOR_API_KEY` everywhere.
 
 #### T3 — `403` with "Insufficient scope"
 
 - **Symptom:** `403 INSUFFICIENT_SCOPE` on a route that works in your admin client but fails from your integration; `error.details` names the required scope.
-- **Cause:** The scope guard ([`scope.guard.ts`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/common/guards/scope.guard.ts)) compares your key's scopes against the `@Scopes()` metadata on the handler and throws `ForbiddenException('Insufficient scope')`.
+- **Cause:** The scope guard ([`scope.guard.ts`](https://github.com/GigAnchor/giganchor/blob/main/apps/api/src/common/guards/scope.guard.ts)) compares your key's scopes against the `@Scopes()` metadata on the handler and throws `ForbiddenException('Insufficient scope')`.
 - **Fix:** Scopes are `read`, `write`, and `support`. Create a key with `write` for any mutating route (`POST`/`PUT`/`PATCH`/`DELETE`) and reserve `support` for dispute operations — see [API Overview — Authentication](/docs/api-reference/overview#authentication). Retrying cannot help; fix the key.
 
 ### Request validation
@@ -82,7 +82,7 @@ The full code catalog lives in [`docs/api/errors.md`](https://github.com/OFFER-H
 #### T5 — `400` "Idempotency-Key must be a valid UUID v4"
 
 - **Symptom:** `400 VALIDATION_ERROR` mentioning the `Idempotency-Key` header.
-- **Cause:** The idempotency guard ([`idempotency.guard.ts`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/common/guards/idempotency.guard.ts)) validates the header with `isValidUuidV4` and rejects anything that is not a UUID v4 — including timestamps, order IDs, or `uuid v1` values.
+- **Cause:** The idempotency guard ([`idempotency.guard.ts`](https://github.com/GigAnchor/giganchor/blob/main/apps/api/src/common/guards/idempotency.guard.ts)) validates the header with `isValidUuidV4` and rejects anything that is not a UUID v4 — including timestamps, order IDs, or `uuid v1` values.
 - **Fix:** Generate a fresh UUID v4 per logical operation (`crypto.randomUUID()` in Node, `uuid.uuid4()` in Python). The key only applies to `POST`/`PUT`/`PATCH`; omitting it means **no** idempotency protection at all (the guard passes the request through).
 
 ### Idempotency
@@ -90,7 +90,7 @@ The full code catalog lives in [`docs/api/errors.md`](https://github.com/OFFER-H
 #### T6 — `409 IDEMPOTENCY_KEY_REUSED`
 
 - **Symptom:** `409` with `This idempotency key was used with a different request body`.
-- **Cause:** `IdempotencyService.checkOrLock` ([`idempotency.service.ts`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/modules/idempotency/idempotency.service.ts)) hashes the request body; the stored hash for this key does not match. Keys are scoped to the API key, so two marketplaces can reuse a key safely.
+- **Cause:** `IdempotencyService.checkOrLock` ([`idempotency.service.ts`](https://github.com/GigAnchor/giganchor/blob/main/apps/api/src/modules/idempotency/idempotency.service.ts)) hashes the request body; the stored hash for this key does not match. Keys are scoped to the API key, so two marketplaces can reuse a key safely.
 - **Fix:** A key identifies one **exact** request. If the operation changed, mint a new UUID. If you intended a replay, send the byte-identical body. See [API Overview — Idempotency](/docs/api-reference/overview#idempotency).
 
 #### T7 — `409 IDEMPOTENCY_KEY_IN_PROGRESS`
@@ -102,7 +102,7 @@ The full code catalog lives in [`docs/api/errors.md`](https://github.com/OFFER-H
 #### T8 — Same request returned an old response (replay)
 
 - **Symptom:** You re-sent a `POST` and got the original response — same body, same status — instead of an error or a second execution.
-- **Cause:** Same key **and** identical body hash after completion: the guard throws `IdempotencyReplayException` ([`idempotency-replay.exception.ts`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/common/exceptions/idempotency-replay.exception.ts)), which replays the stored status and body verbatim. Records are retained for 24 hours.
+- **Cause:** Same key **and** identical body hash after completion: the guard throws `IdempotencyReplayException` ([`idempotency-replay.exception.ts`](https://github.com/GigAnchor/giganchor/blob/main/apps/api/src/common/exceptions/idempotency-replay.exception.ts)), which replays the stored status and body verbatim. Records are retained for 24 hours.
 - **Fix:** This is correct behavior, not a bug — safe retries are the point. Use a new UUID when you actually want a second operation. The SDK adds keys automatically via `withIdempotencyKey` — see [SDK Configuration](/docs/sdk/configuration).
 
 ### Orders and balances
@@ -122,7 +122,7 @@ The full code catalog lives in [`docs/api/errors.md`](https://github.com/OFFER-H
 #### T11 — `409 INVALID_STATE` on a transition
 
 - **Symptom:** `409 INVALID_STATE`, e.g. `Cannot reserve funds order ord_123 in state FUNDS_RESERVED` or `Order ord_123 is in state ESCROW_FUNDING, but ESCROW_FUNDED is required for this operation`.
-- **Cause:** The state machine rejected the transition. `InvalidOrderStateException` ([`orders.exceptions.ts`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/modules/orders/exceptions/orders.exceptions.ts)) and `InvalidResolutionStateException` ([`resolution.exceptions.ts`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/modules/resolution/exceptions/resolution.exceptions.ts)) fire when you skip a step: releasing before the escrow is funded, funding twice, or disputing a closed order.
+- **Cause:** The state machine rejected the transition. `InvalidOrderStateException` ([`orders.exceptions.ts`](https://github.com/GigAnchor/giganchor/blob/main/apps/api/src/modules/orders/exceptions/orders.exceptions.ts)) and `InvalidResolutionStateException` ([`resolution.exceptions.ts`](https://github.com/GigAnchor/giganchor/blob/main/apps/api/src/modules/resolution/exceptions/resolution.exceptions.ts)) fire when you skip a step: releasing before the escrow is funded, funding twice, or disputing a closed order.
 - **Fix:** `GET` the order, compare its `status` against the [order lifecycle](/docs/guide/orders), and issue transitions in sequence: `ORDER_CREATED` → reserve → `FUNDS_RESERVED` → escrow create/fund → `ESCROW_FUNDED` → `IN_PROGRESS` → release/refund. The SDK raises `InvalidTransitionError` for these; never retry it blindly.
 
 <MermaidDiagram
@@ -175,7 +175,7 @@ The diagram shows the only path the state machine accepts — every `409 INVALID
 #### T13 — `409 ESCROW_NOT_READY` (release/refund before funding completes)
 
 - **Symptom:** `409 ESCROW_NOT_READY` — escrow is not in the correct state for this operation.
-- **Cause:** On-chain funding takes time; the escrow is still `CREATING`/`FUNDING` and you tried to release, refund, or dispute. The catalog entry is `ESCROW_NOT_READY` (see [`docs/api/errors.md`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/docs/api/errors.md)).
+- **Cause:** On-chain funding takes time; the escrow is still `CREATING`/`FUNDING` and you tried to release, refund, or dispute. The catalog entry is `ESCROW_NOT_READY` (see [`docs/api/errors.md`](https://github.com/GigAnchor/giganchor/blob/main/docs/api/errors.md)).
 - **Fix:** Wait for the `order.escrow_funded` event (or poll `GET` the order) and act only when status is `IN_PROGRESS`. See [Escrow Flows](/docs/guide/escrow-flows) for the Trustless Work webhook lifecycle that drives these transitions.
 
 ### Disputes
@@ -191,19 +191,19 @@ The diagram shows the only path the state machine accepts — every `409 INVALID
 #### T15 — AirTM webhook rejected with `401`
 
 - **Symptom:** Your AirTM callback returns `401` / `WEBHOOK_SIGNATURE_INVALID`; deposits never credit.
-- **Cause:** Signature verification runs first in `handleAirtmWebhook` ([`webhooks.controller.ts`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/modules/webhooks/webhooks.controller.ts)) using the Svix headers `svix-id`, `svix-timestamp`, `svix-signature` and `svix.Webhook.verify(rawBody, headers)` in [`airtm-webhook.service.ts`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/providers/airtm/services/airtm-webhook.service.ts). A mismatch — wrong `AIRTM_WEBHOOK_SECRET`, a proxy that rewrote the body, or forwarding to a different URL — fails closed.
+- **Cause:** Signature verification runs first in `handleAirtmWebhook` ([`webhooks.controller.ts`](https://github.com/GigAnchor/giganchor/blob/main/apps/api/src/modules/webhooks/webhooks.controller.ts)) using the Svix headers `svix-id`, `svix-timestamp`, `svix-signature` and `svix.Webhook.verify(rawBody, headers)` in [`airtm-webhook.service.ts`](https://github.com/GigAnchor/giganchor/blob/main/apps/api/src/providers/airtm/services/airtm-webhook.service.ts). A mismatch — wrong `AIRTM_WEBHOOK_SECRET`, a proxy that rewrote the body, or forwarding to a different URL — fails closed.
 - **Fix:** Verify the secret matches the AirTM dashboard and that your tunnel/proxy forwards the raw body untouched. If `AIRTM_WEBHOOK_SECRET` is unset, verification is disabled **with a logged warning** — fine for local dev, never for production. Full reference: [Inbound Webhooks](/docs/api-reference/webhooks).
 
 #### T16 — Trustless Work webhook rejected with `401`
 
 - **Symptom:** Trustless Work escrow events return `401`; order status stays stuck at `ESCROW_CREATING`.
-- **Cause:** The receiver verifies the `x-tw-signature` header — `HMAC-SHA256(rawBody, TRUSTLESS_WEBHOOK_SECRET)` as a hex digest ([`webhook.service.ts`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/providers/trustless-work/services/webhook.service.ts)) — and throws `UnauthorizedException` with `WEBHOOK_SIGNATURE_INVALID` on mismatch. The secret must match the value in the Trustless Work dashboard (values not starting with `tw_whsec_` log a warning).
+- **Cause:** The receiver verifies the `x-tw-signature` header — `HMAC-SHA256(rawBody, TRUSTLESS_WEBHOOK_SECRET)` as a hex digest ([`webhook.service.ts`](https://github.com/GigAnchor/giganchor/blob/main/apps/api/src/providers/trustless-work/services/webhook.service.ts)) — and throws `UnauthorizedException` with `WEBHOOK_SIGNATURE_INVALID` on mismatch. The secret must match the value in the Trustless Work dashboard (values not starting with `tw_whsec_` log a warning).
 - **Fix:** Align `TRUSTLESS_WEBHOOK_SECRET` with the provider, and make sure you sign the **raw** body, not a re-serialized JSON.
 
 #### T17 — Trustless Work event processed without a signature
 
 - **Symptom:** Logs show `Trustless Work webhook received without signature header`, yet the event was processed.
-- **Cause:** The controller only verifies `when (signature)` is present — a missing header logs a warning and processing continues ([`webhooks.controller.ts`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/modules/webhooks/webhooks.controller.ts)). This is a documented development gap, not production behavior.
+- **Cause:** The controller only verifies `when (signature)` is present — a missing header logs a warning and processing continues ([`webhooks.controller.ts`](https://github.com/GigAnchor/giganchor/blob/main/apps/api/src/modules/webhooks/webhooks.controller.ts)). This is a documented development gap, not production behavior.
 - **Fix:** Put the receiver behind your Orchestrator's normal deployment boundary (see [Security](/docs/guide/security)) and set `TRUSTLESS_WEBHOOK_SECRET`; do not expose a signature-less webhook publicly.
 
 <Callout type="note">
@@ -215,7 +215,7 @@ The diagram shows the only path the state machine accepts — every `409 INVALID
 #### T18 — SSE stream drops, or events stop after reconnect
 
 - **Symptom:** The event stream disconnects and reconnecting replays nothing — or events arrive in bursts with long gaps.
-- **Cause:** The stream pings every 30 seconds (`interval(30000)` in [`events.controller.ts`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/modules/events/events.controller.ts)); proxies that buffer or time out idle responses kill it. Replay comes from a Redis sorted set (`events:log`) capped at the last **1,000** events ([`sse.service.ts`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/modules/events/sse.service.ts)) — a client that was offline for more than the retention window simply has no backlog, and filter values are exact-match only.
+- **Cause:** The stream pings every 30 seconds (`interval(30000)` in [`events.controller.ts`](https://github.com/GigAnchor/giganchor/blob/main/apps/api/src/modules/events/events.controller.ts)); proxies that buffer or time out idle responses kill it. Replay comes from a Redis sorted set (`events:log`) capped at the last **1,000** events ([`sse.service.ts`](https://github.com/GigAnchor/giganchor/blob/main/apps/api/src/modules/events/sse.service.ts)) — a client that was offline for more than the retention window simply has no backlog, and filter values are exact-match only.
 - **Fix:** Reconnect with `Last-Event-ID` (takes precedence over `since`) to resume inside the window, poll `GET` endpoints as a fallback for gaps, and disable proxy buffering for `/api/v1/events`. The stream is protected by `ApiKeyGuard` only — if the stream never opens, fix the key (T1/T2), not scopes. Full reference: [Events](/docs/api-reference/events).
 
 ### Providers (Stellar, AirTM, Trustless Work)
@@ -237,7 +237,7 @@ The diagram shows the only path the state machine accepts — every `409 INVALID
 #### T21 — `429 RATE_LIMITED`
 
 - **Symptom:** `429` after a burst of requests; disappears a minute later.
-- **Cause:** The rate-limit guard ([`rate-limit.guard.ts`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/common/guards/rate-limit.guard.ts)) enforces a per-API-key Redis bucket — 100 requests per 60 seconds by default.
+- **Cause:** The rate-limit guard ([`rate-limit.guard.ts`](https://github.com/GigAnchor/giganchor/blob/main/apps/api/src/common/guards/rate-limit.guard.ts)) enforces a per-API-key Redis bucket — 100 requests per 60 seconds by default.
 - **Fix:** Back off exponentially; the SDK auto-retries `RateLimitError`. If you legitimately need more, spread traffic across keys by marketplace rather than hammering one.
 
 #### T22 — `500 INTERNAL_ERROR`
@@ -250,7 +250,7 @@ The diagram shows the only path the state machine accepts — every `409 INVALID
 
 Before debugging client code, confirm the Orchestrator itself is healthy.
 
-`GET /health` returns a minimal liveness payload from [`health.controller.ts`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/modules/health/health.controller.ts):
+`GET /health` returns a minimal liveness payload from [`health.controller.ts`](https://github.com/GigAnchor/giganchor/blob/main/apps/api/src/modules/health/health.controller.ts):
 
 <CommandLine>curl http://localhost:4000/api/v1/health</CommandLine>
 
@@ -277,7 +277,7 @@ Any dependency other than `up` explains a whole class of failures: `redis: down`
 
 When an error persists and you need help, the correlation-ID middleware makes any request traceable:
 
-1. Send an `X-Request-ID` header (any UUID v4) on the failing request — or read the `X-Request-ID` **response** header; the server generates one when you do not supply it ([`correlation-id.middleware.ts`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/common/middleware/correlation-id.middleware.ts)).
+1. Send an `X-Request-ID` header (any UUID v4) on the failing request — or read the `X-Request-ID` **response** header; the server generates one when you do not supply it ([`correlation-id.middleware.ts`](https://github.com/GigAnchor/giganchor/blob/main/apps/api/src/common/middleware/correlation-id.middleware.ts)).
 2. Attach that ID to the report together with the `error.code`, the exact request (method, path, body — redact secrets), and the timestamp.
 3. The same ID appears in server logs and in the `metadata.correlationId` field of events emitted by the request, so it connects the API call, the resulting state changes, and the SSE trail.
 
@@ -287,10 +287,10 @@ When an error persists and you need help, the correlation-ID middleware makes an
 
 ## Hackathon FAQ
 
-Answers for participants building on OFFER-HUB under time pressure.
+Answers for participants building on GIGANCHOR under time pressure.
 
 **What do I need before my first API call?**
-A running Orchestrator instance and an API key (`ohk_live_...`). Follow [Installation](/docs/installation) then [Quick Start](/docs/guide/quick-start) — ten minutes end to end.
+A running Orchestrator instance and an API key (`gak_live_...`). Follow [Installation](/docs/installation) then [Quick Start](/docs/guide/quick-start) — ten minutes end to end.
 
 **Testnet or mainnet?**
 Use a local or testnet instance for the hackathon; Stellar testnet USDC is free. Base URLs and keys are per-environment — mixing them is the #1 cause of T9 (`404`).
@@ -311,7 +311,7 @@ Proxies and serverless functions buffer or kill idle streams. Disable buffering,
 Default is 100 requests/minute per key (T21). The SDK backs off automatically; in a demo loop, add a short sleep or cache responses.
 
 **Where do I see the full list of error codes?**
-The [API Overview](/docs/api-reference/overview) table, the [SDK Errors](/docs/sdk/errors) catalog, and the Orchestrator repo's [`docs/api/errors.md`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/docs/api/errors.md).
+The [API Overview](/docs/api-reference/overview) table, the [SDK Errors](/docs/sdk/errors) catalog, and the Orchestrator repo's [`docs/api/errors.md`](https://github.com/GigAnchor/giganchor/blob/main/docs/api/errors.md).
 
 **Something is broken and I cannot tell if it is my code or the API.**
 Check `/health/detailed` first. Then re-run the failing call with an `X-Request-ID` header, capture the response header, and include the ID plus the `error.code` when you ask for help — that single ID traces the request end to end.

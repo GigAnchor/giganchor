@@ -12,7 +12,7 @@ export function TractionSection() {
       description="Current platform metrics and the validated LATAM freelance market opportunity."
       infoText={
         <>
-          The SCF Integration Track requires verifiable traction. This section shows OfferHub&apos;s current testnet status, team readiness, and the market context that validates the integration investment.
+          The SCF Integration Track requires verifiable traction. This section shows Giganchor&apos;s current testnet status, team readiness, and the market context that validates the integration investment.
         </>
       }
     >
@@ -90,7 +90,7 @@ export function TractionSection() {
             </div>
 
             <div className="rounded-2xl bg-bg-base shadow-neu-sunken p-5 text-sm text-content-secondary leading-relaxed mt-2">
-              Traditional platforms (Upwork, Fiverr) cannot pay unbanked LATAM freelancers directly. OfferHub + Stellar + BlindPay closes this gap: any freelancer with a mobile wallet receives USDC-settled payments in seconds, converted to local fiat via established licensed corridors.
+              Traditional platforms (Upwork, Fiverr) cannot pay unbanked LATAM freelancers directly. Giganchor + Stellar + BlindPay closes this gap: any freelancer with a mobile wallet receives USDC-settled payments in seconds, converted to local fiat via established licensed corridors.
             </div>
           </div>
 

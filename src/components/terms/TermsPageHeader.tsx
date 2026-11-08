@@ -6,7 +6,7 @@ export function TermsPageHeader() {
         Platform <span className="text-theme-primary">Terms</span>
       </h1>
       <p className="text-lg text-content-secondary font-medium max-w-2xl mx-auto leading-relaxed">
-        These terms outline the agreement between you and OFFER-HUB.
+        These terms outline the agreement between you and GIGANCHOR.
         By using our tools, you agree to these principles of operation.
       </p>
       <div className="mt-8 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-bg-elevated shadow-neu-raised-sm text-xs font-bold text-content-secondary">

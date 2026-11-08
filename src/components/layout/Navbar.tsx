@@ -80,10 +80,10 @@ export function Navbar() {
               <Image
                 src={
                   resolvedTheme === "dark"
-                    ? "/OFFER-HUB-logo-to-darkmode.png"
-                    : "/OFFER-HUB-logo.png"
+                    ? "/giganchor-logo-to-darkmode.png"
+                    : "/giganchor-logo.png"
                 }
-                alt="OFFER-HUB"
+                alt="GIGANCHOR"
                 width={180}
                 height={48}
                 className="h-10 w-auto object-contain"

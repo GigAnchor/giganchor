@@ -11,7 +11,7 @@ export const heroData: UseCaseHeroProps = {
   subheadline:
     "The professional services platform blueprint: SOW-based escrow, milestone-gated releases, structured dispute resolution, and instant settlement — for legal, consulting, design, and managed services.",
   docsUrl:
-    "https://github.com/OFFER-HUB/offer-hub-monorepo/blob/main/docs/business/use-cases.md#use-case-3-service-marketplace",
+    "https://github.com/GigAnchor/giganchor/blob/main/docs/business/use-cases.md#use-case-3-service-marketplace",
   footerIcon: Briefcase,
   footerLabel: "Enterprise-grade service escrow",
   stats: [
@@ -68,7 +68,7 @@ export const featureCards: FeatureCard[] = [
 export const stellarImpactCardsData: SimpleMetricCard[] = [
   {
     label: "Invoice Settlement",
-    offerhub: "3.2s",
+    giganchor: "3.2s",
     traditional: "30–45 days",
     icon: Zap,
     savingsLabel: "Faster",
@@ -79,7 +79,7 @@ export const stellarImpactCardsData: SimpleMetricCard[] = [
   },
   {
     label: "Provider Risk",
-    offerhub: "0%",
+    giganchor: "0%",
     traditional: "23%",
     icon: ShieldCheck,
     savingsLabel: "Risk eliminated",
@@ -90,7 +90,7 @@ export const stellarImpactCardsData: SimpleMetricCard[] = [
   },
   {
     label: "Scope Transparency",
-    offerhub: "100%",
+    giganchor: "100%",
     traditional: "0%",
     icon: Eye,
     savingsLabel: "Auditability",
@@ -102,10 +102,10 @@ export const stellarImpactCardsData: SimpleMetricCard[] = [
 ];
 
 export const stellarImpactSummary = {
-  offerhub: {
+  giganchor: {
     text: (
       <>
-        Offer Hub{" "}
+        Giganchor{" "}
         <span className="text-content-primary font-bold">
           eliminates unpaid invoice risk entirely
         </span>{" "}

@@ -32,7 +32,7 @@ export const detailCards: DetailCard[] = [
     eyebrow: "Bridge + settlement rail",
     icon: Cpu,
     summary:
-      "Trustlines and vault balances let OFFER-HUB route value from fiat on-ramp or crypto deposit into a stable USDC settlement layer.",
+      "Trustlines and vault balances let GIGANCHOR route value from fiat on-ramp or crypto deposit into a stable USDC settlement layer.",
     bullets: [
       "USDC on Stellar acts as the neutral settlement asset for payouts and cross-rail accounting.",
       "Bridge liquidity is staged in vault accounts so conversion and seller release stay deterministic.",

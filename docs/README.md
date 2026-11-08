@@ -1,15 +1,15 @@
-# OFFER-HUB Documentation
+# GIGANCHOR Documentation
 
-Welcome to the OFFER-HUB documentation. This comprehensive guide covers all aspects of the project, from the Orchestrator API to the frontend architecture.
+Welcome to the GIGANCHOR documentation. This comprehensive guide covers all aspects of the project, from the Orchestrator API to the frontend architecture.
 
 ## Documentation Overview
 
-OFFER-HUB documentation is intentionally split by **audience**, not duplicated by accident:
+GIGANCHOR documentation is intentionally split by **audience**, not duplicated by accident:
 
 | Location | Audience | Purpose | Format |
 |----------|----------|---------|--------|
 | `/docs/` | Contributors & maintainers | Internal engineering reference: implementation detail, architecture, standards | Markdown, read directly on GitHub |
-| `/content/docs/` | External developers & integrators | Public docs website: how to use the API/SDK | MDX, rendered at offer-hub.tech/docs |
+| `/content/docs/` | External developers & integrators | Public docs website: how to use the API/SDK | MDX, rendered at giganchor.tech/docs |
 | `/src/content/` | End users (legal) | Static legal page copy (privacy policy, terms) | MDX, rendered directly by their page routes — not part of the docs site nav/search |
 
 Some topics exist in both `/docs/guides/` and `/content/docs/guide/` (e.g. `escrow`, `orders`, `disputes`, `wallets`, `deposits`, `withdrawals`, `security`) — this is deliberate, not drift: the `/docs/` version explains how the Orchestrator implements the feature (state machine, signer roles, internal field names), while the `/content/docs/` version explains how an external integrator calls the public API/SDK. Each of these pairs cross-links to its counterpart at the top of the file so a reader who lands on the wrong audience's doc can find the right one.
@@ -40,7 +40,7 @@ For crawlers and assistants that don't speak MCP, the public docs site also serv
 - [Provider Integration](./architecture/provider-integration.md) - External service integrations
 
 ### Guides (Internal)
-- [Overview](./guides/overview.md) - Introduction to OFFER-HUB capabilities
+- [Overview](./guides/overview.md) - Introduction to GIGANCHOR capabilities
 - [Core Concepts](./guides/core-concepts.md) - Key concepts and terminology
 - [Architecture](./guides/architecture.md) - Technical architecture guide
 - [Standards](./guides/standards.md) - Code and API standards
@@ -86,10 +86,10 @@ For crawlers and assistants that don't speak MCP, the public docs site also serv
 
 ## Web Documentation (MDX)
 
-The public-facing documentation is available in `/content/docs/` and rendered at [offer-hub.tech/docs](https://offer-hub.tech/docs).
+The public-facing documentation is available in `/content/docs/` and rendered at [giganchor.tech/docs](https://giganchor.tech/docs).
 
 ### Getting Started
-- [Introduction](/content/docs/getting-started.mdx) - What is OFFER-HUB
+- [Introduction](/content/docs/getting-started.mdx) - What is GIGANCHOR
 - [Installation](/content/docs/installation.mdx) - Setup and installation
 - [Configuration](/content/docs/configuration.mdx) - Environment variables
 
@@ -153,7 +153,7 @@ User deposits USDC → Creates order → Funds reserved
 - **Reserved**: Locked for pending orders (before escrow funding)
 
 ### Authentication
-- **API Keys**: Format `ohk_live_xxx` or `ohk_test_xxx`
+- **API Keys**: Format `gak_live_xxx` or `gak_test_xxx`
 - **Scopes**: `read`, `write`, `support`
 - **NOT JWT**: API keys are stateless, no refresh tokens
 

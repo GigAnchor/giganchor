@@ -1,6 +1,6 @@
 # Security Best Practices for Platform Integrators
 
-> Concrete guidance for developers integrating OFFER-HUB into their own marketplaces — covering API key management, webhook validation, wallet security, escrow verification, and blockchain-specific attack mitigations.
+> Concrete guidance for developers integrating GIGANCHOR into their own marketplaces — covering API key management, webhook validation, wallet security, escrow verification, and blockchain-specific attack mitigations.
 
 > **Looking for the public API guide?** This is the internal engineering reference (Orchestrator implementation detail). For the external API/SDK guide aimed at integrators, see [`content/docs/guide/security.mdx`](../../content/docs/guide/security.mdx).
 
@@ -19,7 +19,7 @@
 
 ## API Key Management
 
-OFFER-HUB API keys follow the format `ohk_live_xxx` (production) and `ohk_test_xxx` (sandbox). A leaked live key gives full control over all payment operations, including releasing escrow funds and initiating withdrawals.
+GIGANCHOR API keys follow the format `gak_live_xxx` (production) and `gak_test_xxx` (sandbox). A leaked live key gives full control over all payment operations, including releasing escrow funds and initiating withdrawals.
 
 ### Storage
 
@@ -27,24 +27,24 @@ OFFER-HUB API keys follow the format `ohk_live_xxx` (production) and `ohk_test_x
 
 ```bash
 # Store keys in environment variables — never hardcoded
-OFFER_HUB_API_KEY=ohk_live_abc123...
+GIGANCHOR_API_KEY=gak_live_abc123...
 ```
 
 ```typescript
 // Read from the environment at runtime
-const apiKey = process.env.OFFER_HUB_API_KEY;
-if (!apiKey) throw new Error('OFFER_HUB_API_KEY is not set');
+const apiKey = process.env.GIGANCHOR_API_KEY;
+if (!apiKey) throw new Error('GIGANCHOR_API_KEY is not set');
 ```
 
 ❌ **DON'T:**
 
 ```typescript
 // Never hardcode keys in source code
-const apiKey = 'ohk_live_abc123...'; // ❌ Will end up in git history
+const apiKey = 'gak_live_abc123...'; // ❌ Will end up in git history
 
 // Never embed keys in client-side bundles
 const response = await fetch('/api/orders', {
-  headers: { Authorization: `Bearer ohk_live_abc123...` }, // ❌
+  headers: { Authorization: `Bearer gak_live_abc123...` }, // ❌
 });
 ```
 
@@ -52,7 +52,7 @@ const response = await fetch('/api/orders', {
 // Never commit keys to version control
 // .env.example — show structure only, no real values
 {
-  "OFFER_HUB_API_KEY": "ohk_live_REPLACE_ME"
+  "GIGANCHOR_API_KEY": "gak_live_REPLACE_ME"
 }
 ```
 
@@ -85,25 +85,25 @@ Never use a `write` or `support` scoped key from a context that only needs `read
 
 ### API Key Transport
 
-API keys must **only** travel server-to-server. Your marketplace backend calls OFFER-HUB; your frontend never does.
+API keys must **only** travel server-to-server. Your marketplace backend calls GIGANCHOR; your frontend never does.
 
 ```
-❌ Browser → OFFER-HUB API (exposes key to any user with DevTools)
-✅ Browser → Your Backend → OFFER-HUB API
+❌ Browser → GIGANCHOR API (exposes key to any user with DevTools)
+✅ Browser → Your Backend → GIGANCHOR API
 ```
 
 ---
 
 ## Webhook Signature Validation
 
-OFFER-HUB signs every webhook payload with an HMAC-SHA256 signature using a secret you configure. **Always validate this signature.** Without validation, any actor who knows your webhook URL can send spoofed events — such as a fake `escrow.released` event — and trick your system into delivering services without payment.
+GIGANCHOR signs every webhook payload with an HMAC-SHA256 signature using a secret you configure. **Always validate this signature.** Without validation, any actor who knows your webhook URL can send spoofed events — such as a fake `escrow.released` event — and trick your system into delivering services without payment.
 
 ### How Signatures Work
 
 Each webhook request includes the header:
 
 ```
-X-OfferHub-Signature: sha256=<hex_digest>
+X-Giganchor-Signature: sha256=<hex_digest>
 ```
 
 The digest is computed as:
@@ -141,8 +141,8 @@ function verifyWebhookSignature(
 }
 
 // Express middleware example
-app.post('/webhooks/offerhub', express.raw({ type: 'application/json' }), (req, res) => {
-  const signature = req.headers['x-offerhub-signature'] as string;
+app.post('/webhooks/giganchor', express.raw({ type: 'application/json' }), (req, res) => {
+  const signature = req.headers['x-giganchor-signature'] as string;
 
   if (!verifyWebhookSignature(req.body, signature, process.env.WEBHOOK_SECRET!)) {
     return res.status(401).json({ error: 'Invalid signature' });
@@ -207,7 +207,7 @@ await redis.setex(`webhook:processed:${event.id}`, 3600, '1');
 
 ## Wallet Private Key Management
 
-OFFER-HUB manages Stellar invisible wallets for your users. Private keys are encrypted at rest with AES-256-GCM. As a platform integrator, you interact with the Orchestrator's API — you should **never** handle raw private keys directly.
+GIGANCHOR manages Stellar invisible wallets for your users. Private keys are encrypted at rest with AES-256-GCM. As a platform integrator, you interact with the Orchestrator's API — you should **never** handle raw private keys directly.
 
 ### What the Orchestrator Handles
 
@@ -242,7 +242,7 @@ await db.users.update({ stellarSecretKey: rawKey }); // Must be encrypted
 
 ### If You Deploy Your Own Orchestrator Instance
 
-If you self-host OFFER-HUB, you are responsible for the encryption key used to protect wallet private keys:
+If you self-host GIGANCHOR, you are responsible for the encryption key used to protect wallet private keys:
 
 ```bash
 # Must be a high-entropy random value — never a human-readable string
@@ -265,7 +265,7 @@ For the Orchestrator's platform wallet (used to sign dispute resolutions), consi
 
 ## Escrow Integration Security
 
-The escrow flow is the highest-risk operation in OFFER-HUB. A bug here can result in funds being released to the wrong party or funds being permanently locked.
+The escrow flow is the highest-risk operation in GIGANCHOR. A bug here can result in funds being released to the wrong party or funds being permanently locked.
 
 ### Verify State Before Acting
 
@@ -274,7 +274,7 @@ Always verify the escrow and order state via the API before triggering a resolut
 ```typescript
 // ✅ Always double-check state before releasing
 async function releaseEscrow(orderId: string, requestedBy: string) {
-  const order = await offerHubClient.orders.get(orderId);
+  const order = await giganchorClient.orders.get(orderId);
 
   // Verify the order is in a releasable state
   if (order.status !== 'IN_PROGRESS') {
@@ -291,7 +291,7 @@ async function releaseEscrow(orderId: string, requestedBy: string) {
     throw new Error('Escrow is not in FUNDED state');
   }
 
-  return offerHubClient.orders.release(orderId, 'Buyer approved release');
+  return giganchorClient.orders.release(orderId, 'Buyer approved release');
 }
 ```
 
@@ -312,7 +312,7 @@ Before calling `POST /orders/:id/resolution/release`, confirm:
 All state-changing operations must use idempotency keys to prevent double-releases caused by network retries:
 
 ```typescript
-const idempotentClient = offerHubClient.withIdempotencyKey(`release-${orderId}-${requestedBy}`);
+const idempotentClient = giganchorClient.withIdempotencyKey(`release-${orderId}-${requestedBy}`);
 await idempotentClient.orders.release(orderId, 'Buyer approved release');
 ```
 
@@ -330,7 +330,7 @@ const server = new Horizon.Server('https://horizon.stellar.org');
 // Verify the contract holds the expected amount before releasing
 async function verifyEscrowOnChain(contractId: string, expectedAmount: string) {
   // Query the Trustless Work contract state
-  // Compare against OFFER-HUB's reported escrow amount
+  // Compare against GIGANCHOR's reported escrow amount
   // Alert if there is a mismatch — indicates possible data inconsistency
 }
 ```
@@ -339,7 +339,7 @@ async function verifyEscrowOnChain(contractId: string, expectedAmount: string) {
 
 ## Security Headers and CSP
 
-If you are building a web frontend on top of OFFER-HUB, configure security headers to protect your users.
+If you are building a web frontend on top of GIGANCHOR, configure security headers to protect your users.
 
 ### Recommended HTTP Security Headers
 
@@ -420,7 +420,7 @@ Content-Security-Policy: script-src 'unsafe-inline' 'unsafe-eval' *
 
 ### CORS on Your Proxy Backend
 
-Your marketplace backend proxies calls to OFFER-HUB. Configure CORS restrictively:
+Your marketplace backend proxies calls to GIGANCHOR. Configure CORS restrictively:
 
 ```typescript
 // Only allow requests from your own frontend domain
@@ -436,15 +436,15 @@ app.use(cors({
 
 ## Blockchain-Specific Attack Vectors
 
-OFFER-HUB operates on the Stellar blockchain and uses Soroban smart contracts for escrow. Understand these attack vectors specific to blockchain payment orchestration.
+GIGANCHOR operates on the Stellar blockchain and uses Soroban smart contracts for escrow. Understand these attack vectors specific to blockchain payment orchestration.
 
 ### Replay Attacks
 
 **What it is:** A signed Stellar transaction is intercepted and resubmitted to process the same payment twice.
 
-**How OFFER-HUB mitigates it:** Stellar transactions include a sequence number tied to the source account. A transaction can only be processed once — replaying it will fail with `tx_bad_seq`.
+**How GIGANCHOR mitigates it:** Stellar transactions include a sequence number tied to the source account. A transaction can only be processed once — replaying it will fail with `tx_bad_seq`.
 
-**What you must do:** Use idempotency keys on all OFFER-HUB API calls. If a release call succeeds but your network connection drops before you receive the response, retrying with the same idempotency key returns the original result instead of triggering a second release.
+**What you must do:** Use idempotency keys on all GIGANCHOR API calls. If a release call succeeds but your network connection drops before you receive the response, retrying with the same idempotency key returns the original result instead of triggering a second release.
 
 ```typescript
 // Idempotency key must be deterministic per operation — not random per retry
@@ -455,7 +455,7 @@ const key = `release:${orderId}:${buyerId}`;
 
 **What it is:** An attacker monitors a pending transaction and submits a competing transaction with a higher fee to be processed first.
 
-**Relevance to OFFER-HUB:** Stellar uses a FIFO queue within each ledger cycle, not a fee-priority auction like Ethereum. Front-running in the Ethereum sense is not applicable.
+**Relevance to GIGANCHOR:** Stellar uses a FIFO queue within each ledger cycle, not a fee-priority auction like Ethereum. Front-running in the Ethereum sense is not applicable.
 
 **Residual risk:** A malicious actor with Orchestrator database access could attempt to trigger a release before the buyer approves. Mitigation: enforce strict role-based access control on your Orchestrator deployment and enable database audit logging.
 
@@ -463,20 +463,20 @@ const key = `release:${orderId}:${buyerId}`;
 
 **What it is:** A contract function calls an external contract, which calls back into the original function before it finishes — leading to double-spending.
 
-**Relevance to OFFER-HUB:** Trustless Work's Soroban contracts are designed to prevent reentrancy. The Orchestrator never calls back into itself during a transaction signing sequence.
+**Relevance to GIGANCHOR:** Trustless Work's Soroban contracts are designed to prevent reentrancy. The Orchestrator never calls back into itself during a transaction signing sequence.
 
-**What you must do:** Do not build custom Soroban contract logic that interacts with the OFFER-HUB escrow contracts unless you have conducted a formal security audit of the reentrancy surface.
+**What you must do:** Do not build custom Soroban contract logic that interacts with the GIGANCHOR escrow contracts unless you have conducted a formal security audit of the reentrancy surface.
 
 ### Balance Desynchronization
 
-**What it is:** OFFER-HUB's off-chain balance (PostgreSQL) diverges from the on-chain USDC balance (Stellar ledger). This can happen if a blockchain transaction is submitted but the database update fails, or vice versa.
+**What it is:** GIGANCHOR's off-chain balance (PostgreSQL) diverges from the on-chain USDC balance (Stellar ledger). This can happen if a blockchain transaction is submitted but the database update fails, or vice versa.
 
 **How to detect it:**
 
 ```typescript
 // Periodically reconcile your critical accounts
 async function reconcileBalance(userId: string) {
-  const offChainBalance = await offerHubClient.balances.get(userId);
+  const offChainBalance = await giganchorClient.balances.get(userId);
   const onChainBalance = await stellarHorizon.loadAccount(wallet.publicKey);
 
   const usdc = onChainBalance.balances.find(b => b.asset_code === 'USDC');
@@ -496,7 +496,7 @@ async function reconcileBalance(userId: string) {
 
 ```typescript
 // ✅ Always fetch from the API — never from user-supplied input
-const { data } = await offerHubClient.wallet.getDepositAddress(userId);
+const { data } = await giganchorClient.wallet.getDepositAddress(userId);
 showToUser(data.address);
 ```
 

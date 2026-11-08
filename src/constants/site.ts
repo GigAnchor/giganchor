@@ -1,6 +1,6 @@
 /** Used when `NEXT_PUBLIC_SITE_URL` is unset or malformed. */
-export const SITE_URL_FALLBACK = "https://offer-hub.tech";
-export const SITE_NAME = "OFFER-HUB";
+export const SITE_URL_FALLBACK = "https://giganchor.tech";
+export const SITE_NAME = "GIGANCHOR";
 
 /**
  * Normalizes a configured site URL to an absolute origin without a trailing

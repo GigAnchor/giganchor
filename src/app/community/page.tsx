@@ -18,17 +18,17 @@ export const revalidate = 600;
 export const metadata: Metadata = buildPageMetadata({
   title: "Community",
   description:
-    "Join the OFFER-HUB open-source community. Explore contributors, open issues, recent pull requests, and learn how to get involved.",
+    "Join the GIGANCHOR open-source community. Explore contributors, open issues, recent pull requests, and learn how to get involved.",
   keywords: [
     "community",
     "open source",
     "contributors",
     "GitHub",
-    "OFFER-HUB",
+    "GIGANCHOR",
     "contribute",
   ],
   path: "/community",
-  ogImageAlt: "OFFER-HUB Community — contributors, issues, and pull requests",
+  ogImageAlt: "GIGANCHOR Community — contributors, issues, and pull requests",
 });
 
 export default async function CommunityPage() {

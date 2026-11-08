@@ -12,17 +12,17 @@ import { GITHUB_REPO_URL } from "@/constants/github";
 export const metadata: Metadata = buildPageMetadata({
   title: "Pricing",
   description:
-    "OFFER-HUB pricing: open source core for free, free self-hosting, and enterprise support available on request.",
+    "GIGANCHOR pricing: open source core for free, free self-hosting, and enterprise support available on request.",
   keywords: [
     "pricing",
     "open source",
     "self-hosting",
     "enterprise",
     "escrow pricing",
-    "OFFER-HUB",
+    "GIGANCHOR",
   ],
   path: "/pricing",
-  ogImageAlt: "OFFER-HUB Pricing — open source core, free self-hosting, enterprise support",
+  ogImageAlt: "GIGANCHOR Pricing — open source core, free self-hosting, enterprise support",
 });
 
 type PricingTier = {
@@ -42,7 +42,7 @@ const tiers: PricingTier[] = [
     name: "Open Source",
     priceLabel: "Free forever",
     description:
-      "Build with the full OFFER-HUB core codebase under an open-source model designed for developer trust and transparency.",
+      "Build with the full GIGANCHOR core codebase under an open-source model designed for developer trust and transparency.",
     features: [
       "Core platform access at no cost",
       "Community-driven development and feedback",
@@ -59,7 +59,7 @@ const tiers: PricingTier[] = [
     name: "Self-Hosted",
     priceLabel: "Free",
     description:
-      "Deploy OFFER-HUB on your own infrastructure and keep full control of runtime, data boundaries, and security operations.",
+      "Deploy GIGANCHOR on your own infrastructure and keep full control of runtime, data boundaries, and security operations.",
     features: [
       "No platform licensing cost",
       "Run in your cloud or on-prem environment",
@@ -106,7 +106,7 @@ export default function PricingPage() {
               Open by default. <br className="hidden md:block" /> Scalable by design.
             </h1>
             <p className="text-lg md:text-xl font-medium leading-relaxed text-content-secondary">
-              OFFER-HUB keeps core access free for builders and lets teams self-host without
+              GIGANCHOR keeps core access free for builders and lets teams self-host without
               licensing fees. If you need enterprise-level support, our team can tailor a
               support model around your rollout.
             </p>

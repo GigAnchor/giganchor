@@ -1,11 +1,11 @@
 ---
 title: Configuration
-description: Complete environment variable reference for the OFFER-HUB Orchestrator and the documentation site — verified from source code in both repositories.
+description: Complete environment variable reference for the GIGANCHOR Orchestrator and the documentation site — verified from source code in both repositories.
 order: 3
 section: Getting Started
 ---
 
-This page documents every environment variable that is read by source code in either the **OFFER-HUB Orchestrator** (`github.com/OFFER-HUB/OFFER-HUB`) or the **documentation site** (`github.com/OFFER-HUB/offer-hub-monorepo`). Every entry is traced to the exact implementation file that reads it.
+This page documents every environment variable that is read by source code in either the **GIGANCHOR Orchestrator** (`github.com/GigAnchor/giganchor`) or the **documentation site** (`github.com/GigAnchor/giganchor`). Every entry is traced to the exact implementation file that reads it.
 
 <Callout type="note">
   There are two separate repositories. The Orchestrator is the NestJS payments backend. The documentation site (this website) is a separate Next.js application. Their environment variables are independent and documented in separate sections below.
@@ -13,9 +13,9 @@ This page documents every environment variable that is read by source code in ei
 
 ---
 
-## OFFER-HUB Orchestrator
+## GIGANCHOR Orchestrator
 
-The Orchestrator is a NestJS monorepo in the OFFER-HUB repository. Copy the example file before editing:
+The Orchestrator is a NestJS monorepo in the GIGANCHOR repository. Copy the example file before editing:
 
 <CommandLine>cp .env.example .env</CommandLine>
 
@@ -76,15 +76,15 @@ These variables throw at startup or at first use if absent. The application will
 
 | Variable | Required | Default | Effect | Source |
 |----------|----------|---------|--------|--------|
-| `OFFERHUB_MASTER_KEY` | No | none | If set, requests that present this exact value as a Bearer token bypass API key lookup and receive `['read', 'write', 'support']` scopes. If absent, the master key path is disabled — only regular API keys work. | `apps/api/src/common/guards/api-key.guard.ts` |
-| `OFFERHUB_JWT_SECRET` | No | `'fallback-secret-for-dev'` | Secret used to sign and verify short-lived JWT tokens (`ohk_tok_…`). The fallback is intentionally weak. | `apps/api/src/modules/auth/auth.module.ts` |
+| `GIGANCHOR_MASTER_KEY` | No | none | If set, requests that present this exact value as a Bearer token bypass API key lookup and receive `['read', 'write', 'support']` scopes. If absent, the master key path is disabled — only regular API keys work. | `apps/api/src/common/guards/api-key.guard.ts` |
+| `GIGANCHOR_JWT_SECRET` | No | `'fallback-secret-for-dev'` | Secret used to sign and verify short-lived JWT tokens (`gak_tok_…`). The fallback is intentionally weak. | `apps/api/src/modules/auth/auth.module.ts` |
 
 <Callout type="danger">
-  **`OFFERHUB_JWT_SECRET` must be set in production.** The fallback value `'fallback-secret-for-dev'` is a public default. Any attacker who knows it can forge short-lived tokens. Verified in `apps/api/src/modules/auth/auth.module.ts`:
+  **`GIGANCHOR_JWT_SECRET` must be set in production.** The fallback value `'fallback-secret-for-dev'` is a public default. Any attacker who knows it can forge short-lived tokens. Verified in `apps/api/src/modules/auth/auth.module.ts`:
 
   ```typescript
   JwtModule.register({
-    secret: process.env.OFFERHUB_JWT_SECRET || 'fallback-secret-for-dev',
+    secret: process.env.GIGANCHOR_JWT_SECRET || 'fallback-secret-for-dev',
     signOptions: { expiresIn: '1h' },
   })
   ```
@@ -161,12 +161,12 @@ For the complete queue, retry, reconciliation, and blockchain-monitor runbook, s
 
 ### CLI Variables
 
-These variables are read only by the `@offerhub/cli` package. They are not used by the API server.
+These variables are read only by the `@giganchor/cli` package. They are not used by the API server.
 
 | Variable | Required | Default | Effect | Source |
 |----------|----------|---------|--------|--------|
-| `OFFERHUB_API_URL` | No | none | Orchestrator base URL for CLI commands. Used when no config file is present. | `packages/cli/src/utils/config.ts` |
-| `OFFERHUB_API_KEY` | No | none | API key for CLI authentication. Used when no config file is present. | `packages/cli/src/utils/config.ts` |
+| `GIGANCHOR_API_URL` | No | none | Orchestrator base URL for CLI commands. Used when no config file is present. | `packages/cli/src/utils/config.ts` |
+| `GIGANCHOR_API_KEY` | No | none | API key for CLI authentication. Used when no config file is present. | `packages/cli/src/utils/config.ts` |
 
 ### Complete Orchestrator `.env` Template
 
@@ -218,9 +218,9 @@ REDIS_URL=redis://localhost:6379
 
 # ─── Authentication ──────────────────────────────────────────────────────────
 # Generate with: openssl rand -base64 32
-OFFERHUB_MASTER_KEY=ohk_master_...
+GIGANCHOR_MASTER_KEY=gak_master_...
 # Generate with: openssl rand -base64 32
-OFFERHUB_JWT_SECRET=
+GIGANCHOR_JWT_SECRET=
 
 # ─── Payment Provider ─────────────────────────────────────────────────────────
 # Only "crypto" is supported. "airtm" throws an error at startup.
@@ -276,7 +276,7 @@ This checklist is derived from implemented guards and validators in the Orchestr
 
 | Item | What to verify | Source |
 |------|---------------|--------|
-| `OFFERHUB_JWT_SECRET` is set | Must not be the fallback `'fallback-secret-for-dev'` | `apps/api/src/modules/auth/auth.module.ts` |
+| `GIGANCHOR_JWT_SECRET` is set | Must not be the fallback `'fallback-secret-for-dev'` | `apps/api/src/modules/auth/auth.module.ts` |
 | `WALLET_ENCRYPTION_KEY` is set and backed up | 64 hex chars; losing it makes wallets unrecoverable | `apps/api/src/utils/crypto.ts` |
 | `STELLAR_NETWORK=mainnet` + correct `STELLAR_USDC_ISSUER` | Testnet issuer is the default; mainnet requires an explicit override | `apps/api/src/providers/trustless-work/trustless-work.config.ts` |
 | `DATABASE_URL` and `DIRECT_URL` both set | Direct URL must bypass any pooler for migrations to work | `packages/database/prisma/schema.prisma` |
@@ -295,14 +295,14 @@ This checklist is derived from implemented guards and validators in the Orchestr
 
 ## Documentation Site Variables
 
-The documentation site (`github.com/OFFER-HUB/offer-hub-monorepo`) is a Next.js application. Its environment variables are independent of the Orchestrator.
+The documentation site (`github.com/GigAnchor/giganchor`) is a Next.js application. Its environment variables are independent of the Orchestrator.
 
 ### Runtime Variables
 
 | Variable | Required | Default | Effect | Source |
 |----------|----------|---------|--------|--------|
 | `NODE_ENV` | No | `development` | Controls CSP production headers and dev-only error details. | `config/security-headers.ts`, `next.config.ts`, `src/utils/logger.ts`, `src/app/error.tsx` |
-| `NEXT_PUBLIC_SITE_URL` | No (warns in production) | `'https://offer-hub.tech'` | CORS `Access-Control-Allow-Origin` header and canonical URL generation. In production, a warning is logged if absent. Falls back to the hardcoded constant in `src/constants/site.ts`. | `next.config.ts`, `src/lib/llms-txt.ts`, `src/components/docs/Breadcrumb.tsx`, `src/components/docs/PageActionsMenu.tsx` |
+| `NEXT_PUBLIC_SITE_URL` | No (warns in production) | `'https://giganchor.tech'` | CORS `Access-Control-Allow-Origin` header and canonical URL generation. In production, a warning is logged if absent. Falls back to the hardcoded constant in `src/constants/site.ts`. | `next.config.ts`, `src/lib/llms-txt.ts`, `src/components/docs/Breadcrumb.tsx`, `src/components/docs/PageActionsMenu.tsx` |
 | `NEXT_PUBLIC_SUPABASE_URL` | No | `''` (Supabase disabled) | Supabase project URL. If absent, empty, or a placeholder value, `isSupabaseConfigured` is `false` and all form API routes return HTTP 503. | `src/lib/supabase.ts`, `config/security-headers.ts` |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | No | `''` (Supabase disabled) | Supabase anonymous key. Same placeholder guard as `NEXT_PUBLIC_SUPABASE_URL`. | `src/lib/supabase.ts` |
 | `NEXT_PUBLIC_API_BASE_URL` | No | `'http://localhost:4000/api/v1'` | Base URL for the interactive API explorer widget. Also added to the CSP `connect-src` allowlist. | `src/components/api-explorer/EndpointPanel.tsx`, `config/security-headers.ts` |
@@ -348,11 +348,11 @@ When Supabase is not configured, all of these API routes return HTTP 503:
 
 ### `.env.example` Entries Not Read by Source Code
 
-The following variables appear in `offer-hub-monorepo/.env.example` but are not read by any TypeScript or JavaScript source file in that repository.
+The following variables appear in `giganchor-monorepo/.env.example` but are not read by any TypeScript or JavaScript source file in that repository.
 
 | Variable | Appears in | Reason it is present |
 |----------|-----------|---------------------|
-| `OFFERHUB_API_KEY` | `.env.example`, use-case code examples | Configures the **SDK** in integration examples — not used by the Next.js app itself |
+| `GIGANCHOR_API_KEY` | `.env.example`, use-case code examples | Configures the **SDK** in integration examples — not used by the Next.js app itself |
 | `DATABASE_URL` | `.env.example` | Referenced in installation docs for the Orchestrator; not read by `src/` or `backend/` in this repo |
 | `DIRECT_URL` | `.env.example` | Referenced in installation docs; not read by any source file in this repo |
 

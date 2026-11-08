@@ -13,7 +13,7 @@ section: Guides
 
 By the end of this guide you will have:
 
-- A running OFFER-HUB Orchestrator instance (local, Docker-backed)
+- A running GIGANCHOR Orchestrator instance (local, Docker-backed)
 - A minimal Node.js / TypeScript marketplace backend wired to the SDK
 - Buyer and seller user accounts with Stellar wallets
 - A simple listing flow tied to an escrow-protected order
@@ -21,7 +21,7 @@ By the end of this guide you will have:
 - Real-time event subscription to reflect state changes in your UI
 
 <MermaidDiagram
-  caption="How your marketplace app, the OFFER-HUB Orchestrator, Stellar and Trustless Work fit together"
+  caption="How your marketplace app, the GIGANCHOR Orchestrator, Stellar and Trustless Work fit together"
   chart={`
 flowchart TB
     subgraph You["Your Marketplace App"]
@@ -32,7 +32,7 @@ flowchart TB
 
     App -->|SDK calls| Orch
 
-    subgraph Orch["OFFER-HUB Orchestrator :4000"]
+    subgraph Orch["GIGANCHOR Orchestrator :4000"]
         Ledger[Balance Ledger]
         ESM[Escrow State Machine]
         Events[SSE Event Stream]
@@ -69,7 +69,7 @@ You also need a free [Trustless Work](https://trustlesswork.com) developer API k
 
 ### Step 1.1 — Clone and Install
 
-<CommandLine>git clone https://github.com/OFFER-HUB/OFFER-HUB.git && cd OFFER-HUB</CommandLine>
+<CommandLine>git clone https://github.com/GigAnchor/giganchor.git && cd GIGANCHOR</CommandLine>
 
 <CommandLine>npm install</CommandLine>
 
@@ -91,8 +91,8 @@ NODE_ENV=development
 PORT=4000
 
 # Database (Docker defaults)
-DATABASE_URL=postgresql://offerhub:offerhub_password@localhost:5432/offerhub_db
-DIRECT_URL=postgresql://offerhub:offerhub_password@localhost:5432/offerhub_db
+DATABASE_URL=postgresql://giganchor:giganchor_password@localhost:5432/giganchor_db
+DIRECT_URL=postgresql://giganchor:giganchor_password@localhost:5432/giganchor_db
 
 # Redis
 REDIS_URL=redis://localhost:6379
@@ -104,7 +104,7 @@ PAYMENT_PROVIDER=crypto
 WALLET_ENCRYPTION_KEY=your-32-byte-hex-key
 
 # Choose any secret for local dev
-OFFERHUB_MASTER_KEY=dev-master-key-change-in-production
+GIGANCHOR_MASTER_KEY=dev-master-key-change-in-production
 
 # Get from trustlesswork.com (testnet key)
 TRUSTLESS_API_KEY=your_trustless_testnet_key
@@ -159,7 +159,7 @@ curl -X POST http://localhost:4000/api/v1/auth/api-keys \
   -d '{"name": "my-marketplace", "scopes": ["read", "write"]}'
 ```
 
-Save the returned `key` value — it is only shown once. It will look like `ohk_live_xxxxxxxxxxxx`.
+Save the returned `key` value — it is only shown once. It will look like `gak_live_xxxxxxxxxxxx`.
 
 <Callout type="danger">
   Never commit your API key or `WALLET_ENCRYPTION_KEY` to version control. Add `.env` to `.gitignore`.
@@ -175,7 +175,7 @@ Open a **new terminal** in a different directory for your marketplace code.
 
 <CommandLine>mkdir my-marketplace && cd my-marketplace && npm init -y</CommandLine>
 
-<CommandLine>npm install @offerhub/sdk dotenv</CommandLine>
+<CommandLine>npm install @giganchor/sdk dotenv</CommandLine>
 
 <CommandLine>npm install --save-dev typescript tsx @types/node</CommandLine>
 
@@ -188,8 +188,8 @@ Open a **new terminal** in a different directory for your marketplace code.
 Create a `.env` file in your marketplace directory:
 
 ```env
-OFFERHUB_API_URL=http://localhost:4000
-OFFERHUB_API_KEY=ohk_live_your_api_key_here
+GIGANCHOR_API_URL=http://localhost:4000
+GIGANCHOR_API_KEY=gak_live_your_api_key_here
 ```
 
 ### Step 2.4 — Initialize the SDK
@@ -197,11 +197,11 @@ OFFERHUB_API_KEY=ohk_live_your_api_key_here
 Create `src/sdk.ts`:
 
 ```typescript
-import { OfferHubSDK } from '@offerhub/sdk';
+import { GiganchorSDK } from '@giganchor/sdk';
 
-export const sdk = new OfferHubSDK({
-  apiUrl: process.env.OFFERHUB_API_URL!,
-  apiKey: process.env.OFFERHUB_API_KEY!,
+export const sdk = new GiganchorSDK({
+  apiUrl: process.env.GIGANCHOR_API_URL!,
+  apiKey: process.env.GIGANCHOR_API_KEY!,
 });
 ```
 
@@ -213,7 +213,7 @@ export const sdk = new OfferHubSDK({
 
 ## Part 3 — User Signup
 
-Every participant in your marketplace — buyer or seller — needs an OFFER-HUB user record. This is created once, typically at registration time in your backend.
+Every participant in your marketplace — buyer or seller — needs an GIGANCHOR user record. This is created once, typically at registration time in your backend.
 
 ### What the SDK Creates
 
@@ -285,7 +285,7 @@ signup().catch(console.error);
 <CommandLine>npx tsx src/01-signup.ts</CommandLine>
 
 <Callout type="tip">
-  Store `buyer.id` and `seller.id` in your own database linked to your internal user records. The `externalUserId` field is how you map back from OFFER-HUB to your own user system.
+  Store `buyer.id` and `seller.id` in your own database linked to your internal user records. The `externalUserId` field is how you map back from GIGANCHOR to your own user system.
 </Callout>
 
 ---
@@ -356,7 +356,7 @@ console.log('Reserved:', balance.reserved);   // "0.00"
 
 ## Part 5 — Create a Listing and Order
 
-A "listing" in your marketplace is a concept you own — OFFER-HUB does not store listings. What OFFER-HUB handles is the financial side: creating an order that links a buyer to a seller for a specific amount.
+A "listing" in your marketplace is a concept you own — GIGANCHOR does not store listings. What GIGANCHOR handles is the financial side: creating an order that links a buyer to a seller for a specific amount.
 
 ### The Listing → Order Mapping
 
@@ -685,10 +685,10 @@ Create `src/07-events.ts`:
 ```typescript
 import 'dotenv/config';
 
-// OFFER-HUB emits Server-Sent Events at GET /api/v1/events
+// GIGANCHOR emits Server-Sent Events at GET /api/v1/events
 // Standard EventSource works in Node 18+ and all modern browsers.
-const EVENTS_URL = `${process.env.OFFERHUB_API_URL}/api/v1/events`;
-const API_KEY = process.env.OFFERHUB_API_KEY!;
+const EVENTS_URL = `${process.env.GIGANCHOR_API_URL}/api/v1/events`;
+const API_KEY = process.env.GIGANCHOR_API_KEY!;
 
 // Node.js EventSource (install eventsource package if needed)
 // In a browser you'd use new EventSource(url) directly.
@@ -699,7 +699,7 @@ const es = new EventSource(EVENTS_URL, {
 });
 
 es.onopen = () => {
-  console.log('Connected to OFFER-HUB event stream');
+  console.log('Connected to GIGANCHOR event stream');
 };
 
 es.onmessage = (event) => {
@@ -751,7 +751,7 @@ import 'dotenv/config';
 import { sdk } from './sdk.js';
 
 async function fullDemoFlow() {
-  console.log('\n=== OFFER-HUB Marketplace Demo ===\n');
+  console.log('\n=== GIGANCHOR Marketplace Demo ===\n');
 
   // 1. Register participants
   const buyer = await sdk.users.create({
@@ -829,8 +829,8 @@ import {
   NotFoundError,
   ValidationError,
   InvalidTransitionError,
-  OfferHubError,
-} from '@offerhub/sdk';
+  GiganchorError,
+} from '@giganchor/sdk';
 
 async function safeCreateOrder(buyerId: string, sellerId: string, amount: string) {
   try {
@@ -857,7 +857,7 @@ async function safeCreateOrder(buyerId: string, sellerId: string, amount: string
     } else if (error instanceof InvalidTransitionError) {
       // State machine violation — check current order status
       console.error(`Cannot transition from state: ${error.currentState}`);
-    } else if (error instanceof OfferHubError) {
+    } else if (error instanceof GiganchorError) {
       // Generic orchestrator error
       console.error('Orchestrator error:', error.message);
     } else {
@@ -875,7 +875,7 @@ async function safeCreateOrder(buyerId: string, sellerId: string, amount: string
 | `InvalidTransitionError` | 409 | Wrong order state for action | Follow the state machine |
 | `NotFoundError` | 404 | Unknown ID | Verify IDs are from `create` responses |
 | `ValidationError` | 400 | Missing/invalid fields | Check required fields in SDK types |
-| `OfferHubError` | 5xx | Stellar/infrastructure issue | Retry with same idempotency key |
+| `GiganchorError` | 5xx | Stellar/infrastructure issue | Retry with same idempotency key |
 
 ### Safe Retries with Idempotency Keys
 
@@ -901,7 +901,7 @@ Here is the final file layout of the marketplace app you built:
 
 ```
 my-marketplace/
-├── .env                     # OFFERHUB_API_URL, OFFERHUB_API_KEY
+├── .env                     # GIGANCHOR_API_URL, GIGANCHOR_API_KEY
 ├── package.json
 ├── tsconfig.json
 └── src/
@@ -933,5 +933,5 @@ You now have all the building blocks. Here are natural extensions for a hackatho
 | Security checklist | [Security Guide](/docs/guide/security) |
 
 <Callout type="note">
-  Need help? Join the [Discord community](https://discord.gg/offerhub) or open an issue on [GitHub](https://github.com/OFFER-HUB/offer-hub-monorepo/issues).
+  Need help? Join the [Discord community](https://discord.gg/giganchor) or open an issue on [GitHub](https://github.com/GigAnchor/giganchor/issues).
 </Callout>

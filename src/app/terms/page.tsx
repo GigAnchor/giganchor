@@ -12,17 +12,17 @@ import { getStaticMdxContent } from "@/lib/mdx";
 export const metadata: Metadata = buildPageMetadata({
   title: "Terms of Service",
   description:
-    "The terms governing use of the OFFER-HUB platform — acceptable use, escrow responsibilities, liability, and the legal framework behind our payment orchestration.",
+    "The terms governing use of the GIGANCHOR platform — acceptable use, escrow responsibilities, liability, and the legal framework behind our payment orchestration.",
   keywords: [
     "terms of service",
     "terms and conditions",
     "legal",
     "acceptable use",
     "escrow terms",
-    "OFFER-HUB",
+    "GIGANCHOR",
   ],
   path: "/terms",
-  ogImageAlt: "OFFER-HUB Terms of Service",
+  ogImageAlt: "GIGANCHOR Terms of Service",
 });
 
 export default async function TermsOfServicePage() {
@@ -43,7 +43,7 @@ export default async function TermsOfServicePage() {
             />
             <div className="p-8 md:p-10 rounded-[2.5rem] bg-bg-base shadow-neu-sunken-subtle">
               <p className="text-sm font-medium italic leading-relaxed text-content-secondary">
-                This document was drafted for the OFFER-HUB open-source project and should be reviewed by a licensed
+                This document was drafted for the GIGANCHOR open-source project and should be reviewed by a licensed
                 attorney before publication in a production environment. It is intended as a comprehensive starting point
                 covering the platform&apos;s key legal exposure areas.
               </p>

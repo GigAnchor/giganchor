@@ -24,7 +24,7 @@ export interface SdkCard {
 }
 
 export interface CodeIntegrationShowcaseProps {
-  /** Trailing copy that follows the inline `@offerhub/sdk` code chip in the section header. */
+  /** Trailing copy that follows the inline `@giganchor/sdk` code chip in the section header. */
   description: string;
   tabs: CodeTab[];
   sdkCards: SdkCard[];
@@ -210,7 +210,7 @@ export function CodeIntegrationShowcase({
           <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-content-secondary">
             The{" "}
             <code className="rounded-md bg-bg-sunken px-1.5 py-0.5 font-mono text-[0.85em] text-theme-primary">
-              @offerhub/sdk
+              @giganchor/sdk
             </code>{" "}
             {description}
           </p>

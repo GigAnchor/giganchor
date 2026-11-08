@@ -1,8 +1,8 @@
-# OFFER-HUB Orchestrator — System Context
+# GIGANCHOR Orchestrator — System Context
 
 ## 1. Overview
 
-OFFER-HUB Orchestrator is a **self-hosted payments orchestrator** for marketplaces. It provides a Web2-style experience (balance, top-ups, checkout, withdrawals) while delegating funds to external rails: **Airtm** (fiat) or **Stellar + Trustless Work** (crypto-native). Each marketplace runs its own instance; there is no centralized SaaS.
+GIGANCHOR Orchestrator is a **self-hosted payments orchestrator** for marketplaces. It provides a Web2-style experience (balance, top-ups, checkout, withdrawals) while delegating funds to external rails: **Airtm** (fiat) or **Stellar + Trustless Work** (crypto-native). Each marketplace runs its own instance; there is no centralized SaaS.
 
 **Purpose:** Let marketplaces offer escrow-protected payments and user balances without building payment infrastructure. The Orchestrator coordinates users, orders, balances, escrow on Stellar (Trustless Work), and optional fiat on/off-ramp (Airtm).
 
@@ -37,7 +37,7 @@ OFFER-HUB Orchestrator is a **self-hosted payments orchestrator** for marketplac
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│  Marketplace UI  →  @offerhub/sdk  →  OFFER-HUB Orchestrator    │
+│  Marketplace UI  →  @giganchor/sdk  →  GIGANCHOR Orchestrator    │
 │       (third-party)      (NPM)              (self-hosted)        │
 └─────────────────────────────────────────────┬───────────────────┘
                                               │
@@ -54,7 +54,7 @@ OFFER-HUB Orchestrator is a **self-hosted payments orchestrator** for marketplac
                                     API + Worker (single process)
 ```
 
-- **Clients:** Marketplaces use `@offerhub/sdk` (or direct REST) against the Orchestrator API.
+- **Clients:** Marketplaces use `@giganchor/sdk` (or direct REST) against the Orchestrator API.
 - **API:** NestJS; REST; auth via API key (Bearer); idempotency, rate limiting, audit, events.
 - **Worker:** BullMQ in same process; webhooks, retries, reconciliation.
 - **Core domain:** Users, orders, escrows, balances, top-ups, withdrawals, disputes. State machines enforce valid transitions.

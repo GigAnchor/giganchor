@@ -1,6 +1,6 @@
 # Deployment Guide
 
-> How to self-host the OFFER-HUB Orchestrator: infrastructure, environment variables, migrations, and production security.
+> How to self-host the GIGANCHOR Orchestrator: infrastructure, environment variables, migrations, and production security.
 
 ---
 
@@ -101,8 +101,8 @@ Minimum specs: 1 vCPU, 512 MB RAM (development); 2 vCPU, 2 GB RAM (production).
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/OFFER-HUB/OFFER-HUB.git
-cd OFFER-HUB
+git clone https://github.com/GigAnchor/giganchor.git
+cd GIGANCHOR
 ```
 
 ### 2. Install dependencies
@@ -128,7 +128,7 @@ Quick reference for `PAYMENT_PROVIDER=crypto` (default):
 | `DIRECT_URL` | Postgres direct URL (port 5432 — for migrations) |
 | `REDIS_URL` | Redis connection URL |
 | `WALLET_ENCRYPTION_KEY` | 32-byte hex key for AES-256-GCM |
-| `OFFERHUB_MASTER_KEY` | Master API key for bootstrapping marketplace keys |
+| `GIGANCHOR_MASTER_KEY` | Master API key for bootstrapping marketplace keys |
 | `TRUSTLESS_API_KEY` | Trustless Work API key |
 | `TRUSTLESS_WEBHOOK_SECRET` | Webhook secret from Trustless Work dashboard |
 | `PUBLIC_BASE_URL` | Public HTTPS URL of this instance |
@@ -154,7 +154,7 @@ npm run bootstrap
 Expected output:
 
 ```
-🚀 OFFER-HUB Orchestrator Bootstrap
+🚀 GIGANCHOR Orchestrator Bootstrap
 
 Creating platform user...
   ✓ Platform user created: usr_xxxxxxxxxxxx
@@ -188,7 +188,7 @@ npm run build
 node apps/api/dist/main.js
 
 # With pm2 (recommended for production)
-pm2 start apps/api/dist/main.js --name offerhub-api
+pm2 start apps/api/dist/main.js --name giganchor-api
 
 # Development (hot-reload)
 npm run dev
@@ -207,7 +207,7 @@ API listening on port 4000
 
 ```bash
 curl -X POST http://your-domain/api/v1/auth/api-keys \
-  -H "Authorization: Bearer $OFFERHUB_MASTER_KEY" \
+  -H "Authorization: Bearer $GIGANCHOR_MASTER_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Production Key",
@@ -234,7 +234,7 @@ DATABASE_URL=postgresql://user:pass@host:5432/db?sslmode=require
 REDIS_URL=rediss://:password@host:6379
 
 # Auth
-OFFERHUB_MASTER_KEY=<long-random-secret>
+GIGANCHOR_MASTER_KEY=<long-random-secret>
 
 # Payment Provider (crypto or airtm)
 PAYMENT_PROVIDER=crypto
@@ -299,12 +299,12 @@ npx prisma migrate deploy
 
 ## Creating the First API Key
 
-The `OFFERHUB_MASTER_KEY` is a bootstrap key only — use it once to create a proper API key:
+The `GIGANCHOR_MASTER_KEY` is a bootstrap key only — use it once to create a proper API key:
 
 ```bash
 # Create admin key
 curl -X POST https://your-orchestrator.com/api/v1/auth/api-keys \
-  -H "Authorization: Bearer $OFFERHUB_MASTER_KEY" \
+  -H "Authorization: Bearer $GIGANCHOR_MASTER_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Backend Service Key",
@@ -312,12 +312,12 @@ curl -X POST https://your-orchestrator.com/api/v1/auth/api-keys \
   }'
 
 # Response:
-# { "success": true, "data": { "key": "ohk_live_...", "id": "key_..." } }
+# { "success": true, "data": { "key": "gak_live_...", "id": "key_..." } }
 ```
 
 **Save the key securely** — it's only shown once. Store it in your marketplace backend's environment variables.
 
-After creating the key, the `OFFERHUB_MASTER_KEY` should be rotated periodically.
+After creating the key, the `GIGANCHOR_MASTER_KEY` should be rotated periodically.
 
 ---
 
@@ -345,7 +345,7 @@ Use this endpoint for load balancer health checks and uptime monitoring.
 
 ### Secrets
 
-- [ ] `OFFERHUB_MASTER_KEY` is a long random secret (not a memorable password)
+- [ ] `GIGANCHOR_MASTER_KEY` is a long random secret (not a memorable password)
 - [ ] `WALLET_ENCRYPTION_KEY` is a fresh 32-byte random hex value
 - [ ] `WALLET_ENCRYPTION_KEY` is backed up in at least 2 secure locations (not the DB)
 - [ ] `TRUSTLESS_WEBHOOK_SECRET` and `AIRTM_WEBHOOK_SECRET` are set
@@ -404,17 +404,17 @@ Designate one "monitor instance" without this flag. Use a separate process or de
 ```yaml
 services:
   api-1:
-    image: offerhub-api
+    image: giganchor-api
     environment:
       - DISABLE_BLOCKCHAIN_MONITOR=true
 
   api-2:
-    image: offerhub-api
+    image: giganchor-api
     environment:
       - DISABLE_BLOCKCHAIN_MONITOR=true
 
   api-monitor:
-    image: offerhub-api
+    image: giganchor-api
     # No DISABLE_BLOCKCHAIN_MONITOR — this one runs the monitor
 ```
 
@@ -441,7 +441,7 @@ The Orchestrator uses structured JSON logging. Pipe to your log aggregator (Data
 
 ```bash
 # pm2 with log rotation
-pm2 start apps/api/dist/main.js --name offerhub-api --log-date-format "YYYY-MM-DD HH:mm:ss"
+pm2 start apps/api/dist/main.js --name giganchor-api --log-date-format "YYYY-MM-DD HH:mm:ss"
 
 # Pipe to aggregator
 node apps/api/dist/main.js 2>&1 | your-log-aggregator
@@ -476,7 +476,7 @@ git pull origin main
 npm install
 npm run build
 npx prisma migrate deploy  # Apply new migrations
-pm2 restart offerhub-api   # Zero-downtime restart (use rolling update with load balancer)
+pm2 restart giganchor-api   # Zero-downtime restart (use rolling update with load balancer)
 ```
 
 ### Database Maintenance

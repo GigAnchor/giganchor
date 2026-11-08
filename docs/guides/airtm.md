@@ -1,6 +1,6 @@
 # AirTM Integration Guide
 
-> How the AirTM fiat payment provider works in OFFER-HUB — deposits (top-ups), withdrawals, and webhooks.
+> How the AirTM fiat payment provider works in GIGANCHOR — deposits (top-ups), withdrawals, and webhooks.
 
 > **Status (Phase 1 — Current):** Setting `PAYMENT_PROVIDER=airtm` throws a `ConfigurationError` at startup with the message: _"Set PAYMENT_PROVIDER=crypto to use Stellar USDC wallets. AirTM support is planned for a future release."_ Use `PAYMENT_PROVIDER=crypto` for production deployments.
 >
@@ -117,7 +117,7 @@ AirTM deposits are called "top-ups." The flow is asynchronous — users are redi
 ```bash
 # Create top-up
 POST /api/v1/topups
-Authorization: Bearer ohk_live_...
+Authorization: Bearer gak_live_...
 Content-Type: application/json
 Idempotency-Key: <uuid-v4>
 
@@ -146,7 +146,7 @@ Redirect the user to `confirmationUri`. On mobile, you can open this in a WebVie
 
 ```bash
 GET /api/v1/topups/tp_xyz789
-Authorization: Bearer ohk_live_...
+Authorization: Bearer gak_live_...
 ```
 
 ```json
@@ -222,7 +222,7 @@ Before a user can use AirTM for top-ups or withdrawals, their AirTM account must
 
 ```bash
 POST /api/v1/users/usr_abc123/airtm-link
-Authorization: Bearer ohk_live_...
+Authorization: Bearer gak_live_...
 Content-Type: application/json
 
 {

@@ -4,10 +4,10 @@ import { SITE_URL_FALLBACK, SITE_NAME, normalizeSiteUrl } from "@/constants/site
 
 const INPUT = {
   title: "Privacy Policy",
-  description: "How OFFER-HUB collects, uses, and protects your data.",
+  description: "How GIGANCHOR collects, uses, and protects your data.",
   keywords: ["privacy policy", "GDPR"],
   path: "/privacy",
-  ogImageAlt: "OFFER-HUB Privacy Policy",
+  ogImageAlt: "GIGANCHOR Privacy Policy",
 };
 
 describe("SITE_URL", () => {
@@ -81,11 +81,11 @@ describe("buildPageMetadata", () => {
   it("uses socialTitle verbatim when given, without appending the site name", () => {
     const meta = buildPageMetadata({
       ...INPUT,
-      socialTitle: "Privacy at OFFER-HUB",
+      socialTitle: "Privacy at GIGANCHOR",
     });
 
-    expect(meta.openGraph?.title).toBe("Privacy at OFFER-HUB");
-    expect(meta.twitter?.title).toBe("Privacy at OFFER-HUB");
+    expect(meta.openGraph?.title).toBe("Privacy at GIGANCHOR");
+    expect(meta.twitter?.title).toBe("Privacy at GIGANCHOR");
   });
 
   it("derives the default OG image from the path", () => {
@@ -96,7 +96,7 @@ describe("buildPageMetadata", () => {
         url: "/og/privacy.png",
         width: 1200,
         height: 630,
-        alt: "OFFER-HUB Privacy Policy",
+        alt: "GIGANCHOR Privacy Policy",
       },
     ]);
   });

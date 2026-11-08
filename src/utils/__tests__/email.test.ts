@@ -19,7 +19,7 @@ describe("isValidEmail", () => {
     // form's old `\S+@\S+\.\S+` pattern accepted these because `\S`
     // excludes whitespace but not `@`, while the privacy routes'
     // `[^\s@]+@[^\s@]+\.[^\s@]+` (now the shared implementation) rejects
-    // them. See offer-hub-monorepo#1476.
+    // them. See giganchor-monorepo#1476.
     "a@@b.co",
     "a@b@c.co",
   ])("rejects %j", (email) => {

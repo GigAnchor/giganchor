@@ -1,6 +1,6 @@
 ---
 title: Inbound Webhooks
-description: Inbound provider webhook receivers for a self-hosted OFFER-HUB Orchestrator — AirTM (Svix-signed) and Trustless Work (HMAC-SHA256), with signature verification and deduplication behavior.
+description: Inbound provider webhook receivers for a self-hosted GIGANCHOR Orchestrator — AirTM (Svix-signed) and Trustless Work (HMAC-SHA256), with signature verification and deduplication behavior.
 order: 43
 section: API Reference
 ---
@@ -8,7 +8,7 @@ section: API Reference
 The Orchestrator exposes **two inbound webhook receivers** that external providers call to notify it about events. These are endpoints **your Orchestrator receives** — you never register or call them as an integrator.
 
 <Callout type="warning">
-  OFFER-HUB does **not** provide an outbound webhook subscription API. There is no `POST /api/v1/webhooks` endpoint for registering a URL, an event list, or a signing secret. The only real-time mechanism for integrators is the **SSE event stream** — see the [Events](/docs/api-reference/events) reference for subscriptions and the event catalog. The two `/webhooks` endpoints below are inbound receivers used by external providers.
+  GIGANCHOR does **not** provide an outbound webhook subscription API. There is no `POST /api/v1/webhooks` endpoint for registering a URL, an event list, or a signing secret. The only real-time mechanism for integrators is the **SSE event stream** — see the [Events](/docs/api-reference/events) reference for subscriptions and the event catalog. The two `/webhooks` endpoints below are inbound receivers used by external providers.
 </Callout>
 
 ## Common behavior
