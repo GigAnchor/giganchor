@@ -2,7 +2,7 @@ import { readFileSync, existsSync } from "fs";
 import { join, relative, basename, dirname } from "path";
 import { fileURLToPath } from "url";
 import matter from "gray-matter";
-import { collectFilesByExtension } from "./collect-files.generated.js";
+import { collectFilesByExtension } from "./collect-files.generated.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

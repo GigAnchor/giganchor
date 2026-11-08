@@ -45,16 +45,6 @@ const nextConfig: NextConfig = {
       { source: "/docs/:slug*/raw", destination: "/api/docs-raw/:slug*" },
     ];
   },
-  turbopack: {
-    // mcp/ compiles with Node16 module resolution, so its internal imports
-    // carry `.js` extensions that point at `.ts` sources. Webpack's
-    // `extensionAlias` used to bridge that; Turbopack needs the mapping spelled
-    // out because the server imports mcp/src/index.ts directly.
-    resolveAlias: {
-      "./docs-loader.js": "./mcp/src/docs-loader.ts",
-      "./collect-files.generated.js": "./mcp/src/collect-files.generated.ts",
-    },
-  },
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "avatars.githubusercontent.com", pathname: "/**" },

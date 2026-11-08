@@ -3,7 +3,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
-import { loadDocumentation, searchDocs, getDocBySlug, listSections } from "./docs-loader.js";
+import { loadDocumentation, searchDocs, getDocBySlug, listSections } from "./docs-loader.ts";
 
 const server = new McpServer({
   name: "offer-hub-docs",
