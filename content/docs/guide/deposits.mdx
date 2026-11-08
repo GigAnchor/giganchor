@@ -1,15 +1,15 @@
 ---
 title: Deposits Guide
-description: How users add funds to their OFFER-HUB balance — crypto deposits and AirTM top-ups.
+description: How users add funds to their GIGANCHOR balance — crypto deposits and AirTM top-ups.
 order: 18
 section: Guides
 ---
 
 <Callout type="note">
-  This is the public API/SDK guide for integrators. For internal implementation detail (Orchestrator state machine, signer roles), see [`docs/guides/deposits.md`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/docs/guides/deposits.md) in the repo.
+  This is the public API/SDK guide for integrators. For internal implementation detail (Orchestrator state machine, signer roles), see [`docs/guides/deposits.md`](https://github.com/GigAnchor/giganchor/blob/main/docs/guides/deposits.md) in the repo.
 </Callout>
 
-Before users can create orders or fund escrow, they need balance in their account. OFFER-HUB supports two deposit methods depending on your payment provider configuration.
+Before users can create orders or fund escrow, they need balance in their account. GIGANCHOR supports two deposit methods depending on your payment provider configuration.
 
 ## Payment Providers
 
@@ -32,7 +32,7 @@ When `PAYMENT_PROVIDER=crypto`, users deposit by sending USDC to their Stellar a
 
 ```bash
 curl http://localhost:4000/api/v1/users/usr_abc123/wallet/deposit \
-  -H "Authorization: Bearer ohk_live_your_api_key"
+  -H "Authorization: Bearer gak_live_your_api_key"
 ```
 
 Response:
@@ -63,7 +63,7 @@ The user sends USDC from any Stellar wallet:
 
 ### Step 3: Automatic Detection
 
-OFFER-HUB monitors the blockchain for incoming transactions. When USDC arrives:
+GIGANCHOR monitors the blockchain for incoming transactions. When USDC arrives:
 
 1. **Transaction detected** — Horizon streaming catches the payment
 2. **Balance updated** — Off-chain balance incremented
@@ -79,12 +79,12 @@ OFFER-HUB monitors the blockchain for incoming transactions. When USDC arrives:
 ```mermaid
 sequenceDiagram
     participant User as User's External Wallet
-    participant OH as OFFER-HUB
+    participant GA as GIGANCHOR
 
-    User->>OH: 1. Send USDC
-    Note over OH: 2. Detect on blockchain
-    Note over OH: 3. Update balance
-    OH->>User: 4. Emit event
+    User->>GA: 1. Send USDC
+    Note over GA: 2. Detect on blockchain
+    Note over GA: 3. Update balance
+    GA->>User: 4. Emit event
 ```
 
 ## AirTM Deposits
@@ -97,7 +97,7 @@ For the complete server-side flow — user linking, the create request, `confirm
 
 ```bash
 curl -X POST http://localhost:4000/api/v1/topups \
-  -H "Authorization: Bearer ohk_live_your_api_key" \
+  -H "Authorization: Bearer gak_live_your_api_key" \
   -H "Content-Type: application/json" \
   -H "Idempotency-Key: 550e8400-e29b-41d4-a716-446655440009" \
   -d '{
@@ -152,11 +152,11 @@ The Orchestrator then:
 ### Crypto Deposits
 
 ```typescript
-import { OfferHubSDK } from '@offerhub/sdk';
+import { GiganchorSDK } from '@giganchor/sdk';
 
-const sdk = new OfferHubSDK({
+const sdk = new GiganchorSDK({
   apiUrl: 'http://localhost:4000',
-  apiKey: 'ohk_live_your_api_key'
+  apiKey: 'gak_live_your_api_key'
 });
 
 // Get deposit address
@@ -209,7 +209,7 @@ Connect to the event stream:
 ```typescript
 const events = new EventSource(
   'http://localhost:4000/api/v1/events',
-  { headers: { Authorization: 'Bearer ohk_live_...' } }
+  { headers: { Authorization: 'Bearer gak_live_...' } }
 );
 
 events.onmessage = (e) => {
@@ -233,7 +233,7 @@ After a deposit, verify the updated balance:
 
 ```bash
 curl http://localhost:4000/api/v1/users/usr_abc123/balance \
-  -H "Authorization: Bearer ohk_live_your_api_key"
+  -H "Authorization: Bearer gak_live_your_api_key"
 ```
 
 Response:
@@ -323,7 +323,7 @@ AirTM supports 200+ funding methods including:
 For development, get testnet USDC:
 
 1. **Get testnet XLM** — Use [Stellar Friendbot](https://friendbot.stellar.org)
-2. **Get testnet USDC** — Use Circle's testnet faucet or contact OFFER-HUB
+2. **Get testnet USDC** — Use Circle's testnet faucet or contact GIGANCHOR
 
 ```bash
 # Fund testnet account with XLM

@@ -1,15 +1,15 @@
 ---
 title: Trustless Work Provider Guide
-description: How to enable the Trustless Work escrow provider in the OFFER-HUB Orchestrator — TRUSTLESS_* configuration, signer roles, non-custodial guarantees, HMAC webhook verification, timeouts, and the escrow-to-order state mapping.
+description: How to enable the Trustless Work escrow provider in the GIGANCHOR Orchestrator — TRUSTLESS_* configuration, signer roles, non-custodial guarantees, HMAC webhook verification, timeouts, and the escrow-to-order state mapping.
 order: 31
 section: Guides
 ---
 
 <Callout type="note">
-  This is the public API guide for the Trustless Work escrow provider. Every endpoint, field, status, and environment variable below is verified against the Orchestrator implementation in the [OFFER-HUB repository](https://github.com/OFFER-HUB/OFFER-HUB) — chiefly `apps/api/src/providers/trustless-work` (`trustless-work.config.ts`, `clients/escrow.client.ts`, `clients/wallet.client.ts`, `services/webhook.service.ts`, `services/balance-projection.service.ts`, `types/trustless-work.types.ts`, `dto/escrow.dto.ts`, `dto/webhook.dto.ts`), `apps/api/src/modules/webhooks/webhooks.controller.ts`, and the shared enums in `packages/shared/src/enums`.
+  This is the public API guide for the Trustless Work escrow provider. Every endpoint, field, status, and environment variable below is verified against the Orchestrator implementation in the [GIGANCHOR repository](https://github.com/GigAnchor/giganchor) — chiefly `apps/api/src/providers/trustless-work` (`trustless-work.config.ts`, `clients/escrow.client.ts`, `clients/wallet.client.ts`, `services/webhook.service.ts`, `services/balance-projection.service.ts`, `types/trustless-work.types.ts`, `dto/escrow.dto.ts`, `dto/webhook.dto.ts`), `apps/api/src/modules/webhooks/webhooks.controller.ts`, and the shared enums in `packages/shared/src/enums`.
 </Callout>
 
-Trustless Work is the escrow provider behind every OFFER-HUB checkout. It is a managed API in front of Soroban smart contracts on Stellar: the Orchestrator asks it to build and operate an escrow contract, and the actual custody is a contract on-chain, not a row in the Orchestrator's database.
+Trustless Work is the escrow provider behind every GIGANCHOR checkout. It is a managed API in front of Soroban smart contracts on Stellar: the Orchestrator asks it to build and operate an escrow contract, and the actual custody is a contract on-chain, not a row in the Orchestrator's database.
 
 That split drives everything on this page. The Orchestrator owns the *ledger* (orders, balances, state machines). Trustless Work owns the *contract*. Every operation crosses that boundary twice — once to get an unsigned transaction, once to submit the signed result — and every state change has to come back as a signed webhook before the Orchestrator will act on it.
 

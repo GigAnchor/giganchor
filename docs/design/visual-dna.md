@@ -1,10 +1,10 @@
-# Visual DNA: The OFFER-HUB Design Language
+# Visual DNA: The GIGANCHOR Design Language
 
-This document defines the complete visual identity and aesthetic principles of OFFER-HUB. Every visual decision in the project stems from these foundational rules.
+This document defines the complete visual identity and aesthetic principles of GIGANCHOR. Every visual decision in the project stems from these foundational rules.
 
 ## Design Philosophy: Modern Neumorphic Bento
 
-OFFER-HUB utilizes a **Modern Neumorphic Bento** design system based on the principle of **"Soft Depth"**. The UI simulates a physical 2.5D surface shaped by light, shadow, and tactile feedback.
+GIGANCHOR utilizes a **Modern Neumorphic Bento** design system based on the principle of **"Soft Depth"**. The UI simulates a physical 2.5D surface shaped by light, shadow, and tactile feedback.
 
 ### Core Principles
 
@@ -18,7 +18,7 @@ OFFER-HUB utilizes a **Modern Neumorphic Bento** design system based on the prin
 
 ## The Chromatic Blueprint
 
-Every color in OFFER-HUB has a specific semantic role. These are defined as CSS variables in Tailwind 4.
+Every color in GIGANCHOR has a specific semantic role. These are defined as CSS variables in Tailwind 4.
 
 ### Core Palette
 
@@ -154,7 +154,7 @@ Based on an 8px grid for consistent rhythm.
 
 ## Elevation & Depth
 
-OFFER-HUB uses a z-index scale for layering:
+GIGANCHOR uses a z-index scale for layering:
 
 | Layer | Z-Index | Usage |
 |:------|:--------|:------|

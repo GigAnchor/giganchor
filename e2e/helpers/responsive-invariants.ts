@@ -25,7 +25,7 @@ export const COLOR_SCHEMES = ["light", "dark"] as const;
 export const VIEWPORT_HEIGHT = 800;
 
 /** Must match `THEME_STORAGE_KEY` so ThemeProvider and the layout boot script agree. */
-export const E2E_THEME_STORAGE_KEY = "offer-hub-theme";
+export const E2E_THEME_STORAGE_KEY = "giganchor-theme";
 
 /** WCAG 2.2 SC 2.5.8 minimum target size, in CSS pixels. */
 export const MIN_TARGET_PX = 24;

@@ -1,15 +1,15 @@
 ---
 title: Wallets Guide
-description: Understanding invisible wallets in OFFER-HUB — automatic Stellar wallet creation and management.
+description: Understanding invisible wallets in GIGANCHOR — automatic Stellar wallet creation and management.
 order: 23
 section: Guides
 ---
 
 <Callout type="note">
-  This is the public API/SDK guide for integrators. For internal implementation detail (Orchestrator state machine, signer roles), see [`docs/guides/wallets.md`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/docs/guides/wallets.md) in the repo.
+  This is the public API/SDK guide for integrators. For internal implementation detail (Orchestrator state machine, signer roles), see [`docs/guides/wallets.md`](https://github.com/GigAnchor/giganchor/blob/main/docs/guides/wallets.md) in the repo.
 </Callout>
 
-OFFER-HUB uses "invisible wallets" to give users blockchain capabilities without the complexity of managing private keys. Every user gets a Stellar wallet automatically, but they interact with it like a simple account balance.
+GIGANCHOR uses "invisible wallets" to give users blockchain capabilities without the complexity of managing private keys. Every user gets a Stellar wallet automatically, but they interact with it like a simple account balance.
 
 <Callout type="tip">
   Invisible wallets only apply when using `PAYMENT_PROVIDER=crypto`. AirTM mode uses traditional fiat accounts instead.
@@ -23,7 +23,7 @@ Traditional crypto requires users to:
 - Understand gas fees
 - Sign transactions manually
 
-OFFER-HUB eliminates all of this. Users see a simple USD balance while the system manages Stellar wallets behind the scenes.
+GIGANCHOR eliminates all of this. Users see a simple USD balance while the system manages Stellar wallets behind the scenes.
 
 ### How It Works
 
@@ -56,7 +56,7 @@ When a user is created, a Stellar keypair is generated automatically:
 
 ```bash
 curl -X POST http://localhost:4000/api/v1/users \
-  -H "Authorization: Bearer ohk_live_your_api_key" \
+  -H "Authorization: Bearer gak_live_your_api_key" \
   -H "Content-Type: application/json" \
   -d '{
     "externalUserId": "your-user-123",
@@ -98,7 +98,7 @@ Retrieve the user's Stellar address for receiving USDC:
 
 ```bash
 curl http://localhost:4000/api/v1/users/usr_abc123def456/wallet/deposit \
-  -H "Authorization: Bearer ohk_live_your_api_key"
+  -H "Authorization: Bearer gak_live_your_api_key"
 ```
 
 ### Response
@@ -142,7 +142,7 @@ Get the user's current balance:
 
 ```bash
 curl http://localhost:4000/api/v1/users/usr_abc123def456/balance \
-  -H "Authorization: Bearer ohk_live_your_api_key"
+  -H "Authorization: Bearer gak_live_your_api_key"
 ```
 
 ### Response
@@ -233,11 +233,11 @@ When the user performs an action that requires on-chain activity (funding escrow
 ## Using the SDK
 
 ```typescript
-import { OfferHubSDK } from '@offerhub/sdk';
+import { GiganchorSDK } from '@giganchor/sdk';
 
-const sdk = new OfferHubSDK({
+const sdk = new GiganchorSDK({
   apiUrl: 'http://localhost:4000',
-  apiKey: 'ohk_live_your_api_key'
+  apiKey: 'gak_live_your_api_key'
 });
 
 // Create a user (wallet created automatically)
@@ -279,7 +279,7 @@ events.on('balance.debited', (data) => {
 
 ## On-Chain vs Off-Chain
 
-OFFER-HUB maintains both on-chain (Stellar) and off-chain (database) balances:
+GIGANCHOR maintains both on-chain (Stellar) and off-chain (database) balances:
 
 ### On-Chain (Stellar)
 

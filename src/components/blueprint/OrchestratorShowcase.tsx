@@ -62,7 +62,7 @@ export function OrchestratorShowcase() {
               </h2>
               <p className="mt-5 max-w-2xl text-base leading-8 text-content-secondary">
                 This showcase turns escrow automation, vault custody, and payout sequencing into a
-                flow you can read at a glance. OFFER-HUB ingests fiat or crypto, passes value
+                flow you can read at a glance. GIGANCHOR ingests fiat or crypto, passes value
                 through programmable escrow logic, and releases seller settlement only after the SDK
                 state machine advances through its guarded checkpoints.
               </p>

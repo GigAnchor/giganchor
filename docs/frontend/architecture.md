@@ -1,6 +1,6 @@
 # Frontend Architecture
 
-This document outlines the architecture, patterns, and structure of the OFFER-HUB frontend application.
+This document outlines the architecture, patterns, and structure of the GIGANCHOR frontend application.
 
 ## Technology Stack
 
@@ -448,7 +448,7 @@ import Image from 'next/image';
 
 <Image
   src="/logo.png"
-  alt="OFFER-HUB"
+  alt="GIGANCHOR"
   width={200}
   height={50}
   priority

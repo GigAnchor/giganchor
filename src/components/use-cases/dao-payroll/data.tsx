@@ -11,7 +11,7 @@ export const heroData: UseCaseHeroProps = {
   subheadline:
     "The DAO payroll blueprint: on-chain budget allocation, contributor milestone verification, and atomic USDC distribution — with full governance auditability and zero custodial risk.",
   docsUrl:
-    "https://github.com/OFFER-HUB/offer-hub-monorepo/blob/main/docs/business/use-cases.md",
+    "https://github.com/GigAnchor/giganchor/blob/main/docs/business/use-cases.md",
   footerIcon: Users2,
   footerLabel: "On-chain DAO payroll infrastructure",
   stats: [
@@ -70,7 +70,7 @@ export const stellarImpactCardsData: DetailedMetricCard[] = [
     id: "transparency",
     label: "Payroll Transparency",
     icon: Eye,
-    offerHub: {
+    giganchor: {
       value: "100",
       unit: "%",
       sublabel: "On-chain audit trail",
@@ -90,7 +90,7 @@ export const stellarImpactCardsData: DetailedMetricCard[] = [
     id: "speed",
     label: "Distribution Speed",
     icon: Zap,
-    offerHub: {
+    giganchor: {
       value: "3.2",
       unit: "sec",
       sublabel: "Stellar average finality",
@@ -110,7 +110,7 @@ export const stellarImpactCardsData: DetailedMetricCard[] = [
     id: "fee",
     label: "Transaction Fee",
     icon: DollarSign,
-    offerHub: {
+    giganchor: {
       value: "0.0001",
       unit: "XLM",
       sublabel: "≈ $0.01 per contributor",
@@ -132,7 +132,7 @@ export const stellarImpactSummary = {
   icon: ShieldCheck,
   text: (
     <>
-      OFFER-HUB saves DAOs up to{" "}
+      GIGANCHOR saves DAOs up to{" "}
       <span className="text-theme-primary">99.8% in payroll fees</span> and
       distributes{" "}
       <span className="text-theme-primary">185,000× faster</span> than

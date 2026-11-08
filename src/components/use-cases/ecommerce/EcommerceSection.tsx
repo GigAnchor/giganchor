@@ -43,7 +43,7 @@ export function EcommerceSection({
           variant="detailed"
           cards={stellarImpactCardsData}
           toggleId="ecommerce"
-          summaryContent={{ offerhub: stellarImpactSummary }}
+          summaryContent={{ giganchor: stellarImpactSummary }}
         />
       </MetricsSection>
 

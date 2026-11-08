@@ -17,19 +17,19 @@ import { buildPageMetadata } from "@/lib/seo";
 export const metadata: Metadata = buildPageMetadata({
   title: "Blueprint",
   description:
-    "Explore the OFFER-HUB technical blueprint: orchestrator architecture, marketplace templates, and the evolution roadmap for trustless payment infrastructure.",
+    "Explore the GIGANCHOR technical blueprint: orchestrator architecture, marketplace templates, and the evolution roadmap for trustless payment infrastructure.",
   keywords: [
     "blueprint",
     "architecture",
     "orchestrator",
     "marketplace",
     "roadmap",
-    "OFFER-HUB",
+    "GIGANCHOR",
     "payment infrastructure",
   ],
   path: "/blueprint",
   ogImageAlt:
-    "OFFER-HUB Blueprint — orchestrator architecture and marketplace templates",
+    "GIGANCHOR Blueprint — orchestrator architecture and marketplace templates",
 });
 
 export default function BlueprintPage() {

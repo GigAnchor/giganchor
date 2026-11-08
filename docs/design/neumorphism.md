@@ -1,6 +1,6 @@
 # Neumorphism Guide: The Physics of Light & Shadow
 
-This document defines the neumorphic shadow system that gives OFFER-HUB its distinctive tactile, 2.5D aesthetic.
+This document defines the neumorphic shadow system that gives GIGANCHOR its distinctive tactile, 2.5D aesthetic.
 
 ## What is Neumorphism?
 
@@ -18,7 +18,7 @@ Neumorphism (or "soft UI") is a design style that simulates physical depth throu
 
 ## The Light Source
 
-**OFFER-HUB uses a single, consistent light source positioned at 145° (top-left).**
+**GIGANCHOR uses a single, consistent light source positioned at 145° (top-left).**
 
 ```
         💡 Light Source (145°)
@@ -38,7 +38,7 @@ This creates:
 
 ## Elevation States
 
-OFFER-HUB uses two primary elevation states:
+GIGANCHOR uses two primary elevation states:
 
 ### 1. Raised (Elevated) Surface
 

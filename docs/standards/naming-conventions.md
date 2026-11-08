@@ -1,6 +1,6 @@
 # Naming Conventions
 
-This document defines strict naming standards for the OFFER-HUB codebase. Consistent naming ensures readability, searchability, and maintainability across thousands of files.
+This document defines strict naming standards for the GIGANCHOR codebase. Consistent naming ensures readability, searchability, and maintainability across thousands of files.
 
 ## Core Principles
 

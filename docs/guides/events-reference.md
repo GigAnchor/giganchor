@@ -1,6 +1,6 @@
 # Events Reference
 
-> Complete guide to the OFFER-HUB Orchestrator event system: how events work, how to subscribe, and the full catalog of every event emitted.
+> Complete guide to the GIGANCHOR Orchestrator event system: how events work, how to subscribe, and the full catalog of every event emitted.
 
 ---
 
@@ -71,7 +71,7 @@ The `id` field is the event timestamp, used for reconnect/replay with `Last-Even
 
 ```
 GET /api/v1/events
-Authorization: Bearer ohk_live_...
+Authorization: Bearer gak_live_...
 Accept: text/event-stream
 ```
 
@@ -85,7 +85,7 @@ Accept: text/event-stream
 ```bash
 # Subscribe to all events (keep connection open with -N)
 curl -N \
-  -H "Authorization: Bearer ohk_live_..." \
+  -H "Authorization: Bearer gak_live_..." \
   -H "Accept: text/event-stream" \
   "http://localhost:4000/api/v1/events"
 ```
@@ -103,15 +103,15 @@ Use query parameters to filter the stream:
 
 ```bash
 # Only order events
-curl -N -H "Authorization: Bearer ohk_live_..." \
+curl -N -H "Authorization: Bearer gak_live_..." \
   "http://localhost:4000/api/v1/events?resourceTypes=Order"
 
 # Only deposit and withdrawal completion events
-curl -N -H "Authorization: Bearer ohk_live_..." \
+curl -N -H "Authorization: Bearer gak_live_..." \
   "http://localhost:4000/api/v1/events?types=balance.credited,withdrawal.completed"
 
 # Multiple resource types
-curl -N -H "Authorization: Bearer ohk_live_..." \
+curl -N -H "Authorization: Bearer gak_live_..." \
   "http://localhost:4000/api/v1/events?resourceTypes=Order,Dispute,Balance"
 ```
 
@@ -124,7 +124,7 @@ The SSE service stores the last **1,000 events** in Redis for **1 hour**. If you
 ```bash
 # Reconnect and replay events since a specific timestamp
 curl -N \
-  -H "Authorization: Bearer ohk_live_..." \
+  -H "Authorization: Bearer gak_live_..." \
   -H "Last-Event-ID: 2026-02-18T10:00:00Z" \
   "http://localhost:4000/api/v1/events"
 ```
@@ -139,7 +139,7 @@ The `Last-Event-ID` value is the `id` field from the last SSE event you received
 
 ```typescript
 import EventSource from 'eventsource'; // npm install eventsource
-import type { DomainEvent } from '@offerhub/sdk';
+import type { DomainEvent } from '@giganchor/sdk';
 
 class OrchestratorEventListener {
   private es: EventSource;
@@ -200,8 +200,8 @@ class OrchestratorEventListener {
 
 // Usage
 const listener = new OrchestratorEventListener(
-  process.env.OFFERHUB_API_URL!,
-  process.env.OFFERHUB_API_KEY!
+  process.env.GIGANCHOR_API_URL!,
+  process.env.GIGANCHOR_API_KEY!
 );
 listener.connect();
 ```

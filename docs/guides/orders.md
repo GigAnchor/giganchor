@@ -94,7 +94,7 @@ POST /cancel           → CLOSED             (funds returned)
 
 ```bash
 POST /api/v1/orders
-Authorization: Bearer ohk_live_...
+Authorization: Bearer gak_live_...
 Content-Type: application/json
 Idempotency-Key: <uuid-v4>
 
@@ -133,7 +133,7 @@ Lock the buyer's balance so it can't be used for other orders:
 
 ```bash
 POST /api/v1/orders/ord_VxaM.../reserve
-Authorization: Bearer ohk_live_...
+Authorization: Bearer gak_live_...
 Content-Type: application/json
 Idempotency-Key: <uuid-v4>
 
@@ -166,7 +166,7 @@ Deploy a Soroban smart contract on Stellar via Trustless Work:
 
 ```bash
 POST /api/v1/orders/ord_VxaM.../escrow
-Authorization: Bearer ohk_live_...
+Authorization: Bearer gak_live_...
 Content-Type: application/json
 Idempotency-Key: <uuid-v4>
 ```
@@ -197,7 +197,7 @@ Send the buyer's reserved USDC to the smart contract on-chain:
 
 ```bash
 POST /api/v1/orders/ord_VxaM.../escrow/fund
-Authorization: Bearer ohk_live_...
+Authorization: Bearer gak_live_...
 Content-Type: application/json
 Idempotency-Key: <uuid-v4>
 ```
@@ -230,7 +230,7 @@ When the buyer approves the delivered work:
 
 ```bash
 POST /api/v1/orders/ord_VxaM.../resolution/release
-Authorization: Bearer ohk_live_...
+Authorization: Bearer gak_live_...
 Content-Type: application/json
 Idempotency-Key: <uuid-v4>
 
@@ -273,7 +273,7 @@ Cancellation is only allowed **before escrow is funded** (states: `ORDER_CREATED
 
 ```bash
 POST /api/v1/orders/ord_VxaM.../cancel
-Authorization: Bearer ohk_live_...
+Authorization: Bearer gak_live_...
 Content-Type: application/json
 Idempotency-Key: <uuid-v4>
 
@@ -307,7 +307,7 @@ When the order is `IN_PROGRESS` and the buyer wants funds back:
 
 ```bash
 POST /api/v1/orders/ord_VxaM.../resolution/refund
-Authorization: Bearer ohk_live_...
+Authorization: Bearer gak_live_...
 Content-Type: application/json
 Idempotency-Key: <uuid-v4>
 
@@ -350,7 +350,7 @@ When parties cannot agree and support needs to intervene:
 
 ```bash
 POST /api/v1/orders/ord_VxaM.../resolution/dispute
-Authorization: Bearer ohk_live_...
+Authorization: Bearer gak_live_...
 Content-Type: application/json
 Idempotency-Key: <uuid-v4>
 

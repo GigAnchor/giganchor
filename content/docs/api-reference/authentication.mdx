@@ -1,11 +1,11 @@
 ---
 title: Authentication & Scopes
-description: Guide to credential types, API keys, scopes, and security best practices in the OFFER-HUB Orchestrator.
+description: Guide to credential types, API keys, scopes, and security best practices in the GIGANCHOR Orchestrator.
 order: 50
 section: API Reference
 ---
 
-The OFFER-HUB Orchestrator secures all API endpoints using Bearer token authentication. Requests must include an `Authorization` header with a valid credential.
+The GIGANCHOR Orchestrator secures all API endpoints using Bearer token authentication. Requests must include an `Authorization` header with a valid credential.
 
 ```http
 Authorization: Bearer <credential>
@@ -15,18 +15,18 @@ Authorization: Bearer <credential>
 
 There are three types of credentials you can use to authenticate with the API, each suited for different security and lifecycle requirements.
 
-### 1. Master Key (`OFFERHUB_MASTER_KEY`)
+### 1. Master Key (`GIGANCHOR_MASTER_KEY`)
 - **Format:** Configured in your environment variables.
 - **Description:** The root administrative key that grants access to all endpoints with the `*` (all) scope. 
 - **When to use:** Use only for infrastructure provisioning, backend administration, or to generate initial API keys. **Never** expose this key to clients.
 
-### 2. API Key (`ohk_{env}_{id}_{random}`)
-- **Format:** Starts with `ohk_live_` or `ohk_test_`.
+### 2. API Key (`gak_{env}_{id}_{random}`)
+- **Format:** Starts with `gak_live_` or `gak_test_`.
 - **Description:** Long-lived keys meant for server-to-server communication. They are restricted by specific scopes (e.g., `read`, `write`).
 - **When to use:** Use in your backend services to interact with the Orchestrator (e.g., creating orders, fetching lists).
 
-### 3. Temporary Token (`ohk_tok_*`)
-- **Format:** Starts with `ohk_tok_`.
+### 3. Temporary Token (`gak_tok_*`)
+- **Format:** Starts with `gak_tok_`.
 - **Description:** Short-lived tokens that expire exactly 1 hour after creation. 
 - **When to use:** Ideal for temporary operations, limited-time access grants, or specific client-side handoffs that require strict timeboxing without exposing a permanent API key.
 
@@ -52,13 +52,13 @@ Every endpoint in the Orchestrator enforces permission checks based on the scope
 Managing your API keys and tokens involves four primary operations. 
 
 ### 1. Create an API Key
-Generate a long-lived API key. **Requires the `support` scope** (usually performed using the `OFFERHUB_MASTER_KEY`).
+Generate a long-lived API key. **Requires the `support` scope** (usually performed using the `GIGANCHOR_MASTER_KEY`).
 
 <Badge variant="primary">POST</Badge> `/api/v1/auth/api-keys`
 
 ```bash
-curl -X POST https://api.offer-hub.org/api/v1/auth/api-keys \
-  -H "Authorization: Bearer YOUR_OFFERHUB_MASTER_KEY" \
+curl -X POST https://api.giganchor.tech/api/v1/auth/api-keys \
+  -H "Authorization: Bearer YOUR_GIGANCHOR_MASTER_KEY" \
   -H "Content-Type: application/json" \
   -d '{"name": "Production Backend", "scopes": ["read", "write"]}'
 ```
@@ -69,18 +69,18 @@ Retrieve a list of all active API keys. **Requires the `support` scope.**
 <Badge variant="primary">GET</Badge> `/api/v1/auth/api-keys`
 
 ```bash
-curl https://api.offer-hub.org/api/v1/auth/api-keys \
-  -H "Authorization: Bearer YOUR_OFFERHUB_MASTER_KEY"
+curl https://api.giganchor.tech/api/v1/auth/api-keys \
+  -H "Authorization: Bearer YOUR_GIGANCHOR_MASTER_KEY"
 ```
 
 ### 3. Generate a Temporary Token
-Create a 1-hour `ohk_tok_*` token. **Requires the `write` scope.**
+Create a 1-hour `gak_tok_*` token. **Requires the `write` scope.**
 
 <Badge variant="primary">POST</Badge> `/api/v1/auth/token`
 
 ```bash
-curl -X POST https://api.offer-hub.org/api/v1/auth/token \
-  -H "Authorization: Bearer ohk_live_xxxxxxxxxxxx" \
+curl -X POST https://api.giganchor.tech/api/v1/auth/token \
+  -H "Authorization: Bearer gak_live_xxxxxxxxxxxx" \
   -H "Content-Type: application/json" \
   -d '{"scopes": ["read"]}'
 ```
@@ -91,14 +91,14 @@ Check the identity and granted scopes of the currently authenticated credential.
 <Badge variant="primary">GET</Badge> `/api/v1/auth/me`
 
 ```bash
-curl https://api.offer-hub.org/api/v1/auth/me \
-  -H "Authorization: Bearer ohk_live_xxxxxxxxxxxx"
+curl https://api.giganchor.tech/api/v1/auth/me \
+  -H "Authorization: Bearer gak_live_xxxxxxxxxxxx"
 ```
 
 ## Security Guidance
 
 To ensure the security of your integration, adhere to the following best practices:
 
-- **Server-Side Only:** Never embed `ohk_live_` API keys or the `OFFERHUB_MASTER_KEY` in frontend code, mobile apps, or public repositories. All requests to the Orchestrator should originate from your secure backend servers.
+- **Server-Side Only:** Never embed `gak_live_` API keys or the `GIGANCHOR_MASTER_KEY` in frontend code, mobile apps, or public repositories. All requests to the Orchestrator should originate from your secure backend servers.
 - **Key Rotation:** If you suspect an API key has been compromised, generate a new key via `POST /auth/api-keys`, update your application configurations to use the new key, and delete the compromised key immediately. 
 - **Principle of Least Privilege:** Always grant the minimum required scopes. Do not use the Master Key for everyday API requests; generate specific keys with `read` or `write` access instead.

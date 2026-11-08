@@ -1,11 +1,11 @@
 ---
 title: Data Model
-description: Reference for the OFFER-HUB database schema — every Prisma model, its fields, relationships, and how the tables fit together.
+description: Reference for the GIGANCHOR database schema — every Prisma model, its fields, relationships, and how the tables fit together.
 order: 14
 section: Guides
 ---
 
-OFFER-HUB persists all state in a PostgreSQL database driven by Prisma. This page is the reference for the exact schema that a self-hosting participant hits directly when running migrations, inspecting seed data, or debugging. Every model, field, and relationship below is verified against the canonical `packages/database/prisma/schema.prisma` in the [OFFER-HUB Orchestrator](https://github.com/OFFER-HUB/OFFER-HUB) repository.
+GIGANCHOR persists all state in a PostgreSQL database driven by Prisma. This page is the reference for the exact schema that a self-hosting participant hits directly when running migrations, inspecting seed data, or debugging. Every model, field, and relationship below is verified against the canonical `packages/database/prisma/schema.prisma` in the [GIGANCHOR Orchestrator](https://github.com/GigAnchor/giganchor) repository.
 
 <Callout type="tip">
   Use this page together with the [Self-Hosting](/docs/guide/self-hosting) guide, which shows you how to configure `DATABASE_URL`, run `prisma migrate deploy`, and inspect the database in production.
@@ -76,7 +76,7 @@ One row per user tracking spendable and reserved funds. `available` is immediate
 
 <Badge variant="primary">api_keys</Badge>
 
-Scoped credentials used to authenticate API calls via the `Authorization: Bearer ohk_...` header. Only the salted hash is stored — the raw key is shown once at creation.
+Scoped credentials used to authenticate API calls via the `Authorization: Bearer gak_...` header. Only the salted hash is stored — the raw key is shown once at creation.
 
 | Field | Column | Type | Description |
 |-------|--------|------|-------------|

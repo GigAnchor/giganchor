@@ -34,8 +34,8 @@ vi.mock("@/lib/mdx", () => ({
 }));
 
 vi.mock("@/constants/site", () => ({
-  SITE_URL: "https://offer-hub.tech",
-  SITE_NAME: "OFFER-HUB",
+  SITE_URL: "https://giganchor.tech",
+  SITE_NAME: "GIGANCHOR",
 }));
 
 import { buildLlmsIndex, buildLlmsFull } from "../llms-txt";
@@ -45,7 +45,7 @@ describe("buildLlmsIndex", () => {
     const body = buildLlmsIndex();
     const lines = body.split("\n");
 
-    expect(lines[0]).toBe("# OFFER-HUB");
+    expect(lines[0]).toBe("# GIGANCHOR");
     expect(lines[2]).toMatch(/^>/);
   });
 
@@ -60,15 +60,15 @@ describe("buildLlmsIndex", () => {
     const body = buildLlmsIndex();
 
     expect(body).toContain(
-      "- [Escrow](https://offer-hub.tech/docs/guide/escrow): Description for guide/escrow",
+      "- [Escrow](https://giganchor.tech/docs/guide/escrow): Description for guide/escrow",
     );
   });
 
   it("omits the trailing colon when a page has no description", () => {
     const body = buildLlmsIndex();
 
-    expect(body).toContain("- [No Description](https://offer-hub.tech/docs/guide/no-description)");
-    expect(body).not.toContain("No Description](https://offer-hub.tech/docs/guide/no-description):");
+    expect(body).toContain("- [No Description](https://giganchor.tech/docs/guide/no-description)");
+    expect(body).not.toContain("No Description](https://giganchor.tech/docs/guide/no-description):");
   });
 });
 

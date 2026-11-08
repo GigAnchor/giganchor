@@ -1,12 +1,12 @@
 # Marketplace Integration Guide
 
-> **Audience:** You have your own frontend or marketplace and want to integrate OFFER-HUB Orchestrator to handle payments, escrow, and withdrawals.
+> **Audience:** You have your own frontend or marketplace and want to integrate GIGANCHOR Orchestrator to handle payments, escrow, and withdrawals.
 
 ---
 
 ## What is the Orchestrator?
 
-OFFER-HUB Orchestrator is a **self-hosted payments and escrow backend** that your marketplace calls via REST API or TypeScript SDK. It handles user balances, USDC escrow on Stellar (via Trustless Work), and withdrawals. It does **not** provide a UI, marketplace logic, or user authentication — those are yours. The Orchestrator is server-to-server: your backend calls it with an API key.
+GIGANCHOR Orchestrator is a **self-hosted payments and escrow backend** that your marketplace calls via REST API or TypeScript SDK. It handles user balances, USDC escrow on Stellar (via Trustless Work), and withdrawals. It does **not** provide a UI, marketplace logic, or user authentication — those are yours. The Orchestrator is server-to-server: your backend calls it with an API key.
 
 ---
 
@@ -35,7 +35,7 @@ Copy `.env.example` to `.env` and fill in these values:
 | `DATABASE_URL` | Yes | `postgresql://...` | Supabase direct URL (port **5432**, not 6543) |
 | `DIRECT_URL` | Yes | `postgresql://...` | Same as DATABASE_URL for Prisma migrations |
 | `REDIS_URL` | Yes | `redis://:pass@host:6379` | Redis connection |
-| `OFFERHUB_MASTER_KEY` | Yes | `a-long-random-secret` | Bootstrap key for API key creation |
+| `GIGANCHOR_MASTER_KEY` | Yes | `a-long-random-secret` | Bootstrap key for API key creation |
 | `PAYMENT_PROVIDER` | Yes | `crypto` or `airtm` | Active payment provider |
 | `WALLET_ENCRYPTION_KEY` | crypto only | 32-byte hex | AES-256-GCM key for wallet encryption |
 | `TRUSTLESS_API_KEY` | Yes | `tw_live_...` | Trustless Work API key |
@@ -59,8 +59,8 @@ Copy `.env.example` to `.env` and fill in these values:
 ### Step 1 — Clone and install
 
 ```bash
-git clone https://github.com/OFFER-HUB/OFFER-HUB.git
-cd OFFER-HUB
+git clone https://github.com/GigAnchor/giganchor.git
+cd GIGANCHOR
 npm install
 cp .env.example .env
 # Fill in your .env values
@@ -84,7 +84,7 @@ npm run dev
 
 ```bash
 curl -X POST http://localhost:4000/api/v1/auth/api-keys \
-  -H "Authorization: Bearer YOUR_OFFERHUB_MASTER_KEY" \
+  -H "Authorization: Bearer YOUR_GIGANCHOR_MASTER_KEY" \
   -H "Content-Type: application/json" \
   -d '{"name": "My Marketplace", "scopes": ["read", "write"]}'
 ```
@@ -94,19 +94,19 @@ Response:
 {
   "data": {
     "id": "key_...",
-    "key": "ohk_live_...",
+    "key": "gak_live_...",
     "name": "My Marketplace"
   }
 }
 ```
 
-Save `ohk_live_...` — this is your API key for all subsequent calls.
+Save `gak_live_...` — this is your API key for all subsequent calls.
 
 ### Step 5 — Create a test user
 
 ```bash
 curl -X POST http://localhost:4000/api/v1/users \
-  -H "Authorization: Bearer ohk_live_..." \
+  -H "Authorization: Bearer gak_live_..." \
   -H "Content-Type: application/json" \
   -d '{"externalUserId": "your-user-123", "email": "buyer@example.com"}'
 ```
@@ -136,11 +136,11 @@ Browser → Your Marketplace Backend → Orchestrator API
 **With the TypeScript SDK (recommended):**
 
 ```typescript
-import { OfferHubSDK } from '@offerhub/sdk';
+import { GiganchorSDK } from '@giganchor/sdk';
 
-const orchestrator = new OfferHubSDK({
-  apiUrl: process.env.OFFERHUB_API_URL,  // http://localhost:4000 in dev
-  apiKey: process.env.OFFERHUB_API_KEY,  // ohk_live_...
+const orchestrator = new GiganchorSDK({
+  apiUrl: process.env.GIGANCHOR_API_URL,  // http://localhost:4000 in dev
+  apiKey: process.env.GIGANCHOR_API_KEY,  // gak_live_...
 });
 
 // All calls are server-side
@@ -154,7 +154,7 @@ const user = await orchestrator.users.create({
 
 ```http
 POST /api/v1/users
-Authorization: Bearer ohk_live_...
+Authorization: Bearer gak_live_...
 Content-Type: application/json
 
 {"externalUserId": "your-user-123", "email": "buyer@example.com"}
@@ -228,7 +228,7 @@ See the [Deposit Flow](#deposit--add-funds) section below.
 
 ```bash
 curl -X POST http://localhost:4000/api/v1/orders \
-  -H "Authorization: Bearer ohk_live_..." \
+  -H "Authorization: Bearer gak_live_..." \
   -H "Content-Type: application/json" \
   -d '{
     "buyerId": "usr_buyer...",
@@ -246,7 +246,7 @@ Response: `{ "data": { "id": "ord_...", "status": "ORDER_CREATED" } }`
 
 ```bash
 curl -X POST http://localhost:4000/api/v1/orders/ord_.../reserve \
-  -H "Authorization: Bearer ohk_live_..."
+  -H "Authorization: Bearer gak_live_..."
 ```
 
 Response: `{ "data": { "status": "FUNDS_RESERVED" } }`
@@ -256,11 +256,11 @@ Response: `{ "data": { "status": "FUNDS_RESERVED" } }`
 ```bash
 # Create escrow contract on Stellar
 curl -X POST http://localhost:4000/api/v1/orders/ord_.../escrow \
-  -H "Authorization: Bearer ohk_live_..."
+  -H "Authorization: Bearer gak_live_..."
 
 # Fund the escrow (sends USDC on-chain)
 curl -X POST http://localhost:4000/api/v1/orders/ord_.../escrow/fund \
-  -H "Authorization: Bearer ohk_live_..."
+  -H "Authorization: Bearer gak_live_..."
 ```
 
 **Step 5 — Release funds to seller**
@@ -269,7 +269,7 @@ After work is delivered:
 
 ```bash
 curl -X POST http://localhost:4000/api/v1/orders/ord_.../resolution/release \
-  -H "Authorization: Bearer ohk_live_..." \
+  -H "Authorization: Bearer gak_live_..." \
   -H "Content-Type: application/json" \
   -d '{"requestedBy": "usr_buyer..."}'
 ```
@@ -284,7 +284,7 @@ Response: `{ "data": { "status": "CLOSED" } }` — seller's `available` balance 
 
 ```bash
 curl -X POST http://localhost:4000/api/v1/orders/ord_.../cancel \
-  -H "Authorization: Bearer ohk_live_..."
+  -H "Authorization: Bearer gak_live_..."
 ```
 
 Funds are unreserved immediately. Cannot cancel once escrow is funded (`ESCROW_FUNDED`).
@@ -297,7 +297,7 @@ Direct refund from an IN_PROGRESS order:
 
 ```bash
 curl -X POST http://localhost:4000/api/v1/orders/ord_.../resolution/refund \
-  -H "Authorization: Bearer ohk_live_..." \
+  -H "Authorization: Bearer gak_live_..." \
   -H "Content-Type: application/json" \
   -d '{"reason": "Seller cancelled"}'
 ```
@@ -312,7 +312,7 @@ Internally executes 2 on-chain steps: dispute escrow + resolve 100% to buyer. Bu
 
 ```bash
 curl -X POST http://localhost:4000/api/v1/orders/ord_.../resolution/dispute \
-  -H "Authorization: Bearer ohk_live_..." \
+  -H "Authorization: Bearer gak_live_..." \
   -H "Content-Type: application/json" \
   -d '{"openedBy": "BUYER", "reason": "QUALITY_ISSUE"}'
 ```
@@ -323,7 +323,7 @@ curl -X POST http://localhost:4000/api/v1/orders/ord_.../resolution/dispute \
 
 ```bash
 curl -X POST http://localhost:4000/api/v1/disputes/dsp_.../resolve \
-  -H "Authorization: Bearer ohk_live_..." \
+  -H "Authorization: Bearer gak_live_..." \
   -H "Content-Type: application/json" \
   -d '{"decision": "FULL_RELEASE"}'
 ```
@@ -334,7 +334,7 @@ curl -X POST http://localhost:4000/api/v1/disputes/dsp_.../resolve \
 
 ```bash
 curl -X POST http://localhost:4000/api/v1/disputes/dsp_.../resolve \
-  -H "Authorization: Bearer ohk_live_..." \
+  -H "Authorization: Bearer gak_live_..." \
   -H "Content-Type: application/json" \
   -d '{"decision": "FULL_REFUND"}'
 ```
@@ -345,7 +345,7 @@ curl -X POST http://localhost:4000/api/v1/disputes/dsp_.../resolve \
 
 ```bash
 curl -X POST http://localhost:4000/api/v1/disputes/dsp_.../resolve \
-  -H "Authorization: Bearer ohk_live_..." \
+  -H "Authorization: Bearer gak_live_..." \
   -H "Content-Type: application/json" \
   -d '{
     "decision": "SPLIT",
@@ -367,7 +367,7 @@ curl -X POST http://localhost:4000/api/v1/disputes/dsp_.../resolve \
 
 ```bash
 curl http://localhost:4000/api/v1/users/usr_.../wallet/deposit \
-  -H "Authorization: Bearer ohk_live_..."
+  -H "Authorization: Bearer gak_live_..."
 ```
 
 Response:
@@ -398,7 +398,7 @@ Show the `address` (and optionally a QR code) to the buyer. They send USDC from 
 
 ```bash
 curl -X POST http://localhost:4000/api/v1/topups \
-  -H "Authorization: Bearer ohk_live_..." \
+  -H "Authorization: Bearer gak_live_..." \
   -H "Content-Type: application/json" \
   -H "Idempotency-Key: $(uuidgen)" \
   -d '{
@@ -422,7 +422,7 @@ Single call, completes synchronously:
 
 ```bash
 curl -X POST http://localhost:4000/api/v1/withdrawals \
-  -H "Authorization: Bearer ohk_live_..." \
+  -H "Authorization: Bearer gak_live_..." \
   -H "Content-Type: application/json" \
   -d '{
     "userId": "usr_seller...",
@@ -445,14 +445,14 @@ Two-step process:
 ```bash
 # Step 1: Create
 curl -X POST http://localhost:4000/api/v1/withdrawals \
-  -H "Authorization: Bearer ohk_live_..." \
+  -H "Authorization: Bearer gak_live_..." \
   -H "Content-Type: application/json" \
   -d '{"userId": "usr_...", "amount": "80.00", "destinationType": "bank", "destinationRef": "bank_ref"}'
 # → status: WITHDRAWAL_CREATED
 
 # Step 2: Commit
 curl -X POST "http://localhost:4000/api/v1/withdrawals/wd_.../commit?userId=usr_..." \
-  -H "Authorization: Bearer ohk_live_..."
+  -H "Authorization: Bearer gak_live_..."
 # → status: WITHDRAWAL_COMMITTED
 ```
 
@@ -489,7 +489,7 @@ The Orchestrator emits domain events you can subscribe to via SSE:
 ```typescript
 const events = new EventSource(
   'http://localhost:4000/api/v1/events',
-  { headers: { Authorization: 'Bearer ohk_live_...' } }
+  { headers: { Authorization: 'Bearer gak_live_...' } }
 );
 
 events.onmessage = (e) => {
@@ -561,13 +561,13 @@ If you retry with the same key, you get the same response without duplicating th
 
 Install:
 ```bash
-npm install @offerhub/sdk
+npm install @giganchor/sdk
 ```
 
 Initialize:
 ```typescript
-import { OfferHubSDK } from '@offerhub/sdk';
-const sdk = new OfferHubSDK({ apiUrl: '...', apiKey: '...' });
+import { GiganchorSDK } from '@giganchor/sdk';
+const sdk = new GiganchorSDK({ apiUrl: '...', apiKey: '...' });
 ```
 
 Available resources: `sdk.users`, `sdk.orders`, `sdk.balance`, `sdk.topups`, `sdk.withdrawals`, `sdk.wallet`, `sdk.disputes`.

@@ -1,10 +1,10 @@
 # Developer Guide
 
-Complete guide for developers working with OFFER-HUB.
+Complete guide for developers working with GIGANCHOR.
 
 ## Overview
 
-OFFER-HUB is a self-hosted payment and escrow system for marketplaces. It consists of two main components:
+GIGANCHOR is a self-hosted payment and escrow system for marketplaces. It consists of two main components:
 
 1. **Orchestrator (Backend)** - RESTful API on port **4000** (NestJS)
    - Handles user balances, USDC escrow on Stellar (via Trustless Work), and withdrawals
@@ -16,7 +16,7 @@ OFFER-HUB is a self-hosted payment and escrow system for marketplaces. It consis
 
 Components:
 - **API** - RESTful API on port **4000** (NestJS)
-- **SDK** - TypeScript SDK for easy integration (`@offerhub/sdk`)
+- **SDK** - TypeScript SDK for easy integration (`@giganchor/sdk`)
 - **Worker** - Background jobs integrated into the API (BullMQ + Redis)
 - **Database** - PostgreSQL with Prisma ORM (Supabase recommended)
 - **Frontend** - Next.js 15+ with App Router
@@ -53,8 +53,8 @@ Components:
 
 ```bash
 # Clone repository
-git clone https://github.com/OFFER-HUB/offer-hub-monorepo.git
-cd offer-hub-monorepo
+git clone https://github.com/GigAnchor/giganchor.git
+cd giganchor-monorepo
 
 # Install dependencies
 npm install
@@ -69,11 +69,11 @@ npm run dev
 ### 2. Using the SDK
 
 ```typescript
-import { OfferHubSDK } from '@offerhub/sdk';
+import { GiganchorSDK } from '@giganchor/sdk';
 
-const sdk = new OfferHubSDK({
+const sdk = new GiganchorSDK({
   apiUrl: 'http://localhost:4000',
-  apiKey: process.env.OFFERHUB_API_KEY
+  apiKey: process.env.GIGANCHOR_API_KEY
 });
 
 // Create a user
@@ -96,13 +96,13 @@ const order = await sdk.orders.create({
 
 ```bash
 # Configure CLI
-offerhub config set
+giganchor config set
 
 # Create API key
-offerhub keys create --user-id usr_admin --scopes read,write
+giganchor keys create --user-id usr_admin --scopes read,write
 
 # Enable maintenance mode
-offerhub maintenance enable --message "Upgrading database"
+giganchor maintenance enable --message "Upgrading database"
 ```
 
 ---
@@ -120,14 +120,14 @@ offerhub maintenance enable --message "Upgrading database"
                      | Uses SDK
                      v
 +---------------------------------------------------------+
-|                  @offerhub/sdk                           |
+|                  @giganchor/sdk                           |
 |            (TypeScript SDK Package)                      |
 +--------------------+------------------------------------+
                      |
                      | HTTP/REST
                      v
 +---------------------------------------------------------+
-|                   OfferHub API                           |
+|                   Giganchor API                           |
 |         (NestJS REST API + Background Jobs)              |
 +---------------------------------------------------------+
 |  - Auth & Security                                       |
@@ -197,7 +197,7 @@ See [State Machines](./architecture/state-machines.md) for detailed flows.
 ### Project Structure
 
 ```
-offer-hub-monorepo/
+giganchor-monorepo/
 ├── src/
 │   ├── app/           # Next.js App Router pages
 │   ├── components/    # React components
@@ -255,7 +255,7 @@ npm run build
 
 ```bash
 # Enable debug logs
-DEBUG=offerhub:* npm run dev
+DEBUG=giganchor:* npm run dev
 
 # Or in your .env
 LOG_LEVEL=debug
@@ -266,9 +266,9 @@ LOG_LEVEL=debug
 The SDK automatically retries failed requests. To debug:
 
 ```typescript
-const sdk = new OfferHubSDK({
+const sdk = new GiganchorSDK({
   apiUrl: 'http://localhost:4000',
-  apiKey: process.env.OFFERHUB_API_KEY,
+  apiKey: process.env.GIGANCHOR_API_KEY,
   timeout: 60000,        // Increase timeout
   retryAttempts: 0,      // Disable retries for debugging
 });
@@ -304,7 +304,7 @@ const sdk = new OfferHubSDK({
 curl http://localhost:4000/health
 
 # CLI check
-offerhub maintenance status
+giganchor maintenance status
 ```
 
 ### Logging
@@ -334,8 +334,8 @@ All operations are logged with structured JSON:
 
 ### Community
 
-- [GitHub Issues](https://github.com/OFFER-HUB/offer-hub-monorepo/issues)
-- [GitHub Discussions](https://github.com/OFFER-HUB/offer-hub-monorepo/discussions)
+- [GitHub Issues](https://github.com/GigAnchor/giganchor/issues)
+- [GitHub Discussions](https://github.com/GigAnchor/giganchor/discussions)
 
 ---
 

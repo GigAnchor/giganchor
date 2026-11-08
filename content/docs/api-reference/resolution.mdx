@@ -1,6 +1,6 @@
 ---
 title: Resolution Endpoints
-description: Per-endpoint reference for the OFFER-HUB order resolution API — release, refund, and dispute — with real DTO fields, Trustless Work signer roles, valid state transitions, error codes, and cURL plus TypeScript SDK examples.
+description: Per-endpoint reference for the GIGANCHOR order resolution API — release, refund, and dispute — with real DTO fields, Trustless Work signer roles, valid state transitions, error codes, and cURL plus TypeScript SDK examples.
 order: 46
 section: API Reference
 ---
@@ -284,7 +284,7 @@ Checked in `ResolutionService.requestRelease` before any state change:
       label: "cURL",
       language: "bash",
       code: `curl -X POST "http://localhost:4000/api/v1/orders/ord_abc123/resolution/release" \\
-  -H "Authorization: Bearer ohk_live_xxxxxxxxxxxxxxxxxxxxxxxx" \\
+  -H "Authorization: Bearer gak_live_xxxxxxxxxxxxxxxxxxxxxxxx" \\
   -H "Content-Type: application/json" \\
   -H "X-Request-ID: req_7f3a1c" \\
   -d '{
@@ -295,11 +295,11 @@ Checked in `ResolutionService.requestRelease` before any state change:
       id: "sdk",
       label: "TypeScript SDK",
       language: "typescript",
-      code: `import { OfferHubSDK } from "@offerhub/sdk";
+      code: `import { GiganchorSDK } from "@giganchor/sdk";
 
-const sdk = new OfferHubSDK({
+const sdk = new GiganchorSDK({
   apiUrl: "https://your-orchestrator.example.com",
-  apiKey: "ohk_live_xxxxxxxxxxxxxxxxxxxxxxxx",
+  apiKey: "gak_live_xxxxxxxxxxxxxxxxxxxxxxxx",
 });
 
 // reason is optional; sdk.orders.release(orderId, reason?)
@@ -423,7 +423,7 @@ Identical to release, minus the milestone check: order exists, has an escrow, is
       label: "cURL",
       language: "bash",
       code: `curl -X POST "http://localhost:4000/api/v1/orders/ord_abc123/resolution/refund" \\
-  -H "Authorization: Bearer ohk_live_xxxxxxxxxxxxxxxxxxxxxxxx" \\
+  -H "Authorization: Bearer gak_live_xxxxxxxxxxxxxxxxxxxxxxxx" \\
   -H "Content-Type: application/json" \\
   -d '{
     "reason": "Seller never delivered the agreed scope"
@@ -433,11 +433,11 @@ Identical to release, minus the milestone check: order exists, has an escrow, is
       id: "sdk",
       label: "TypeScript SDK",
       language: "typescript",
-      code: `import { OfferHubSDK } from "@offerhub/sdk";
+      code: `import { GiganchorSDK } from "@giganchor/sdk";
 
-const sdk = new OfferHubSDK({
+const sdk = new GiganchorSDK({
   apiUrl: "https://your-orchestrator.example.com",
-  apiKey: "ohk_live_xxxxxxxxxxxxxxxxxxxxxxxx",
+  apiKey: "gak_live_xxxxxxxxxxxxxxxxxxxxxxxx",
 });
 
 // reason is required by RequestRefundDto
@@ -575,7 +575,7 @@ Checked in `ResolutionService.openDispute`: the order exists, its status is `IN_
       label: "cURL",
       language: "bash",
       code: `curl -X POST "http://localhost:4000/api/v1/orders/ord_abc123/resolution/dispute" \\
-  -H "Authorization: Bearer ohk_live_xxxxxxxxxxxxxxxxxxxxxxxx" \\
+  -H "Authorization: Bearer gak_live_xxxxxxxxxxxxxxxxxxxxxxxx" \\
   -H "Content-Type: application/json" \\
   -d '{
     "orderId": "ord_abc123",
@@ -588,11 +588,11 @@ Checked in `ResolutionService.openDispute`: the order exists, its status is `IN_
       id: "sdk",
       label: "TypeScript SDK",
       language: "typescript",
-      code: `import { OfferHubSDK } from "@offerhub/sdk";
+      code: `import { GiganchorSDK } from "@giganchor/sdk";
 
-const sdk = new OfferHubSDK({
+const sdk = new GiganchorSDK({
   apiUrl: "https://your-orchestrator.example.com",
-  apiKey: "ohk_live_xxxxxxxxxxxxxxxxxxxxxxxx",
+  apiKey: "gak_live_xxxxxxxxxxxxxxxxxxxxxxxx",
 });
 
 // OpenDisputeDto marks orderId as required, so include it in the body object

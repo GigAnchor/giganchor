@@ -1,6 +1,6 @@
 # Color Palette Reference
 
-This document provides a comprehensive reference for the OFFER-HUB color system.
+This document provides a comprehensive reference for the GIGANCHOR color system.
 
 ## Primary Palette
 

@@ -1,5 +1,5 @@
 ---
-name: Feature OFFER-HUB
+name: Feature request
 about: Feature
 title: ''
 labels: ''
@@ -24,8 +24,8 @@ assignees: ''
 
 ## 🔧 Context AI
 
-- [DOCS](https://github.com/OFFER-HUB/offer-hub/tree/main/docs)
-- [DOCS](https://github.com/OFFER-HUB/offer-hub-monorepo/tree/main/docs)
+- [DOCS](https://github.com/GigAnchor/giganchor/tree/main/docs)
+- [DOCS](https://github.com/GigAnchor/giganchor/tree/main/docs)
 
 ## 📋 Additional Notes
 

@@ -1,13 +1,13 @@
 # Contribution Guide
 
-Thank you for your interest in contributing to **OFFER-HUB**! To maintain code quality and consistency, we follow these standards.
+Thank you for your interest in contributing to **GIGANCHOR**! To maintain code quality and consistency, we follow these standards.
 
 ## Local Setup
 
 ### Cloning the Repository
 ```bash
 git clone <repo-url>
-cd offer-hub-monorepo
+cd giganchor-monorepo
 ```
 
 ### Installation
@@ -48,7 +48,7 @@ The project uses **npm Workspaces**. You can run the services from the root:
 
 ### Backend (Orchestrator)
 
-For the backend Orchestrator, see the [OFFER-HUB-Orchestrator](https://github.com/OFFER-HUB/OFFER-HUB-Orchestrator) repository:
+For the backend Orchestrator, see the [GIGANCHOR-Orchestrator](https://github.com/GigAnchor/giganchor-Orchestrator) repository:
 
 - **API Server**: `npm run dev:api`
 - **Both Services (API + Worker)**: `npm run dev`
@@ -177,7 +177,7 @@ by `.gitignore` and is not tracked in git. Name reports
 - **Tester**: [Your Name/Username]
 
 ## Test Environment
-- **URL**: https://www.offer-hub.org
+- **URL**: https://giganchor.tech
 - **Browser**: [Browser Name and Version]
 - **Device**: [Desktop/Mobile/Tablet]
 

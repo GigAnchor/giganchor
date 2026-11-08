@@ -26,7 +26,7 @@ export function createApp({
   app.use(express.json({ limit: "100kb" }));
 
   app.get("/", (_req, res) => {
-    res.json({ message: "Offer Hub API - Ready to build something new." });
+    res.json({ message: "Giganchor API - Ready to build something new." });
   });
 
   app.get("/health", (_req, res) => {

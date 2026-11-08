@@ -1,10 +1,10 @@
 # Payment Flows
 
-This document details the complete payment lifecycle flows in OFFER-HUB, including state transitions and transaction sequences.
+This document details the complete payment lifecycle flows in GIGANCHOR, including state transitions and transaction sequences.
 
 ## Overview
 
-OFFER-HUB supports two payment modes:
+GIGANCHOR supports two payment modes:
 1. **Crypto-Native (Default):** USDC on Stellar with Trustless Work escrow
 2. **Airtm Mode:** Fiat on/off-ramp via Airtm
 

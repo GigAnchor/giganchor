@@ -5,10 +5,10 @@ order: 17
 section: Guides
 ---
 
-This guide walks through every escrow flow in OFFER-HUB: from creating and funding a contract to releasing, disputing, and refunding. Each flow includes step-by-step diagrams and code examples.
+This guide walks through every escrow flow in GIGANCHOR: from creating and funding a contract to releasing, disputing, and refunding. Each flow includes step-by-step diagrams and code examples.
 
 <Callout type="note">
-  OFFER-HUB uses [Trustless Work](https://trustlesswork.com) smart contracts on Stellar for non-custodial escrow. All flows ultimately resolve on-chain.
+  GIGANCHOR uses [Trustless Work](https://trustlesswork.com) smart contracts on Stellar for non-custodial escrow. All flows ultimately resolve on-chain.
 </Callout>
 
 ## State Machines
@@ -109,7 +109,7 @@ flowchart LR
 
 ```bash
 curl -X POST http://localhost:4000/api/v1/orders/ord_xyz789/escrow \
-  -H "Authorization: Bearer ohk_live_your_api_key" \
+  -H "Authorization: Bearer gak_live_your_api_key" \
   -H "Content-Type: application/json"
 ```
 
@@ -131,11 +131,11 @@ Response:
 ### TypeScript SDK
 
 ```ts
-import { OfferHubSDK } from '@offerhub/sdk';
+import { GiganchorSDK } from '@giganchor/sdk';
 
-const sdk = new OfferHubSDK({
+const sdk = new GiganchorSDK({
   apiUrl: 'http://localhost:4000',
-  apiKey: 'ohk_live_your_api_key',
+  apiKey: 'gak_live_your_api_key',
 });
 
 // Create escrow contract
@@ -184,7 +184,7 @@ flowchart LR
 
 ```bash
 curl -X POST http://localhost:4000/api/v1/orders/ord_xyz789/escrow/fund \
-  -H "Authorization: Bearer ohk_live_your_api_key" \
+  -H "Authorization: Bearer gak_live_your_api_key" \
   -H "Idempotency-Key: 550e8400-e29b-41d4-a716-446655440001"
 ```
 
@@ -286,7 +286,7 @@ Source: `apps/api/src/modules/resolution/resolution.service.ts` (`requestRelease
 
 ```bash
 curl -X POST http://localhost:4000/api/v1/orders/ord_xyz789/resolution/release \
-  -H "Authorization: Bearer ohk_live_your_api_key" \
+  -H "Authorization: Bearer gak_live_your_api_key" \
   -H "Content-Type: application/json" \
   -H "Idempotency-Key: 550e8400-e29b-41d4-a716-446655440002" \
   -d '{"requestedBy": "usr_buyer123"}'
@@ -345,7 +345,7 @@ flowchart LR
 
 ```bash
 curl -X POST http://localhost:4000/api/v1/orders/ord_xyz789/resolution/dispute \
-  -H "Authorization: Bearer ohk_live_your_api_key" \
+  -H "Authorization: Bearer gak_live_your_api_key" \
   -H "Content-Type: application/json" \
   -d '{
     "openedBy": "BUYER",
@@ -400,7 +400,7 @@ After a dispute is opened, the platform reviews evidence and resolves with a **r
 
 ```bash
 curl -X POST http://localhost:4000/api/v1/disputes/dsp_abc123/resolve \
-  -H "Authorization: Bearer ohk_live_your_api_key" \
+  -H "Authorization: Bearer gak_live_your_api_key" \
   -H "Content-Type: application/json" \
   -d '{
     "decision": "FULL_REFUND",
@@ -412,7 +412,7 @@ curl -X POST http://localhost:4000/api/v1/disputes/dsp_abc123/resolve \
 
 ```bash
 curl -X POST http://localhost:4000/api/v1/disputes/dsp_abc123/resolve \
-  -H "Authorization: Bearer ohk_live_your_api_key" \
+  -H "Authorization: Bearer gak_live_your_api_key" \
   -H "Content-Type: application/json" \
   -d '{
     "decision": "FULL_RELEASE",
@@ -481,7 +481,7 @@ Cancellation is only accepted in `CANCELLABLE_ORDER_STATES` — `ORDER_CREATED` 
 
 ```bash
 curl -X POST http://localhost:4000/api/v1/orders/ord_xyz789/cancel \
-  -H "Authorization: Bearer ohk_live_your_api_key" \
+  -H "Authorization: Bearer gak_live_your_api_key" \
   -H "Content-Type: application/json" \
   -d '{"requestedBy": "usr_seller456", "reason": "Unable to fulfill order"}'
 ```

@@ -5,7 +5,7 @@ order: 32
 section: SDK
 ---
 
-The `sdk.balance` resource provides methods to manage the dual ledger system of OFFER-HUB: fast off-chain balances (with `available` and `reserved` splits) synchronized with on-chain Stellar trustline or payment provider assets.
+The `sdk.balance` resource provides methods to manage the dual ledger system of GIGANCHOR: fast off-chain balances (with `available` and `reserved` splits) synchronized with on-chain Stellar trustline or payment provider assets.
 
 <Callout type="note">
   **Orchestrator Source References:**
@@ -83,7 +83,7 @@ async get(userId: string): Promise<Balance>
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `userId` | `string` | **Yes** | Target OFFER-HUB user ID (`usr_...`) |
+| `userId` | `string` | **Yes** | Target GIGANCHOR user ID (`usr_...`) |
 
 #### Return Type
 
@@ -98,11 +98,11 @@ async get(userId: string): Promise<Balance>
 #### Example
 
 ```typescript
-import { OfferHubSDK } from '@offerhub/sdk';
+import { GiganchorSDK } from '@giganchor/sdk';
 
-const sdk = new OfferHubSDK({
-  apiUrl: process.env.OFFERHUB_API_URL!,
-  apiKey: process.env.OFFERHUB_API_KEY!,
+const sdk = new GiganchorSDK({
+  apiUrl: process.env.GIGANCHOR_API_URL!,
+  apiKey: process.env.GIGANCHOR_API_KEY!,
 });
 
 const balance = await sdk.balance.get('usr_abc123');
@@ -193,7 +193,7 @@ async debit(userId: string, params: DebitBalanceParams): Promise<Balance>
 #### Example
 
 ```typescript
-import { OfferHubSDK, InsufficientFundsError } from '@offerhub/sdk';
+import { GiganchorSDK, InsufficientFundsError } from '@giganchor/sdk';
 
 try {
   const updatedBalance = await sdk.balance.debit('usr_abc123', {
@@ -475,7 +475,7 @@ interface BalanceVerification {
 | Error Class | HTTP Status | Code | Cause |
 |---|---|---|---|
 | `NotFoundError` | `404` | `USER_NOT_FOUND` | User or wallet does not exist |
-| `OfferHubError` | `500` | `VERIFICATION_FAILED` | Horizon connection error or RPC failure |
+| `GiganchorError` | `500` | `VERIFICATION_FAILED` | Horizon connection error or RPC failure |
 
 #### Example
 

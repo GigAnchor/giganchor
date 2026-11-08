@@ -32,14 +32,14 @@ describe("buildDocExportJson", () => {
     const root = buildRoot(`
       <h2 id="install">Install</h2>
       <p>Run this:</p>
-      <pre><code class="language-bash">npm install offer-hub</code></pre>
+      <pre><code class="language-bash">npm install giganchor</code></pre>
     `);
 
     const result = buildDocExportJson(root, "getting-started", "Getting Started");
 
     expect(result.sections).toHaveLength(1);
     expect(result.sections[0].content).toBe("Run this:");
-    expect(result.sections[0].codeBlocks).toEqual([{ language: "bash", code: "npm install offer-hub" }]);
+    expect(result.sections[0].codeBlocks).toEqual([{ language: "bash", code: "npm install giganchor" }]);
   });
 
   it("returns null language when the code block has no language-x className", () => {

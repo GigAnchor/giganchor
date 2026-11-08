@@ -1,12 +1,12 @@
 ---
 title: AirTM Provider Guide
-description: How to enable the AirTM fiat provider in the OFFER-HUB Orchestrator — user linking, top-ups, withdrawals, callback redirects, and webhook verification.
+description: How to enable the AirTM fiat provider in the GIGANCHOR Orchestrator — user linking, top-ups, withdrawals, callback redirects, and webhook verification.
 order: 20
 section: Guides
 ---
 
 <Callout type="note">
-  This is the public API guide for the AirTM fiat provider. Every endpoint, DTO, status, and environment variable below is verified against the Orchestrator implementation in the [OFFER-HUB repository](https://github.com/OFFER-HUB/OFFER-HUB) (`apps/api/src/modules/topups`, `apps/api/src/modules/withdrawals`, `apps/api/src/modules/users`, `apps/api/src/modules/webhooks`, `apps/api/src/providers/airtm`).
+  This is the public API guide for the AirTM fiat provider. Every endpoint, DTO, status, and environment variable below is verified against the Orchestrator implementation in the [GIGANCHOR repository](https://github.com/GigAnchor/giganchor) (`apps/api/src/modules/topups`, `apps/api/src/modules/withdrawals`, `apps/api/src/modules/users`, `apps/api/src/modules/webhooks`, `apps/api/src/providers/airtm`).
 </Callout>
 
 <Callout type="warning">
@@ -85,13 +85,13 @@ The Orchestrator authenticates with AirTM using HTTP Basic Auth: `Authorization:
 
 ## Linking a User's AirTM Account
 
-Before a user can top up or withdraw, their internal OFFER-HUB user must be linked to an AirTM account. The Orchestrator verifies the user's email against AirTM (and checks that the account is active and KYC-verified), then stores the `airtmUserId` on the user record.
+Before a user can top up or withdraw, their internal GIGANCHOR user must be linked to an AirTM account. The Orchestrator verifies the user's email against AirTM (and checks that the account is active and KYC-verified), then stores the `airtmUserId` on the user record.
 
 <Badge variant="primary">POST</Badge> `/api/v1/users/:id/airtm/link` — requires `write` scope
 
 ```bash
 curl -X POST http://localhost:4000/api/v1/users/usr_abc123/airtm/link \
-  -H "Authorization: Bearer ohk_live_your_api_key" \
+  -H "Authorization: Bearer gak_live_your_api_key" \
   -H "Content-Type: application/json" \
   -d '{
     "email": "user@example.com"
@@ -123,7 +123,7 @@ If the user is already linked, the same payload is returned with the existing li
 
 ## Top-Ups (Pay-ins)
 
-Top-ups add fiat balance to a user's OFFER-HUB balance. The flow is asynchronous: you create a top-up, send the user to AirTM's hosted confirmation page, and the Orchestrator credits the balance when AirTM reports the payment as succeeded.
+Top-ups add fiat balance to a user's GIGANCHOR balance. The flow is asynchronous: you create a top-up, send the user to AirTM's hosted confirmation page, and the Orchestrator credits the balance when AirTM reports the payment as succeeded.
 
 ### Create a Top-Up
 
@@ -133,7 +133,7 @@ The acting user is taken from the authenticated API key — it is **not** passed
 
 ```bash
 curl -X POST http://localhost:4000/api/v1/topups \
-  -H "Authorization: Bearer ohk_live_your_api_key" \
+  -H "Authorization: Bearer gak_live_your_api_key" \
   -H "Content-Type: application/json" \
   -d '{
     "amount": "100.00",
@@ -218,7 +218,7 @@ The balance is credited either from the `payin.succeeded` webhook or from a `ref
 
 ## Withdrawals (Payouts)
 
-Withdrawals move funds out of a user's OFFER-HUB balance to a destination AirTM supports. Withdrawals are created in **two steps** by default (create, then commit) — use `commit: true` for a trusted one-step flow.
+Withdrawals move funds out of a user's GIGANCHOR balance to a destination AirTM supports. Withdrawals are created in **two steps** by default (create, then commit) — use `commit: true` for a trusted one-step flow.
 
 ### Create a Withdrawal
 
@@ -228,7 +228,7 @@ Unlike top-ups, `userId` **is** passed in the body — this is a server-to-serve
 
 ```bash
 curl -X POST http://localhost:4000/api/v1/withdrawals \
-  -H "Authorization: Bearer ohk_live_your_api_key" \
+  -H "Authorization: Bearer gak_live_your_api_key" \
   -H "Content-Type: application/json" \
   -d '{
     "userId": "usr_abc123",
@@ -278,7 +278,7 @@ With `commit: false` (the default), the payout stays in `WITHDRAWAL_CREATED` unt
 
 ```bash
 curl -X POST "http://localhost:4000/api/v1/withdrawals/wth_abc456/commit?userId=usr_abc123" \
-  -H "Authorization: Bearer ohk_live_your_api_key"
+  -H "Authorization: Bearer gak_live_your_api_key"
 ```
 
 Committing from any other status returns `409 WITHDRAWAL_NOT_COMMITTABLE`.

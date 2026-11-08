@@ -1,11 +1,11 @@
 ---
 title: SDK Errors
-description: Complete error hierarchy for @offerhub/sdk — the base OfferHubError class, every typed subclass, how each maps to an Orchestrator server error code, and the retry semantics that govern automatic backoff.
+description: Complete error hierarchy for @giganchor/sdk — the base GiganchorError class, every typed subclass, how each maps to an Orchestrator server error code, and the retry semantics that govern automatic backoff.
 order: 36
 section: SDK
 ---
 
-Every failure raised by `@offerhub/sdk` extends the base `OfferHubError`. Catching a specific subclass lets you branch on business failures (`InsufficientFundsError`) versus infrastructure failures (`ProviderError`) versus developer mistakes (`ValidationError`).
+Every failure raised by `@giganchor/sdk` extends the base `GiganchorError`. Catching a specific subclass lets you branch on business failures (`InsufficientFundsError`) versus infrastructure failures (`ProviderError`) versus developer mistakes (`ValidationError`).
 
 ## Class hierarchy
 
@@ -13,7 +13,7 @@ Every failure raised by `@offerhub/sdk` extends the base `OfferHubError`. Catchi
 classDiagram
     direction TB
     class Error
-    class OfferHubError {
+    class GiganchorError {
       +string message
       +string code
       +number statusCode
@@ -30,20 +30,20 @@ classDiagram
     class RateLimitError
     class NetworkError
 
-    Error <|-- OfferHubError
-    OfferHubError <|-- AuthenticationError
-    OfferHubError <|-- AuthorizationError
-    OfferHubError <|-- NotFoundError
-    OfferHubError <|-- ValidationError
-    OfferHubError <|-- InsufficientFundsError
-    OfferHubError <|-- InvalidTransitionError
-    OfferHubError <|-- IdempotencyError
-    OfferHubError <|-- ProviderError
-    OfferHubError <|-- RateLimitError
-    OfferHubError <|-- NetworkError
+    Error <|-- GiganchorError
+    GiganchorError <|-- AuthenticationError
+    GiganchorError <|-- AuthorizationError
+    GiganchorError <|-- NotFoundError
+    GiganchorError <|-- ValidationError
+    GiganchorError <|-- InsufficientFundsError
+    GiganchorError <|-- InvalidTransitionError
+    GiganchorError <|-- IdempotencyError
+    GiganchorError <|-- ProviderError
+    GiganchorError <|-- RateLimitError
+    GiganchorError <|-- NetworkError
 `} />
 
-## Base class: `OfferHubError`
+## Base class: `GiganchorError`
 
 | Member | Type | Description |
 |---|---|---|
@@ -53,12 +53,12 @@ classDiagram
 | `response` | `unknown` | Raw response body. |
 
 ```typescript
-import { OfferHubError } from "@offerhub/sdk";
+import { GiganchorError } from "@giganchor/sdk";
 
 try {
   await sdk.orders.get("ord_missing");
 } catch (error) {
-  if (error instanceof OfferHubError) {
+  if (error instanceof GiganchorError) {
     console.error(error.code, error.statusCode, error.message);
   }
 }
@@ -122,8 +122,8 @@ Branch from most specific to least specific, and end with the base class as a ca
 
 ```typescript
 import {
-  OfferHubSDK,
-  OfferHubError,
+  GiganchorSDK,
+  GiganchorError,
   ValidationError,
   NotFoundError,
   InsufficientFundsError,
@@ -132,10 +132,10 @@ import {
   ProviderError,
   RateLimitError,
   NetworkError,
-} from "@offerhub/sdk";
+} from "@giganchor/sdk";
 
-const sdk = new OfferHubSDK({
-  apiKey: process.env.OFFERHUB_API_KEY!,
+const sdk = new GiganchorSDK({
+  apiKey: process.env.GIGANCHOR_API_KEY!,
 });
 
 try {
@@ -159,7 +159,7 @@ try {
   if (error instanceof RateLimitError || error instanceof ProviderError || error instanceof NetworkError) {
     return { ok: false, reason: "TRANSIENT" };
   }
-  if (error instanceof OfferHubError) {
+  if (error instanceof GiganchorError) {
     return { ok: false, reason: error.code };
   }
   throw error;
@@ -168,7 +168,7 @@ try {
 
 ## Retry semantics
 
-Automatic retries are handled inside the SDK and governed by `retryAttempts` (default `3`) on `OfferHubSDKConfig`. Retryable classes use exponential backoff; the exact schedule is an implementation detail but never exceeds `timeout` per attempt.
+Automatic retries are handled inside the SDK and governed by `retryAttempts` (default `3`) on `GiganchorSDKConfig`. Retryable classes use exponential backoff; the exact schedule is an implementation detail but never exceeds `timeout` per attempt.
 
 | Class | Auto-retried | Why |
 |---|---|---|
@@ -186,8 +186,8 @@ Automatic retries are handled inside the SDK and governed by `retryAttempts` (de
 To disable retries entirely for a specific call, construct a client with `retryAttempts: 0`:
 
 ```typescript
-const strict = new OfferHubSDK({
-  apiKey: process.env.OFFERHUB_API_KEY!,
+const strict = new GiganchorSDK({
+  apiKey: process.env.GIGANCHOR_API_KEY!,
   retryAttempts: 0,
 });
 
@@ -214,7 +214,7 @@ The SDK lifts `code`, `message`, and `details` onto the thrown instance and clas
 
 - [Troubleshooting & FAQ](/docs/guide/troubleshooting) — symptom-cause-fix recipes for every error above, with Orchestrator source citations.
 - [API Error Codes](/docs/api-reference/errors) — Complete 40+ Orchestrator server error code catalog and resolution guide.
-- [Configuration](/docs/sdk/configuration) — `OfferHubSDKConfig`, `withIdempotencyKey`, and retry policy.
+- [Configuration](/docs/sdk/configuration) — `GiganchorSDKConfig`, `withIdempotencyKey`, and retry policy.
 - [Quick Start](/docs/sdk/quick-start) — first request in five minutes.
 - [Events](/docs/api-reference/events) — SSE stream errors use the same envelope.
 - [Inbound Webhooks](/docs/api-reference/webhooks) — provider-side failures are separate from SDK exceptions.

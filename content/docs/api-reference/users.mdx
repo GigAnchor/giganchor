@@ -1,6 +1,6 @@
 ---
 title: Users Endpoints
-description: Per-endpoint reference for the OFFER-HUB Users API - create a user with an automatic balance and link a user's Airtm account - with real DTO fields, enums, response shapes, error codes, idempotency behavior, and cURL plus TypeScript SDK examples.
+description: Per-endpoint reference for the GIGANCHOR Users API - create a user with an automatic balance and link a user's Airtm account - with real DTO fields, enums, response shapes, error codes, idempotency behavior, and cURL plus TypeScript SDK examples.
 order: 52
 section: API Reference
 ---
@@ -105,7 +105,7 @@ What the service does, in order (`UsersService.createUser`):
       label: "cURL",
       language: "bash",
       code: `curl -X POST "http://localhost:4000/api/v1/users" \\
-  -H "Authorization: Bearer $OFFERHUB_API_KEY" \\
+  -H "Authorization: Bearer $GIGANCHOR_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{
     "externalUserId": "user_123",
@@ -117,11 +117,11 @@ What the service does, in order (`UsersService.createUser`):
       id: "sdk",
       label: "TypeScript SDK",
       language: "typescript",
-      code: `import { OfferHubSDK } from "@offerhub/sdk";
+      code: `import { GiganchorSDK } from "@giganchor/sdk";
 
-const sdk = new OfferHubSDK({
+const sdk = new GiganchorSDK({
   apiUrl: "http://localhost:4000",
-  apiKey: process.env.OFFERHUB_API_KEY!,
+  apiKey: process.env.GIGANCHOR_API_KEY!,
 });
 
 // Safe to retry: the same externalUserId returns the existing user.
@@ -194,7 +194,7 @@ On a first successful link the service also emits a `USER_AIRTM_LINKED` event. T
       label: "cURL",
       language: "bash",
       code: `curl -X POST "http://localhost:4000/api/v1/users/usr_V1StGXR8Z5jdHi6B3mEv0/airtm/link" \\
-  -H "Authorization: Bearer $OFFERHUB_API_KEY" \\
+  -H "Authorization: Bearer $GIGANCHOR_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{ "email": "buyer@example.com" }'`
     },
@@ -202,11 +202,11 @@ On a first successful link the service also emits a `USER_AIRTM_LINKED` event. T
       id: "sdk",
       label: "TypeScript SDK",
       language: "typescript",
-      code: `import { OfferHubSDK } from "@offerhub/sdk";
+      code: `import { GiganchorSDK } from "@giganchor/sdk";
 
-const sdk = new OfferHubSDK({
+const sdk = new GiganchorSDK({
   apiUrl: "http://localhost:4000",
-  apiKey: process.env.OFFERHUB_API_KEY!,
+  apiKey: process.env.GIGANCHOR_API_KEY!,
 });
 
 const link = await sdk.users.linkAirtm("usr_V1StGXR8Z5jdHi6B3mEv0", {

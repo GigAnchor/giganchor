@@ -7,5 +7,5 @@
  */
 import { SITE_URL } from "./site";
 
-export const MCP_SERVER_NAME = "offer-hub-docs";
+export const MCP_SERVER_NAME = "giganchor-docs";
 export const MCP_SERVER_URL = `${SITE_URL}/api/mcp`;

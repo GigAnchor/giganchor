@@ -8,8 +8,8 @@ export function IntegrationsMap() {
       eyebrowClassName="inline-block rounded-full bg-bg-base shadow-neu-sunken px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-theme-primary mb-6"
       eyebrow="Ecosystem Integrations"
       heading="Hub and Spoke Architecture"
-      description="OfferHub acts as the orchestrator, integrating best-in-class solutions for wallet management, escrow, and global fiat off-ramps."
-      infoText="OfferHub uses two building blocks from the official SCF Integration List. Stellar Wallets Kit handles non-custodial wallet connection and client-side Soroban signing. BlindPay routes USDC to bank accounts across 7 LATAM corridors via SPEI, Pix, PSE, and Transfer 3.0. The NestJS orchestrator selects the corridor automatically based on freelancer country and payout preference."
+      description="Giganchor acts as the orchestrator, integrating best-in-class solutions for wallet management, escrow, and global fiat off-ramps."
+      infoText="Giganchor uses two building blocks from the official SCF Integration List. Stellar Wallets Kit handles non-custodial wallet connection and client-side Soroban signing. BlindPay routes USDC to bank accounts across 7 LATAM corridors via SPEI, Pix, PSE, and Transfer 3.0. The NestJS orchestrator selects the corridor automatically based on freelancer country and payout preference."
     >
       {/* Desktop Hub & Spoke / Mobile Stack */}
         <div className="relative w-full max-w-5xl mx-auto flex flex-col md:block min-h-[600px] gap-8">
@@ -41,11 +41,11 @@ export function IntegrationsMap() {
              <div className="w-px h-full border-l-2 border-dashed border-[var(--color-primary)] opacity-40"></div>
           </div>
 
-          {/* Center Hub: OfferHub */}
+          {/* Center Hub: Giganchor */}
           <div className="relative z-10 w-full md:absolute md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-[220px]">
             <div className="rounded-[2rem] bg-bg-elevated shadow-neu-raised p-6 flex flex-col items-center text-center border border-[var(--color-border)]">
               <div className="w-4 h-4 rounded-full bg-theme-primary animate-pulse mb-3 shadow-neu-raised-sm"></div>
-              <h3 className="text-xl font-bold text-content-primary">OfferHub</h3>
+              <h3 className="text-xl font-bold text-content-primary">Giganchor</h3>
               <p className="text-sm text-theme-primary font-medium mt-1 mb-3">NestJS Orchestrator</p>
               <div className="rounded-xl bg-bg-base shadow-neu-sunken-subtle p-3 w-full">
                 <p className="text-xs text-content-secondary">Routes USDC based on freelancer country</p>

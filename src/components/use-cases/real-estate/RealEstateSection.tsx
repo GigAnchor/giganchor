@@ -43,7 +43,7 @@ export function RealEstateSection({
           variant="detailed"
           cards={stellarImpactCardsData}
           toggleId="real-estate"
-          summaryContent={{ offerhub: stellarImpactSummary }}
+          summaryContent={{ giganchor: stellarImpactSummary }}
         />
       </MetricsSection>
 

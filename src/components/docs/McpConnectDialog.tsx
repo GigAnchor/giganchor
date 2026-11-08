@@ -59,7 +59,7 @@ export function McpConnectDialog({ onClose }: McpConnectDialogProps) {
               Connect with MCP
             </h2>
             <p className="mt-1 text-sm text-content-secondary">
-              Add the OFFER-HUB docs to your AI assistant as an MCP server.
+              Add the GIGANCHOR docs to your AI assistant as an MCP server.
             </p>
           </div>
           <button

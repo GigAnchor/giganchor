@@ -1,35 +1,28 @@
 "use client";
 
-import { ArrowUpRight, Disc3, Github, Send, Twitter } from "lucide-react";
+import { ArrowUpRight, CircleDot, Github, MessageSquare } from "lucide-react";
 import { motion } from "framer-motion";
 import { SectionHeading } from "@/components/community/SectionHeading";
-import { SOCIAL_DISCORD, SOCIAL_TELEGRAM, SOCIAL_X } from "@/constants/social";
-import { GITHUB_ORG_URL } from "@/constants/github";
+import { SOCIAL_DISCUSSIONS, SOCIAL_GITHUB, SOCIAL_ISSUES } from "@/constants/social";
 
 const channels = [
   {
-    name: "Discord",
-    description: "Real-time discussions, pairing, and contributor office hours.",
-    href: SOCIAL_DISCORD,
-    icon: Disc3,
-  },
-  {
-    name: "Telegram",
-    description: "Fast async updates for announcements and roadmap drops.",
-    href: SOCIAL_TELEGRAM,
-    icon: Send,
-  },
-  {
-    name: "X",
-    description: "Community highlights, release threads, and ecosystem news.",
-    href: SOCIAL_X,
-    icon: Twitter,
-  },
-  {
     name: "GitHub",
-    description: "Open source repositories, pull requests, and roadmap items.",
-    href: GITHUB_ORG_URL,
+    description: "Source, releases and the roadmap that drives them.",
+    href: SOCIAL_GITHUB,
     icon: Github,
+  },
+  {
+    name: "Discussions",
+    description: "Design questions, pairing sessions and contributor office hours.",
+    href: SOCIAL_DISCUSSIONS,
+    icon: MessageSquare,
+  },
+  {
+    name: "Issues",
+    description: "Bug reports, accessibility findings and scoped feature work.",
+    href: SOCIAL_ISSUES,
+    icon: CircleDot,
   },
 ];
 

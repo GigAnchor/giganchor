@@ -1,6 +1,6 @@
 # Motion & Animation Standards
 
-This document defines the animation system for OFFER-HUB. Movement should feel organic, purposeful, and enhance the user experience without being distracting.
+This document defines the animation system for GIGANCHOR. Movement should feel organic, purposeful, and enhance the user experience without being distracting.
 
 ## Animation Philosophy
 

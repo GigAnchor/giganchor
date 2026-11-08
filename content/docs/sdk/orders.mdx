@@ -312,11 +312,11 @@ Possible errors:
 ## End-to-end example: order → escrow → release
 
 ```typescript
-import { OfferHubSDK, InvalidTransitionError } from '@offerhub/sdk';
+import { GiganchorSDK, InvalidTransitionError } from '@giganchor/sdk';
 
-const sdk = new OfferHubSDK({
-  apiUrl: process.env.OFFERHUB_API_URL!,
-  apiKey: process.env.OFFERHUB_API_KEY!,
+const sdk = new GiganchorSDK({
+  apiUrl: process.env.GIGANCHOR_API_URL!,
+  apiKey: process.env.GIGANCHOR_API_KEY!,
 });
 
 // 1. Create the order (starts in ORDER_CREATED)
@@ -354,7 +354,7 @@ console.log(settled.status); // CLOSED
 
 ## Sources
 
-All behavior on this page was verified against the orchestrator repository (`OFFER-HUB/OFFER-HUB`), not inferred:
+All behavior on this page was verified against the orchestrator repository (`GigAnchor/giganchor`), not inferred:
 
 - SDK client: `packages/sdk/src/resources/orders.ts`
 - Controllers: `apps/api/src/modules/orders/orders.controller.ts`, `apps/api/src/modules/resolution/resolution.controller.ts`

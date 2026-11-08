@@ -42,7 +42,7 @@ Each user has a unique, permanent Stellar deposit address:
 
 ```bash
 GET /api/v1/wallet/deposit-address
-Authorization: Bearer ohk_live_...
+Authorization: Bearer gak_live_...
 ```
 
 **Response:**
@@ -220,7 +220,7 @@ When `PAYMENT_PROVIDER=airtm`, deposits are called "top-ups" and go through the 
 ```bash
 # Create top-up
 POST /api/v1/topups
-Authorization: Bearer ohk_live_...
+Authorization: Bearer gak_live_...
 Content-Type: application/json
 Idempotency-Key: uuid-v4
 
@@ -279,7 +279,7 @@ After a deposit, verify the updated balance:
 
 ```bash
 GET /api/v1/balances/:userId
-Authorization: Bearer ohk_live_...
+Authorization: Bearer gak_live_...
 ```
 
 **Response:**

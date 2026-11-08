@@ -19,9 +19,9 @@ export const tabs: CodeTab[] = [
       "Service contract creation and budget funding on the server side.",
     docHref: repoDocUrl("apiReferenceOverview"),
     docLabel: "API Reference",
-    code: `import { OfferHub } from "@offerhub/sdk";
+    code: `import { Giganchor } from "@giganchor/sdk";
 
-const oh = new OfferHub({ apiKey: process.env.OFFERHUB_API_KEY! });
+const oh = new Giganchor({ apiKey: process.env.GIGANCHOR_API_KEY! });
 
 // Create a milestone-based service contract
 const contract = await oh.contracts.create({
@@ -54,9 +54,9 @@ console.log("Contract funded:", escrow.status);
       "Milestone approval from the client side — releases the matching payment.",
     docHref: repoDocUrl("sdkQuickStart"),
     docLabel: "SDK Guide",
-    code: `import { OfferHub } from "@offerhub/sdk";
+    code: `import { Giganchor } from "@giganchor/sdk";
 
-const oh = new OfferHub({ apiKey: process.env.OFFERHUB_API_KEY });
+const oh = new Giganchor({ apiKey: process.env.GIGANCHOR_API_KEY });
 
 // Provider completes milestone 1 — client approves
 const approval = await oh.milestones.approve(

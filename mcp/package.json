@@ -1,11 +1,11 @@
 {
-  "name": "@offer-hub/mcp-docs-server",
+  "name": "@giganchor/mcp-docs-server",
   "version": "1.0.0",
-  "description": "MCP server that exposes OFFER-HUB documentation to AI assistants",
+  "description": "MCP server that exposes GIGANCHOR documentation to AI assistants",
   "type": "module",
   "main": "./build/index.js",
   "bin": {
-    "offer-hub-docs": "./build/index.js"
+    "giganchor-docs": "./build/index.js"
   },
   "files": [
     "build"
@@ -22,11 +22,11 @@
   "keywords": [
     "mcp",
     "model-context-protocol",
-    "offer-hub",
+    "giganchor",
     "documentation",
     "ai-assistant"
   ],
-  "author": "OFFER-HUB Team",
+  "author": "GIGANCHOR Team",
   "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",

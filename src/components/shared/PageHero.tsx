@@ -62,9 +62,9 @@ export function PageHero({
                 backgroundClip: "text",
                 color: "transparent",
               }}
-              aria-label="OFFER-HUB"
+              aria-label="GIGANCHOR"
             >
-              OFFER-HUB
+              GIGANCHOR
             </div>
           </motion.div>
 

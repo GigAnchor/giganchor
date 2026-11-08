@@ -1,4 +1,4 @@
-# Accessibility Statement — OFFER-HUB
+# Accessibility Statement — GIGANCHOR
 
 **Effective Date:** May 27, 2026
 **Last Updated:** May 27, 2026
@@ -7,7 +7,7 @@
 
 ## 1. Commitment to Accessibility
 
-OFFER-HUB ("the Platform") is committed to ensuring digital accessibility for all users, including those with disabilities. We continuously work to improve the accessibility and usability of the Platform to conform to the **Web Content Accessibility Guidelines (WCAG) 2.1 Level AA** standard and applicable accessibility laws, including the EU Web Accessibility Directive and Section 508 of the Rehabilitation Act.
+GIGANCHOR ("the Platform") is committed to ensuring digital accessibility for all users, including those with disabilities. We continuously work to improve the accessibility and usability of the Platform to conform to the **Web Content Accessibility Guidelines (WCAG) 2.1 Level AA** standard and applicable accessibility laws, including the EU Web Accessibility Directive and Section 508 of the Rehabilitation Act.
 
 ---
 
@@ -29,7 +29,7 @@ WCAG 2.1 Level A is the foundational compliance level, while Level AA represents
 
 Our accessibility efforts cover:
 
-- ✅ The OFFER-HUB website and web application (https://offer-hub.tech)
+- ✅ The GIGANCHOR website and web application (https://giganchor.tech)
 - ✅ All public-facing pages and features
 - ✅ User account and dashboard interfaces
 - ✅ Documentation and help resources
@@ -88,11 +88,11 @@ While we strive for full compliance, the following known limitations exist and a
 
 ## 4. How to Report Accessibility Issues
 
-We value your feedback and are committed to making the Platform accessible to everyone. If you encounter any accessibility barriers while using OFFER-HUB, please report them to us:
+We value your feedback and are committed to making the Platform accessible to everyone. If you encounter any accessibility barriers while using GIGANCHOR, please report them to us:
 
 ### Primary Contact Method
 
-**Email:** [support@offerhub.io](mailto:support@offerhub.io)
+**Email:** [support@giganchor.tech](mailto:support@giganchor.tech)
 
 **Subject Line:** Accessibility Issue Report
 
@@ -107,13 +107,13 @@ We value your feedback and are committed to making the Platform accessible to ev
 
 For users who cannot use email or the standard contact form:
 
-1. **Telegram:** [@offer_hub_contributors](https://t.me/offer_hub_contributors)
+1. **Telegram:** [@giganchor_contributors](https://t.me/giganchor_contributors)
    - Message the support team about accessibility concerns
 
-2. **Discord:** [OFFER-HUB Community Server](https://discord.gg/yH4vBNWwc)
+2. **Discord:** [GIGANCHOR Community Server](https://discord.gg/yH4vBNWwc)
    - Post in the #support channel with accessibility questions
 
-3. **GitHub Issues:** [OFFER-HUB GitHub Repository](https://github.com/OFFER-HUB)
+3. **GitHub Issues:** [GIGANCHOR GitHub Repository](https://github.com/GigAnchor)
    - Create an issue labeled with `accessibility` tag for technical problems
 
 ### Accessibility Request Process
@@ -131,7 +131,7 @@ When you report an accessibility issue, we commit to:
 
 ### Screen Reader Compatibility
 
-OFFER-HUB is designed to work with popular screen readers:
+GIGANCHOR is designed to work with popular screen readers:
 
 - NVDA (NonVisual Desktop Access) — Windows
 - JAWS (Job Access With Speech) — Windows
@@ -161,7 +161,7 @@ We recommend:
 
 ### Applicable Laws and Standards
 
-OFFER-HUB complies with or works toward compliance with:
+GIGANCHOR complies with or works toward compliance with:
 
 - **Web Content Accessibility Guidelines (WCAG) 2.1 Level AA** — International standard
 - **EU Web Accessibility Directive (2016/2102)** — Required for public sector bodies and certain private entities in EU
@@ -211,7 +211,7 @@ While we strive for full compliance, certain accessibility measures may be deter
 
 ## 8. Third-Party Content and Services
 
-OFFER-HUB integrates with third-party services that may have varying levels of accessibility support:
+GIGANCHOR integrates with third-party services that may have varying levels of accessibility support:
 
 - **Stellar Blockchain:** Transaction data is displayed with accessible fallbacks
 - **Airtm:** Payment interface — we ensure accessible integration points
@@ -248,17 +248,17 @@ Your feedback is essential for improving our accessibility. We review all access
 
 **For accessibility questions or concerns:**
 
-📧 **Email:** [support@offerhub.io](mailto:support@offerhub.io)
+📧 **Email:** [support@giganchor.tech](mailto:support@giganchor.tech)
 🕐 **Response Time:** 2 business days
 
 **For general support:**
 
 - 💬 **Chat:** Available in-app support
-- 📱 **Telegram:** [@offer_hub_contributors](https://t.me/offer_hub_contributors)
+- 📱 **Telegram:** [@giganchor_contributors](https://t.me/giganchor_contributors)
 - 💬 **Discord:** [Community Server](https://discord.gg/yH4vBNWwc)
 
 ---
 
-This statement was prepared in accordance with the WCAG 2.1 Standard and in compliance with applicable accessibility laws. We welcome your feedback and are committed to making OFFER-HUB accessible to all users.
+This statement was prepared in accordance with the WCAG 2.1 Standard and in compliance with applicable accessibility laws. We welcome your feedback and are committed to making GIGANCHOR accessible to all users.
 
 **Last Updated:** May 27, 2026

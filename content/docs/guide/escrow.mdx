@@ -1,15 +1,15 @@
 ---
 title: Escrow Guide
-description: How blockchain-based escrow works in OFFER-HUB — fund locking, release flows, and dispute handling.
+description: How blockchain-based escrow works in GIGANCHOR — fund locking, release flows, and dispute handling.
 order: 16
 section: Guides
 ---
 
 <Callout type="note">
-  This is the public API/SDK guide for integrators. For internal implementation detail (Orchestrator state machine, signer roles), see [`docs/guides/escrow.md`](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/docs/guides/escrow.md) in the repo.
+  This is the public API/SDK guide for integrators. For internal implementation detail (Orchestrator state machine, signer roles), see [`docs/guides/escrow.md`](https://github.com/GigAnchor/giganchor/blob/main/docs/guides/escrow.md) in the repo.
 </Callout>
 
-Escrow is the core security mechanism in OFFER-HUB. When a buyer pays for a service, funds are locked in a Stellar smart contract until the work is delivered and approved. Neither party can unilaterally access the funds — the contract enforces fair resolution.
+Escrow is the core security mechanism in GIGANCHOR. When a buyer pays for a service, funds are locked in a Stellar smart contract until the work is delivered and approved. Neither party can unilaterally access the funds — the contract enforces fair resolution.
 
 <Callout type="tip">
   Make sure you understand the [Order Lifecycle](/docs/guide/orders) before diving into escrow mechanics.
@@ -17,12 +17,12 @@ Escrow is the core security mechanism in OFFER-HUB. When a buyer pays for a serv
 
 ## How Escrow Works
 
-OFFER-HUB uses [Trustless Work](https://trustlesswork.com) smart contracts on the Stellar blockchain for non-custodial escrow. This means:
+GIGANCHOR uses [Trustless Work](https://trustlesswork.com) smart contracts on the Stellar blockchain for non-custodial escrow. This means:
 
-1. **Funds are on-chain** — Not in OFFER-HUB's database
+1. **Funds are on-chain** — Not in GIGANCHOR's database
 2. **Contract enforces rules** — Release requires proper signatures
 3. **Transparent** — Anyone can verify escrow state on Stellar
-4. **Non-custodial** — OFFER-HUB cannot access funds without proper authorization
+4. **Non-custodial** — GIGANCHOR cannot access funds without proper authorization
 
 ### Escrow Participants
 
@@ -30,7 +30,7 @@ OFFER-HUB uses [Trustless Work](https://trustlesswork.com) smart contracts on th
 |------|-------------|
 | **Buyer** | Funds the escrow; approves milestones; signs fund-release transactions |
 | **Seller** | Receives funds; marks milestones as completed (`serviceProvider` role) |
-| **Platform** | OFFER-HUB's signer; acts as `disputeResolver` — required for any dispute resolution |
+| **Platform** | GIGANCHOR's signer; acts as `disputeResolver` — required for any dispute resolution |
 | **Arbiter** | Trustless Work's smart contract; enforces that `disputeResolver` ≠ `disputer` on-chain |
 
 ## Escrow Lifecycle
@@ -89,7 +89,7 @@ After reserving funds, create the escrow contract:
 
 ```bash
 curl -X POST http://localhost:4000/api/v1/orders/ord_xyz789/escrow \
-  -H "Authorization: Bearer ohk_live_your_api_key" \
+  -H "Authorization: Bearer gak_live_your_api_key" \
   -H "Content-Type: application/json"
 ```
 
@@ -116,7 +116,7 @@ Once the contract is created, fund it with USDC:
 
 ```bash
 curl -X POST http://localhost:4000/api/v1/orders/ord_xyz789/escrow/fund \
-  -H "Authorization: Bearer ohk_live_your_api_key"
+  -H "Authorization: Bearer gak_live_your_api_key"
 ```
 
 This triggers an on-chain USDC transfer from the buyer's invisible wallet to the escrow contract.
@@ -139,7 +139,7 @@ When the buyer approves the work, release funds to the seller:
 
 ```bash
 curl -X POST http://localhost:4000/api/v1/orders/ord_xyz789/resolution/release \
-  -H "Authorization: Bearer ohk_live_your_api_key" \
+  -H "Authorization: Bearer gak_live_your_api_key" \
   -H "Content-Type: application/json" \
   -d '{"requestedBy": "usr_buyer123"}'
 ```
@@ -195,7 +195,7 @@ A refund is requested by the buyer — directly, or after either party opens a d
 
 ```bash
 curl -X POST http://localhost:4000/api/v1/orders/ord_xyz789/resolution/dispute \
-  -H "Authorization: Bearer ohk_live_your_api_key" \
+  -H "Authorization: Bearer gak_live_your_api_key" \
   -H "Content-Type: application/json" \
   -d '{
     "openedBy": "BUYER",
@@ -209,7 +209,7 @@ After review, the platform resolves the dispute:
 
 ```bash
 curl -X POST http://localhost:4000/api/v1/disputes/dsp_abc123/resolve \
-  -H "Authorization: Bearer ohk_live_your_api_key" \
+  -H "Authorization: Bearer gak_live_your_api_key" \
   -H "Content-Type: application/json" \
   -d '{
     "decision": "FULL_REFUND",
@@ -239,11 +239,11 @@ Source: `apps/api/src/modules/resolution/resolution.service.ts` (`requestRefund`
 The SDK simplifies escrow operations:
 
 ```typescript
-import { OfferHubSDK } from '@offerhub/sdk';
+import { GiganchorSDK } from '@giganchor/sdk';
 
-const sdk = new OfferHubSDK({
+const sdk = new GiganchorSDK({
   apiUrl: 'http://localhost:4000',
-  apiKey: 'ohk_live_your_api_key'
+  apiKey: 'gak_live_your_api_key'
 });
 
 // Create and fund escrow in sequence
@@ -290,7 +290,7 @@ events.on('order.disputed', (data) => {
 
 ## On-Chain vs Off-Chain Balance
 
-OFFER-HUB tracks two types of balances:
+GIGANCHOR tracks two types of balances:
 
 ### Off-Chain Balance
 
@@ -381,7 +381,7 @@ Escrow lifecycle events are delivered over the [SSE event stream](/docs/api-refe
 
 ```bash
 curl -N "http://localhost:4000/api/v1/events?types=order.escrow_creating,order.escrow_funded,order.released,order.refunded" \
-  -H "Authorization: Bearer ohk_live_your_api_key"
+  -H "Authorization: Bearer gak_live_your_api_key"
 ```
 
 Or with the SDK:

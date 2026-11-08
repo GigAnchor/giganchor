@@ -10,17 +10,17 @@ import { getStaticMdxContent } from "@/lib/mdx";
 export const metadata: Metadata = buildPageMetadata({
   title: "Privacy Policy",
   description:
-    "How OFFER-HUB collects, uses, and protects your data. Privacy is a feature, not an afterthought — read our full data governance and transparency policy.",
+    "How GIGANCHOR collects, uses, and protects your data. Privacy is a feature, not an afterthought — read our full data governance and transparency policy.",
   keywords: [
     "privacy policy",
     "data governance",
     "GDPR",
     "data protection",
     "transparency",
-    "OFFER-HUB",
+    "GIGANCHOR",
   ],
   path: "/privacy",
-  ogImageAlt: "OFFER-HUB Privacy Policy — data governance and transparency",
+  ogImageAlt: "GIGANCHOR Privacy Policy — data governance and transparency",
 });
 
 export default async function PrivacyPage() {

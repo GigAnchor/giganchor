@@ -1,6 +1,6 @@
 # npm Packages
 
-> The OFFER-HUB Orchestrator ships three npm packages. This guide explains what each one does, when to use it, and how to use it correctly.
+> The GIGANCHOR Orchestrator ships three npm packages. This guide explains what each one does, when to use it, and how to use it correctly.
 
 ---
 
@@ -8,17 +8,17 @@
 
 | Package | Who uses it | What it does |
 |---|---|---|
-| [`create-offer-hub-orchestrator`](#create-offer-hub-orchestrator) | DevOps / platform engineers | Interactive setup wizard — configures `.env`, runs migrations, bootstraps platform user |
-| [`@offerhub/sdk`](#offerhubsdk) | Marketplace backend developers | TypeScript client for the Orchestrator API |
-| [`@offerhub/cli`](#offerhubcli) | Platform administrators | Manage API keys and run maintenance tasks from the terminal |
+| [`create-giganchor-orchestrator`](#create-giganchor-orchestrator) | DevOps / platform engineers | Interactive setup wizard — configures `.env`, runs migrations, bootstraps platform user |
+| [`@giganchor/sdk`](#giganchorsdk) | Marketplace backend developers | TypeScript client for the Orchestrator API |
+| [`@giganchor/cli`](#giganchorcli) | Platform administrators | Manage API keys and run maintenance tasks from the terminal |
 
 ---
 
-## `create-offer-hub-orchestrator`
+## `create-giganchor-orchestrator`
 
 ### What it is
 
-A one-time setup tool you run **inside a cloned OFFER-HUB Orchestrator repo** to configure your instance. It replaces manually editing `.env` files and running setup commands one by one.
+A one-time setup tool you run **inside a cloned GIGANCHOR Orchestrator repo** to configure your instance. It replaces manually editing `.env` files and running setup commands one by one.
 
 ### When to use it
 
@@ -38,14 +38,14 @@ A one-time setup tool you run **inside a cloned OFFER-HUB Orchestrator repo** to
 
 ```bash
 # 1. Clone the Orchestrator
-git clone https://github.com/OFFER-HUB/OFFER-HUB.git
-cd OFFER-HUB
+git clone https://github.com/GigAnchor/giganchor.git
+cd GIGANCHOR
 
 # 2. Install dependencies
 npm install
 
 # 3. Run the setup wizard
-npx create-offer-hub-orchestrator
+npx create-giganchor-orchestrator
 ```
 
 The wizard will ask for:
@@ -64,7 +64,7 @@ The wizard will ask for:
 | Generate API key? | Optional — requires the server to be running |
 
 **What it does automatically:**
-1. Generates a secure `OFFERHUB_MASTER_KEY`
+1. Generates a secure `GIGANCHOR_MASTER_KEY`
 2. Generates a secure `WALLET_ENCRYPTION_KEY` (crypto mode only)
 3. Writes `.env` with all values filled in
 4. Runs `prisma migrate deploy`
@@ -80,31 +80,31 @@ The wizard will ask for:
 
 ---
 
-## `@offerhub/sdk`
+## `@giganchor/sdk`
 
 ### What it is
 
-The official TypeScript/JavaScript client for the OFFER-HUB Orchestrator API. Marketplace backends use it to create users, manage escrows, handle disputes, and query balances — without writing raw HTTP calls.
+The official TypeScript/JavaScript client for the GIGANCHOR Orchestrator API. Marketplace backends use it to create users, manage escrows, handle disputes, and query balances — without writing raw HTTP calls.
 
 ### When to use it
 
-- Building the backend of a marketplace that integrates with OFFER-HUB
+- Building the backend of a marketplace that integrates with GIGANCHOR
 - Any Node.js or TypeScript service that needs to talk to the Orchestrator API
 
 ### How to install it
 
 ```bash
-npm install @offerhub/sdk
+npm install @giganchor/sdk
 ```
 
 ### How to use it
 
 ```typescript
-import { OfferHubSDK } from '@offerhub/sdk';
+import { GiganchorSDK } from '@giganchor/sdk';
 
-const sdk = new OfferHubSDK({
+const sdk = new GiganchorSDK({
   baseUrl: 'https://your-orchestrator.com',
-  apiKey: process.env.OFFERHUB_API_KEY,
+  apiKey: process.env.GIGANCHOR_API_KEY,
 });
 
 // Create a user (auto-creates Stellar wallet in crypto mode)
@@ -145,7 +145,7 @@ await sdk.orders.release(order.data.id, 'Work completed');
 ### Error handling
 
 ```typescript
-import { OfferHubSDK, OfferHubError, NotFoundError, ValidationError } from '@offerhub/sdk';
+import { GiganchorSDK, GiganchorError, NotFoundError, ValidationError } from '@giganchor/sdk';
 
 try {
   const order = await sdk.orders.get('ord_nonexistent');
@@ -155,7 +155,7 @@ try {
   } else if (error instanceof ValidationError) {
     // 422 — invalid input
     console.log(error.details);
-  } else if (error instanceof OfferHubError) {
+  } else if (error instanceof GiganchorError) {
     // Other API error
     console.log(error.statusCode, error.message);
   }
@@ -172,7 +172,7 @@ try {
 
 ---
 
-## `@offerhub/cli`
+## `@giganchor/cli`
 
 ### What it is
 
@@ -188,42 +188,42 @@ A command-line tool for platform administrators to manage API keys and run maint
 
 ```bash
 # Use directly without installing
-npx @offerhub/cli <command>
+npx @giganchor/cli <command>
 
 # Or install globally
-npm install -g @offerhub/cli
+npm install -g @giganchor/cli
 ```
 
 ### Configuration
 
 ```bash
 # Point the CLI at your Orchestrator instance
-offerhub config set
+giganchor config set
 
 # Or pass flags directly
-offerhub --url https://your-orchestrator.com --key ohk_live_xxx <command>
+giganchor --url https://your-orchestrator.com --key gak_live_xxx <command>
 ```
 
 ### Common commands
 
 ```bash
 # List all API keys
-offerhub keys list
+giganchor keys list
 
 # Create a new API key
-offerhub keys create --name "My Marketplace" --scopes read,write
+giganchor keys create --name "My Marketplace" --scopes read,write
 
 # Revoke a key
-offerhub keys revoke key_xxx
+giganchor keys revoke key_xxx
 
 # Show current config
-offerhub config show
+giganchor config show
 ```
 
 ### How to do it right
 
 - Use the CLI for **administration only** — not for marketplace integration (use the SDK for that).
-- Restrict CLI access to platform engineers — it uses the `OFFERHUB_MASTER_KEY` or a key with `support` scope.
+- Restrict CLI access to platform engineers — it uses the `GIGANCHOR_MASTER_KEY` or a key with `support` scope.
 - Rotate API keys whenever a team member leaves or a key may have been exposed.
 - In production, prefer creating keys via the API directly (`POST /api/v1/auth/api-keys`) in your CI/CD pipeline rather than manually via CLI.
 
@@ -233,13 +233,13 @@ offerhub config show
 
 ```
 I'm setting up a new Orchestrator instance
-  → npx create-offer-hub-orchestrator
+  → npx create-giganchor-orchestrator
 
 I'm building a marketplace that uses the Orchestrator
-  → npm install @offerhub/sdk
+  → npm install @giganchor/sdk
 
 I'm an admin managing API keys or running maintenance
-  → npx @offerhub/cli
+  → npx @giganchor/cli
 ```
 
 ---

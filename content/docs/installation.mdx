@@ -1,6 +1,6 @@
 ---
 title: Installation
-description: Set up OFFER-HUB Orchestrator locally — fast path with the setup wizard or manual Docker setup.
+description: Set up GIGANCHOR Orchestrator locally — fast path with the setup wizard or manual Docker setup.
 order: 2
 section: Getting Started
 ---
@@ -17,7 +17,7 @@ Choose the setup path that fits your workflow:
 
 ## Option 1: Setup Wizard <Badge variant="success">Recommended</Badge>
 
-`create-offer-hub-orchestrator` is a one-command interactive setup wizard. It configures your `.env`, runs database migrations, and bootstraps the platform user — so you can skip the manual steps entirely. For a full breakdown of each prompt, generated environment files, and the platform bootstrap step, see the [Scaffolder Guide](/docs/guide/scaffolder).
+`create-giganchor-orchestrator` is a one-command interactive setup wizard. It configures your `.env`, runs database migrations, and bootstraps the platform user — so you can skip the manual steps entirely. For a full breakdown of each prompt, generated environment files, and the platform bootstrap step, see the [Scaffolder Guide](/docs/guide/scaffolder).
 
 <Callout type="tip">
   This is the fastest way to get a working Orchestrator. Run the wizard, answer the prompts, and you'll have a running API in under 2 minutes.
@@ -25,11 +25,11 @@ Choose the setup path that fits your workflow:
 
 ### Step 1 — Clone and install
 
-<CommandLine>git clone https://github.com/OFFER-HUB/OFFER-HUB.git && cd OFFER-HUB && npm install</CommandLine>
+<CommandLine>git clone https://github.com/GigAnchor/giganchor.git && cd GIGANCHOR && npm install</CommandLine>
 
 ### Step 2 — Run the setup wizard
 
-<CommandLine>npx create-offer-hub-orchestrator</CommandLine>
+<CommandLine>npx create-giganchor-orchestrator</CommandLine>
 
 The wizard prompts for:
 
@@ -48,7 +48,7 @@ The wizard prompts for:
 
 The wizard then automatically:
 
-1. Generates a secure `OFFERHUB_MASTER_KEY`
+1. Generates a secure `GIGANCHOR_MASTER_KEY`
 2. Generates a secure `WALLET_ENCRYPTION_KEY` (crypto mode)
 3. Writes `.env` with all values filled in
 4. Runs `prisma migrate deploy`
@@ -102,7 +102,7 @@ Use this path when you need full manual control — custom Docker networks, CI/C
 
 ### Step 1 — Clone the Repository
 
-<CommandLine>git clone https://github.com/OFFER-HUB/OFFER-HUB.git && cd OFFER-HUB</CommandLine>
+<CommandLine>git clone https://github.com/GigAnchor/giganchor.git && cd GIGANCHOR</CommandLine>
 
 ### Step 2 — Install Dependencies
 
@@ -132,8 +132,8 @@ NODE_ENV=development
 PORT=4000
 
 # Database (Docker defaults)
-DATABASE_URL=postgresql://offerhub:offerhub_password@localhost:5432/offerhub_db
-DIRECT_URL=postgresql://offerhub:offerhub_password@localhost:5432/offerhub_db
+DATABASE_URL=postgresql://giganchor:giganchor_password@localhost:5432/giganchor_db
+DIRECT_URL=postgresql://giganchor:giganchor_password@localhost:5432/giganchor_db
 
 # Redis (Docker default)
 REDIS_URL=redis://localhost:6379
@@ -143,7 +143,7 @@ PAYMENT_PROVIDER=crypto
 WALLET_ENCRYPTION_KEY=your-32-byte-hex-key
 
 # Master Key (for creating API keys)
-OFFERHUB_MASTER_KEY=your-secure-master-key
+GIGANCHOR_MASTER_KEY=your-secure-master-key
 
 # Trustless Work (get from trustlesswork.com)
 TRUSTLESS_API_KEY=your_trustless_api_key
@@ -203,18 +203,18 @@ You should see:
 
 ## Option 3: Using the SDK Only
 
-If you want to integrate with an existing OFFER-HUB Orchestrator instance (hosted by you or a partner), you only need the SDK:
+If you want to integrate with an existing GIGANCHOR Orchestrator instance (hosted by you or a partner), you only need the SDK:
 
-<CommandLine>npm install @offerhub/sdk</CommandLine>
+<CommandLine>npm install @giganchor/sdk</CommandLine>
 
 Then configure it in your code:
 
 ```typescript
-import { OfferHubSDK } from '@offerhub/sdk';
+import { GiganchorSDK } from '@giganchor/sdk';
 
-const sdk = new OfferHubSDK({
+const sdk = new GiganchorSDK({
   apiUrl: 'https://your-orchestrator-url.com',
-  apiKey: 'ohk_live_your_api_key'
+  apiKey: 'gak_live_your_api_key'
 });
 
 // Create a user
@@ -234,11 +234,11 @@ Once the server is running, create an API key using your master key.
 
 ### Option A: Using the CLI (Recommended)
 
-The `@offerhub/cli` is the fastest way to create an API key:
+The `@giganchor/cli` is the fastest way to create an API key:
 
-<CommandLine>npm install -g @offerhub/cli</CommandLine>
+<CommandLine>npm install -g @giganchor/cli</CommandLine>
 
-<CommandLine>offerhub keys create</CommandLine>
+<CommandLine>giganchor keys create</CommandLine>
 
 This runs an interactive wizard that prompts for scopes and key name. See the [CLI Guide](/docs/guide/cli) for all available commands.
 
@@ -246,7 +246,7 @@ This runs an interactive wizard that prompts for scopes and key name. See the [C
 
 ```bash
 curl -X POST http://localhost:4000/api/v1/auth/api-keys \
-  -H "Authorization: Bearer YOUR_OFFERHUB_MASTER_KEY" \
+  -H "Authorization: Bearer YOUR_GIGANCHOR_MASTER_KEY" \
   -H "Content-Type: application/json" \
   -d '{"name": "My Marketplace", "scopes": ["read", "write"]}'
 ```
@@ -257,7 +257,7 @@ Response:
 {
   "data": {
     "id": "key_abc123",
-    "key": "ohk_live_xxxxxxxxxxxx",
+    "key": "gak_live_xxxxxxxxxxxx",
     "name": "My Marketplace",
     "scopes": ["read", "write"]
   }
@@ -300,7 +300,7 @@ If port 4000 is already in use, change the `PORT` in your `.env` file or stop th
 
 ## Next Steps
 
-- [Scaffolder Guide](/docs/guide/scaffolder) — In-depth reference for `create-offer-hub-orchestrator`
+- [Scaffolder Guide](/docs/guide/scaffolder) — In-depth reference for `create-giganchor-orchestrator`
 - [Configuration](/docs/configuration) — Learn about all environment variables
 - [Quick Start](/docs/guide/quick-start) — Create your first user and order
 - [CLI Guide](/docs/guide/cli) — Manage API keys and configuration

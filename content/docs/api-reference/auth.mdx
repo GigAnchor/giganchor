@@ -1,6 +1,6 @@
 ---
 title: Auth Endpoints
-description: Per-endpoint reference for the OFFER-HUB Auth API - create and list API keys, exchange a key for a short-lived token, and read the current auth context - with real scopes, request fields, response shapes, error codes, idempotency behavior, and cURL plus TypeScript examples.
+description: Per-endpoint reference for the GIGANCHOR Auth API - create and list API keys, exchange a key for a short-lived token, and read the current auth context - with real scopes, request fields, response shapes, error codes, idempotency behavior, and cURL plus TypeScript examples.
 order: 51
 section: API Reference
 ---
@@ -26,9 +26,9 @@ Each route attaches `ApiKeyGuard` and, except `GET /auth/me`, `ScopeGuard` with 
 
 | Credential | Format | Scopes it carries |
 | --- | --- | --- |
-| API key | `ohk_{env}_{id}_{random}` where `env` is `live` or `test` | The scopes stored when the key was created |
-| Short-lived token | `ohk_tok_` followed by a signed JWT, valid for 1 hour | The scopes of the key it was issued from |
-| Master key | The value of `OFFERHUB_MASTER_KEY` | `read`, `write`, `support` |
+| API key | `gak_{env}_{id}_{random}` where `env` is `live` or `test` | The scopes stored when the key was created |
+| Short-lived token | `gak_tok_` followed by a signed JWT, valid for 1 hour | The scopes of the key it was issued from |
+| Master key | The value of `GIGANCHOR_MASTER_KEY` | `read`, `write`, `support` |
 
 The master key exists so you can create the first real key. Use real keys in application code.
 
@@ -76,7 +76,7 @@ Creates an API key. **Requires the `support` scope.** The plain-text key is in t
   example={{
     data: {
       id: "key_V1StGXR8Z5jdHi6B3mEv0",
-      key: "ohk_live_key_V1StGXR8Z5jdHi6B3mEv0_9f2c1a7e5b3d8f6041c2a9e7b5d3f1a08c6e4b2d7f9a1c3e",
+      key: "gak_live_key_V1StGXR8Z5jdHi6B3mEv0_9f2c1a7e5b3d8f6041c2a9e7b5d3f1a08c6e4b2d7f9a1c3e",
       name: "Marketplace backend",
       scopes: ["read", "write"]
     },
@@ -99,7 +99,7 @@ Creates an API key. **Requires the `support` scope.** The plain-text key is in t
       label: "cURL",
       language: "bash",
       code: `curl -X POST "http://localhost:4000/api/v1/auth/api-keys" \\
-  -H "Authorization: Bearer $OFFERHUB_MASTER_KEY" \\
+  -H "Authorization: Bearer $GIGANCHOR_MASTER_KEY" \\
   -H "Content-Type: application/json" \\
   -H "Idempotency-Key: 3f1c2a4e-8b7d-4c1e-9a6f-2d5b7e9c1a3f" \\
   -d '{ "name": "Marketplace backend", "scopes": ["read", "write"] }'`
@@ -111,7 +111,7 @@ Creates an API key. **Requires the `support` scope.** The plain-text key is in t
       code: `const res = await fetch("http://localhost:4000/api/v1/auth/api-keys", {
   method: "POST",
   headers: {
-    Authorization: \`Bearer \${process.env.OFFERHUB_MASTER_KEY}\`,
+    Authorization: \`Bearer \${process.env.GIGANCHOR_MASTER_KEY}\`,
     "Content-Type": "application/json",
     "Idempotency-Key": crypto.randomUUID(),
   },
@@ -181,18 +181,18 @@ Lists API keys, newest first. **Requires the `support` scope.** Key values are n
       label: "cURL",
       language: "bash",
       code: `curl "http://localhost:4000/api/v1/auth/api-keys?limit=20" \\
-  -H "Authorization: Bearer $OFFERHUB_API_KEY"
+  -H "Authorization: Bearer $GIGANCHOR_API_KEY"
 
 # Next page
 curl "http://localhost:4000/api/v1/auth/api-keys?limit=20&cursor=key_V1StGXR8Z5jdHi6B3mEv0" \\
-  -H "Authorization: Bearer $OFFERHUB_API_KEY"`
+  -H "Authorization: Bearer $GIGANCHOR_API_KEY"`
     },
     {
       id: "fetch",
       label: "TypeScript (fetch)",
       language: "typescript",
       code: `const res = await fetch("http://localhost:4000/api/v1/auth/api-keys?limit=20", {
-  headers: { Authorization: \`Bearer \${process.env.OFFERHUB_API_KEY}\` },
+  headers: { Authorization: \`Bearer \${process.env.GIGANCHOR_API_KEY}\` },
 });
 
 const body = await res.json();
@@ -204,7 +204,7 @@ const { hasMore, nextCursor } = body.data.pagination;`
 
 ## POST /api/v1/auth/api-keys/:id/token
 
-Exchanges an API key ID for a short-lived token (`ohk_tok_...`) that expires after 1 hour. It is designed for a frontend or other untrusted client that should not hold the long-lived key. **Requires the `write` scope.** The token carries the scopes of the key with that ID.
+Exchanges an API key ID for a short-lived token (`gak_tok_...`) that expires after 1 hour. It is designed for a frontend or other untrusted client that should not hold the long-lived key. **Requires the `write` scope.** The token carries the scopes of the key with that ID.
 
 <ParamTable
   label="Token request"
@@ -216,11 +216,11 @@ Exchanges an API key ID for a short-lived token (`ohk_tok_...`) that expires aft
 <ResponseSchema
   label="Token response (201 Created)"
   fields={[
-    { name: "data.token", type: "string", required: true, description: "The short-lived token, prefixed with ohk_tok_. Send it as a Bearer token. It expires 1 hour after issue." },
+    { name: "data.token", type: "string", required: true, description: "The short-lived token, prefixed with gak_tok_. Send it as a Bearer token. It expires 1 hour after issue." },
     { name: "meta", type: "object", required: true, description: "requestId (when sent) and timestamp." }
   ]}
   example={{
-    data: { token: "ohk_tok_eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJrZXlfVjFTdEdYUjhaNWpkSGk2QjNtRXYwIiwic2NvcGVzIjpbInJlYWQiXSwidHlwZSI6InNob3J0LWxpdmVkIn0.signature" },
+    data: { token: "gak_tok_eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJrZXlfVjFTdEdYUjhaNWpkSGk2QjNtRXYwIiwic2NvcGVzIjpbInJlYWQiXSwidHlwZSI6InNob3J0LWxpdmVkIn0.signature" },
     meta: { requestId: "req_1ab90e", timestamp: "2026-09-30T10:01:00.000Z" }
   }}
 />
@@ -239,7 +239,7 @@ Exchanges an API key ID for a short-lived token (`ohk_tok_...`) that expires aft
       label: "cURL",
       language: "bash",
       code: `curl -X POST "http://localhost:4000/api/v1/auth/api-keys/key_V1StGXR8Z5jdHi6B3mEv0/token" \\
-  -H "Authorization: Bearer $OFFERHUB_API_KEY"`
+  -H "Authorization: Bearer $GIGANCHOR_API_KEY"`
     },
     {
       id: "fetch",
@@ -249,7 +249,7 @@ Exchanges an API key ID for a short-lived token (`ohk_tok_...`) that expires aft
 
 const res = await fetch(\`http://localhost:4000/api/v1/auth/api-keys/\${keyId}/token\`, {
   method: "POST",
-  headers: { Authorization: \`Bearer \${process.env.OFFERHUB_API_KEY}\` },
+  headers: { Authorization: \`Bearer \${process.env.GIGANCHOR_API_KEY}\` },
 });
 
 const { data } = await res.json();
@@ -289,14 +289,14 @@ This response has no `meta` object, because the handler already returns a single
       label: "cURL",
       language: "bash",
       code: `curl "http://localhost:4000/api/v1/auth/me" \\
-  -H "Authorization: Bearer $OFFERHUB_API_KEY"`
+  -H "Authorization: Bearer $GIGANCHOR_API_KEY"`
     },
     {
       id: "fetch",
       label: "TypeScript (fetch)",
       language: "typescript",
       code: `const res = await fetch("http://localhost:4000/api/v1/auth/me", {
-  headers: { Authorization: \`Bearer \${process.env.OFFERHUB_API_KEY}\` },
+  headers: { Authorization: \`Bearer \${process.env.GIGANCHOR_API_KEY}\` },
 });
 
 const { data } = await res.json();

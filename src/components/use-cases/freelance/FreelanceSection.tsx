@@ -46,7 +46,7 @@ export function FreelanceSection({
           variant="detailed"
           cards={stellarImpactCardsData}
           toggleId="freelance"
-          summaryContent={{ offerhub: stellarImpactSummary }}
+          summaryContent={{ giganchor: stellarImpactSummary }}
         />
       </MetricsSection>
 

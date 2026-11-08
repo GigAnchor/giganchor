@@ -79,7 +79,7 @@ RESOLVED      ← Decision executed on-chain
 
 ```bash
 POST /api/v1/orders/ord_VxaM.../resolution/dispute
-Authorization: Bearer ohk_live_...
+Authorization: Bearer gak_live_...
 Content-Type: application/json
 Idempotency-Key: <uuid-v4>
 
@@ -129,7 +129,7 @@ Before resolving, a dispute should be assigned to a support agent:
 
 ```bash
 POST /api/v1/disputes/dsp_abc123/assign
-Authorization: Bearer ohk_live_...
+Authorization: Bearer gak_live_...
 Content-Type: application/json
 
 {
@@ -167,7 +167,7 @@ All funds go to the seller. Use when the seller delivered as agreed.
 
 ```bash
 POST /api/v1/disputes/dsp_abc123/resolve
-Authorization: Bearer ohk_live_...
+Authorization: Bearer gak_live_...
 Content-Type: application/json
 
 {
@@ -200,7 +200,7 @@ All funds returned to the buyer. Use when the seller failed to deliver.
 
 ```bash
 POST /api/v1/disputes/dsp_abc123/resolve
-Authorization: Bearer ohk_live_...
+Authorization: Bearer gak_live_...
 Content-Type: application/json
 
 {
@@ -233,7 +233,7 @@ Funds distributed between buyer and seller. Use for partial delivery or shared f
 
 ```bash
 POST /api/v1/disputes/dsp_abc123/resolve
-Authorization: Bearer ohk_live_...
+Authorization: Bearer gak_live_...
 Content-Type: application/json
 
 {
@@ -306,7 +306,7 @@ The platform wallet is the sole `disputeResolver` — this ensures neutral arbit
 
 ```bash
 GET /api/v1/disputes/dsp_abc123
-Authorization: Bearer ohk_live_...
+Authorization: Bearer gak_live_...
 ```
 
 **Response:**

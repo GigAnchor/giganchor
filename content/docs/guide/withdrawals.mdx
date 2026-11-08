@@ -1,11 +1,11 @@
 ---
 title: Withdrawals Guide
-description: Reference for crypto and AirTM withdrawals in the OFFER-HUB Orchestrator.
+description: Reference for crypto and AirTM withdrawals in the GIGANCHOR Orchestrator.
 order: 19
 section: Guides
 ---
 
-This page documents the withdrawal controller and DTOs in the [OFFER-HUB Orchestrator](https://github.com/OFFER-HUB/OFFER-HUB): `apps/api/src/modules/withdrawals/withdrawals.controller.ts`, `apps/api/src/modules/withdrawals/dto/create-withdrawal.dto.ts`, and `apps/api/src/modules/withdrawals/withdrawals.service.ts`.
+This page documents the withdrawal controller and DTOs in the [GIGANCHOR Orchestrator](https://github.com/GigAnchor/giganchor): `apps/api/src/modules/withdrawals/withdrawals.controller.ts`, `apps/api/src/modules/withdrawals/dto/create-withdrawal.dto.ts`, and `apps/api/src/modules/withdrawals/withdrawals.service.ts`.
 
 Every request uses `Authorization: Bearer <api-key>`. Write endpoints require the `write` scope; read endpoints require `read`.
 
@@ -51,7 +51,7 @@ Creates a withdrawal. The request body is `CreateWithdrawalDto`:
 
 ```bash
 curl -X POST http://localhost:4000/api/v1/withdrawals \
-  -H "Authorization: Bearer ohk_live_your_api_key" \
+  -H "Authorization: Bearer gak_live_your_api_key" \
   -H "Content-Type: application/json" \
   -d '{
     "userId": "usr_abc123",
@@ -88,7 +88,7 @@ Lists a user's withdrawals. The controller accepts only these query parameters:
 
 ```bash
 curl "http://localhost:4000/api/v1/withdrawals?userId=usr_abc123&limit=20&cursor=wd_previous" \
-  -H "Authorization: Bearer ohk_live_your_api_key"
+  -H "Authorization: Bearer gak_live_your_api_key"
 ```
 
 The response is `{ "data": WithdrawalResponse[], "hasMore": boolean, "nextCursor"?: string }`.
@@ -99,7 +99,7 @@ Fetches one withdrawal. `userId` is required as a query parameter because the co
 
 ```bash
 curl "http://localhost:4000/api/v1/withdrawals/wd_abc123?userId=usr_abc123" \
-  -H "Authorization: Bearer ohk_live_your_api_key"
+  -H "Authorization: Bearer gak_live_your_api_key"
 ```
 
 An individual `WithdrawalResponse` includes `id`, `userId`, `amount`, `fee?`, `currency`, `status`, `destinationType`, `destinationRef`, `airtmPayoutId?`, `failureReason?`, `createdAt`, and `updatedAt`.
@@ -110,7 +110,7 @@ Commits an AirTM withdrawal created with `commit: false`. It accepts no body and
 
 ```bash
 curl -X POST "http://localhost:4000/api/v1/withdrawals/wd_abc123/commit?userId=usr_abc123" \
-  -H "Authorization: Bearer ohk_live_your_api_key"
+  -H "Authorization: Bearer gak_live_your_api_key"
 ```
 
 This endpoint returns the updated `WithdrawalResponse`. It is not applicable to crypto withdrawals, which complete during creation. A non-committable state returns `WITHDRAWAL_NOT_COMMITTABLE` (409); a missing provider payout returns `PROVIDER_ERROR` (422).
@@ -121,7 +121,7 @@ Refreshes an AirTM payout when a webhook may have been missed. It accepts no bod
 
 ```bash
 curl -X POST "http://localhost:4000/api/v1/withdrawals/wd_abc123/refresh?userId=usr_abc123" \
-  -H "Authorization: Bearer ohk_live_your_api_key"
+  -H "Authorization: Bearer gak_live_your_api_key"
 ```
 
 The response is the current `WithdrawalResponse`. Crypto withdrawals do not need provider refreshes.
@@ -130,4 +130,4 @@ The response is the current `WithdrawalResponse`. Crypto withdrawals do not need
 
 The withdrawal controller does not declare an idempotency header or an idempotency DTO field. Do not describe `Idempotency-Key` as a withdrawal-specific guarantee until the controller and guard expose one. Clients should use their own request deduplication and treat the returned withdrawal ID as the operation identifier.
 
-For provider-specific status and webhook events, see [Webhooks](/docs/api-reference/webhooks), [Balance Reference](/docs/sdk/balance), and the upstream [withdrawal endpoint source](https://github.com/OFFER-HUB/OFFER-HUB/blob/main/apps/api/src/modules/withdrawals/withdrawals.controller.ts).
+For provider-specific status and webhook events, see [Webhooks](/docs/api-reference/webhooks), [Balance Reference](/docs/sdk/balance), and the upstream [withdrawal endpoint source](https://github.com/GigAnchor/giganchor/blob/main/apps/api/src/modules/withdrawals/withdrawals.controller.ts).

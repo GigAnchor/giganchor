@@ -12,7 +12,7 @@ export function BlueprintHero() {
       eyebrowIcon={<Layers size={14} className="shrink-0 opacity-90" aria-hidden />}
       eyebrowText="Strategic roadmap"
       heading="The Blueprint of Global Orchestration"
-      paragraph="Mapping the technical evolution of the OFFER-HUB ecosystem, from core engine to global marketplace templates."
+      paragraph="Mapping the technical evolution of the GIGANCHOR ecosystem, from core engine to global marketplace templates."
       illustrationClassName="w-full max-w-3xl"
     >
       {/* Single raised surface — same vocabulary as Use Cases feature cards */}

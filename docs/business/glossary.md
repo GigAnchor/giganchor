@@ -1,6 +1,6 @@
 # Glossary
 
-This document defines key terminology used throughout the OFFER-HUB project.
+This document defines key terminology used throughout the GIGANCHOR project.
 
 ## Core Concepts
 
@@ -123,7 +123,7 @@ A formal challenge to an order's outcome. Either party can open a dispute, which
 ## Technical Terms
 
 ### Orchestrator
-The OFFER-HUB backend service that coordinates users, orders, balances, escrow, and provider integrations. It orchestrates state machines and calls external services but does not hold escrow funds.
+The GIGANCHOR backend service that coordinates users, orders, balances, escrow, and provider integrations. It orchestrates state machines and calls external services but does not hold escrow funds.
 
 ---
 
@@ -189,7 +189,7 @@ A Redis-based job queue used for asynchronous tasks like webhook processing, ret
 ## Blockchain Terms
 
 ### Stellar
-A blockchain network optimized for payments and asset transfers. OFFER-HUB uses Stellar for USDC transactions and escrow contracts.
+A blockchain network optimized for payments and asset transfers. GIGANCHOR uses Stellar for USDC transactions and escrow contracts.
 
 **Network:** Mainnet (production) or Testnet (development)
 
@@ -203,7 +203,7 @@ The Stellar HTTP API used to query blockchain data and submit transactions. The 
 ---
 
 ### USDC
-A stablecoin pegged 1:1 to the US Dollar. OFFER-HUB uses USDC on Stellar for crypto-native payments.
+A stablecoin pegged 1:1 to the US Dollar. GIGANCHOR uses USDC on Stellar for crypto-native payments.
 
 **Issuer:** Circle (on Stellar)
 
@@ -233,7 +233,7 @@ The private key for a Stellar account (e.g., `SXXXXXX...`). Used to sign transac
 ## Business Terms
 
 ### Marketplace
-A third-party platform that integrates OFFER-HUB to provide escrow-protected payments to its users. Each marketplace runs its own Orchestrator instance.
+A third-party platform that integrates GIGANCHOR to provide escrow-protected payments to its users. Each marketplace runs its own Orchestrator instance.
 
 **Examples:** Freelance platforms, e-commerce sites, service marketplaces
 
@@ -270,7 +270,7 @@ Balances are attributed to individual users, not pooled in a marketplace account
 | **UUID** | Universally Unique Identifier | Random unique ID |
 | **USDC** | USD Coin | Stablecoin on Stellar |
 | **API** | Application Programming Interface | REST endpoints |
-| **SDK** | Software Development Kit | Client library (`@offerhub/sdk`) |
+| **SDK** | Software Development Kit | Client library (`@giganchor/sdk`) |
 | **TTL** | Time To Live | Expiration time for cached data |
 | **AES** | Advanced Encryption Standard | Encryption algorithm |
 | **GCM** | Galois/Counter Mode | Encryption mode |

@@ -26,7 +26,7 @@ test("GET / reports the API is ready", async () => {
     const response = await fetch(`${baseUrl}/`);
     assert.equal(response.status, 200);
     assert.deepEqual(await response.json(), {
-      message: "Offer Hub API - Ready to build something new.",
+      message: "Giganchor API - Ready to build something new.",
     });
   });
 });

@@ -45,7 +45,7 @@ In crypto mode, a withdrawal is a direct on-chain Stellar payment from the user'
 
 ```bash
 POST /api/v1/withdrawals
-Authorization: Bearer ohk_live_...
+Authorization: Bearer gak_live_...
 Content-Type: application/json
 Idempotency-Key: <uuid-v4>
 
@@ -117,7 +117,7 @@ AirTM withdrawals are asynchronous two-step operations (create → commit).
 
 ```bash
 POST /api/v1/withdrawals
-Authorization: Bearer ohk_live_...
+Authorization: Bearer gak_live_...
 Content-Type: application/json
 Idempotency-Key: <uuid-v4>
 
@@ -149,7 +149,7 @@ The two-step design allows your backend to review before committing:
 
 ```bash
 POST /api/v1/withdrawals/wd_xyz789/commit
-Authorization: Bearer ohk_live_...
+Authorization: Bearer gak_live_...
 Content-Type: application/json
 ```
 
@@ -231,7 +231,7 @@ WITHDRAWAL_CANCELED (canceled)
 
 ```bash
 GET /api/v1/withdrawals/:withdrawalId
-Authorization: Bearer ohk_live_...
+Authorization: Bearer gak_live_...
 ```
 
 **Response:**

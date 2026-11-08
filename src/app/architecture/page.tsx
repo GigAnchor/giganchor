@@ -20,7 +20,7 @@ import { buildPageMetadata } from "@/lib/seo";
 export const metadata: Metadata = buildPageMetadata({
   title: "Technical Architecture",
   description:
-    "Complete technical architecture of OFFER-HUB: non-custodial escrow on Stellar, Stellar Wallets Kit integration, BlindPay off-ramp corridors across 7 LATAM markets. SCF Build Award #44.",
+    "Complete technical architecture of GIGANCHOR: non-custodial escrow on Stellar, Stellar Wallets Kit integration, BlindPay off-ramp corridors across 7 LATAM markets. SCF Build Award #44.",
   keywords: [
     "architecture",
     "stellar",
@@ -29,13 +29,13 @@ export const metadata: Metadata = buildPageMetadata({
     "TrustlessWork",
     "BlindPay",
     "SCF",
-    "OFFER-HUB",
+    "GIGANCHOR",
     "USDC",
     "LATAM",
   ],
   path: "/architecture",
   ogImageAlt:
-    "OFFER-HUB Technical Architecture — non-custodial escrow on Stellar",
+    "GIGANCHOR Technical Architecture — non-custodial escrow on Stellar",
 });
 
 export default function ArchitecturePage() {

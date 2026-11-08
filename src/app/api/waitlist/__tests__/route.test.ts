@@ -22,7 +22,7 @@ const insert = vi.fn();
 const from = vi.fn(() => ({ insert }));
 
 function request(body: unknown, raw = false) {
-  return new NextRequest("https://offer-hub.tech/api/waitlist", {
+  return new NextRequest("https://giganchor.tech/api/waitlist", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: raw ? (body as string) : JSON.stringify(body),

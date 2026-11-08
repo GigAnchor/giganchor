@@ -19,10 +19,10 @@ export const tabs: CodeTab[] = [
       "Payroll epoch creation and treasury escrow funding on the server side.",
     docHref: repoDocUrl("apiReferenceOverview"),
     docLabel: "API Reference",
-    code: `import { OfferHub } from "@offerhub/sdk";
+    code: `import { Giganchor } from "@giganchor/sdk";
 
 // Initialize SDK — The Orchestrator mirrors your DAO's backend state
-const oh = new OfferHub({ apiKey: process.env.OFFERHUB_API_KEY! });
+const oh = new Giganchor({ apiKey: process.env.GIGANCHOR_API_KEY! });
 
 // Payroll Epoch: initialize a payroll period for the DAO
 const payroll = await oh.payroll.create({
@@ -50,10 +50,10 @@ await oh.escrows.fund(payroll.id, {
       "Milestone verification and payroll distribution — triggers on-chain settlement.",
     docHref: repoDocUrl("sdkQuickStart"),
     docLabel: "SDK Guide",
-    code: `import { OfferHub } from "@offerhub/sdk";
+    code: `import { Giganchor } from "@giganchor/sdk";
 
 // Governance dashboard SDK use a public/restricted key
-const oh = new OfferHub({
+const oh = new Giganchor({
   apiKey: "oh_demo_xxxxxxxxxxxx",
 });
 

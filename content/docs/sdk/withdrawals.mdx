@@ -109,7 +109,7 @@ Returns a cursor-paginated list of withdrawals for a user.
 
 ```bash
 curl -X GET "http://localhost:4000/api/v1/withdrawals?userId=usr_abc123&limit=20" \
-  -H "Authorization: Bearer ohk_live_your_api_key"
+  -H "Authorization: Bearer gak_live_your_api_key"
 ```
 
 Possible errors:
@@ -124,7 +124,7 @@ Returns a single withdrawal. The REST endpoint also takes the acting user as `?u
 
 ```bash
 curl -X GET "http://localhost:4000/api/v1/withdrawals/wd_abc123?userId=usr_abc123" \
-  -H "Authorization: Bearer ohk_live_your_api_key"
+  -H "Authorization: Bearer gak_live_your_api_key"
 ```
 
 Possible errors:
@@ -156,7 +156,7 @@ Pulls the latest payout status from AirTM and updates the local record when the 
 
 ```bash
 curl -X POST "http://localhost:4000/api/v1/withdrawals/wd_abc123/refresh?userId=usr_abc123" \
-  -H "Authorization: Bearer ohk_live_your_api_key"
+  -H "Authorization: Bearer gak_live_your_api_key"
 ```
 
 The refresh is a no-op when the mapped AirTM status does not represent a valid transition from the current status (per the withdrawal state machine above). Withdrawals without an AirTM payout are returned unchanged.
@@ -174,17 +174,17 @@ All methods throw typed SDK errors. The most relevant for withdrawals:
 | `ValidationError` | 400 | `amount` not a 2-decimal string, missing `userId`/`destinationType`/`destinationRef` |
 | `NotFoundError` | 404 | User or withdrawal does not exist |
 | `InsufficientFundsError` | 422 | Available balance below the requested amount (`INSUFFICIENT_FUNDS`) |
-| `OfferHubError` | 502 | AirTM or payment provider failure (`PROVIDER_ERROR`) |
+| `GiganchorError` | 502 | AirTM or payment provider failure (`PROVIDER_ERROR`) |
 
 ```typescript
-import { InsufficientFundsError, NotFoundError } from '@offerhub/sdk';
+import { InsufficientFundsError, NotFoundError } from '@giganchor/sdk';
 
 try {
   await sdk.withdrawals.commit('wd_abc123');
 } catch (error) {
   if (error instanceof NotFoundError) {
     console.error('Withdrawal not found for this user');
-  } else if (error instanceof OfferHubError && error.code === 'WITHDRAWAL_NOT_COMMITTABLE') {
+  } else if (error instanceof GiganchorError && error.code === 'WITHDRAWAL_NOT_COMMITTABLE') {
     console.error('Withdrawal already committed or canceled');
   }
 }
@@ -192,7 +192,7 @@ try {
 
 ## Sources
 
-All behavior on this page was verified against the orchestrator repository (`OFFER-HUB/OFFER-HUB`), not inferred:
+All behavior on this page was verified against the orchestrator repository (`GigAnchor/giganchor`), not inferred:
 
 - SDK client: `packages/sdk/src/resources/withdrawals.ts`
 - Controller: `apps/api/src/modules/withdrawals/withdrawals.controller.ts`

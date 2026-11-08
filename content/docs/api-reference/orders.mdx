@@ -1,11 +1,11 @@
 ---
 title: Orders & Milestones Endpoints
-description: Per-endpoint reference for the OFFER-HUB order API — create, list, get, reserve, cancel, and milestone completion — with real DTO fields, valid state transitions, error codes, idempotency behavior, and cURL plus TypeScript SDK examples.
+description: Per-endpoint reference for the GIGANCHOR order API — create, list, get, reserve, cancel, and milestone completion — with real DTO fields, valid state transitions, error codes, idempotency behavior, and cURL plus TypeScript SDK examples.
 order: 44
 section: API Reference
 ---
 
-An OFFER-HUB order is the lifecycle root of a marketplace transaction: it records the buyer, the seller, the amount, and the work, and every money movement in the escrow flow is driven by its status. Five endpoints drive an order from creation up to the point where escrow takes over, and two more track delivery against the order's milestones.
+An GIGANCHOR order is the lifecycle root of a marketplace transaction: it records the buyer, the seller, the amount, and the work, and every money movement in the escrow flow is driven by its status. Five endpoints drive an order from creation up to the point where escrow takes over, and two more track delivery against the order's milestones.
 
 | Method | Path | Success status | Controller handler |
 | --- | --- | --- | --- |
@@ -308,7 +308,7 @@ A duplicate `clientOrderRef` violates the unique column (`docs/guides/orders.md`
       code: `# No money moves here: the order starts in ORDER_CREATED.
 # Milestone amounts must add up to the order amount.
 curl -X POST "http://localhost:4000/api/v1/orders" \\
-  -H "Authorization: Bearer ohk_live_xxxxxxxxxxxxxxxxxxxxxxxx" \\
+  -H "Authorization: Bearer gak_live_xxxxxxxxxxxxxxxxxxxxxxxx" \\
   -H "Content-Type: application/json" \\
   -H "X-Request-ID: req_1ab90c" \\
   -d '{
@@ -331,11 +331,11 @@ curl -X POST "http://localhost:4000/api/v1/orders" \\
       id: "sdk",
       label: "TypeScript SDK",
       language: "typescript",
-      code: `import { OfferHubSDK } from "@offerhub/sdk";
+      code: `import { GiganchorSDK } from "@giganchor/sdk";
 
-const sdk = new OfferHubSDK({
+const sdk = new GiganchorSDK({
   apiUrl: "https://your-orchestrator.example.com",
-  apiKey: "ohk_live_xxxxxxxxxxxxxxxxxxxxxxxx",
+  apiKey: "gak_live_xxxxxxxxxxxxxxxxxxxxxxxx",
 });
 
 // The SDK input type is documented with snake_case keys and a
@@ -461,21 +461,21 @@ This endpoint defines no endpoint-specific errors. Query values are parsed lenie
       language: "bash",
       code: `# First page of in-progress orders for one buyer
 curl "http://localhost:4000/api/v1/orders?status=IN_PROGRESS&buyer_id=usr_buyer123&limit=20" \\
-  -H "Authorization: Bearer ohk_live_xxxxxxxxxxxxxxxxxxxxxxxx"
+  -H "Authorization: Bearer gak_live_xxxxxxxxxxxxxxxxxxxxxxxx"
 
 # Next page: the cursor is data.nextCursor from the previous response
 curl "http://localhost:4000/api/v1/orders?status=IN_PROGRESS&buyer_id=usr_buyer123&limit=20&cursor=ord_abc123" \\
-  -H "Authorization: Bearer ohk_live_xxxxxxxxxxxxxxxxxxxxxxxx"`
+  -H "Authorization: Bearer gak_live_xxxxxxxxxxxxxxxxxxxxxxxx"`
     },
     {
       id: "sdk",
       label: "TypeScript SDK",
       language: "typescript",
-      code: `import { OfferHubSDK } from "@offerhub/sdk";
+      code: `import { GiganchorSDK } from "@giganchor/sdk";
 
-const sdk = new OfferHubSDK({
+const sdk = new GiganchorSDK({
   apiUrl: "https://your-orchestrator.example.com",
-  apiKey: "ohk_live_xxxxxxxxxxxxxxxxxxxxxxxx",
+  apiKey: "gak_live_xxxxxxxxxxxxxxxxxxxxxxxx",
 });
 
 const page = await sdk.orders.list({ status: "IN_PROGRESS", limit: 20 });
@@ -601,18 +601,18 @@ Fetches one order. `OrdersService.getOrder` loads the order by ID and includes i
       label: "cURL",
       language: "bash",
       code: `curl "http://localhost:4000/api/v1/orders/ord_xyz789" \\
-  -H "Authorization: Bearer ohk_live_xxxxxxxxxxxxxxxxxxxxxxxx" \\
+  -H "Authorization: Bearer gak_live_xxxxxxxxxxxxxxxxxxxxxxxx" \\
   -H "X-Request-ID: req_1ab91d"`
     },
     {
       id: "sdk",
       label: "TypeScript SDK",
       language: "typescript",
-      code: `import { OfferHubSDK } from "@offerhub/sdk";
+      code: `import { GiganchorSDK } from "@giganchor/sdk";
 
-const sdk = new OfferHubSDK({
+const sdk = new GiganchorSDK({
   apiUrl: "https://your-orchestrator.example.com",
-  apiKey: "ohk_live_xxxxxxxxxxxxxxxxxxxxxxxx",
+  apiKey: "gak_live_xxxxxxxxxxxxxxxxxxxxxxxx",
 });
 
 const result = await sdk.orders.get("ord_xyz789");
@@ -728,7 +728,7 @@ Moves `order.amount` from the buyer's **available** balance to **reserved**, so 
       language: "bash",
       code: `# No request body: the amount comes from the order.
 curl -X POST "http://localhost:4000/api/v1/orders/ord_xyz789/reserve" \\
-  -H "Authorization: Bearer ohk_live_xxxxxxxxxxxxxxxxxxxxxxxx" \\
+  -H "Authorization: Bearer gak_live_xxxxxxxxxxxxxxxxxxxxxxxx" \\
   -H "X-Request-ID: req_1ab92e"`
     },
     {
@@ -736,14 +736,14 @@ curl -X POST "http://localhost:4000/api/v1/orders/ord_xyz789/reserve" \\
       label: "TypeScript SDK",
       language: "typescript",
       code: `import {
-  OfferHubSDK,
+  GiganchorSDK,
   InsufficientFundsError,
   InvalidTransitionError,
-} from "@offerhub/sdk";
+} from "@giganchor/sdk";
 
-const sdk = new OfferHubSDK({
+const sdk = new GiganchorSDK({
   apiUrl: "https://your-orchestrator.example.com",
-  apiKey: "ohk_live_xxxxxxxxxxxxxxxxxxxxxxxx",
+  apiKey: "gak_live_xxxxxxxxxxxxxxxxxxxxxxxx",
 });
 
 try {
@@ -864,7 +864,7 @@ Optional — `@Body() dto?: CancelOrderDto` (`apps/api/src/modules/orders/dto/ca
       label: "cURL",
       language: "bash",
       code: `curl -X POST "http://localhost:4000/api/v1/orders/ord_xyz789/cancel" \\
-  -H "Authorization: Bearer ohk_live_xxxxxxxxxxxxxxxxxxxxxxxx" \\
+  -H "Authorization: Bearer gak_live_xxxxxxxxxxxxxxxxxxxxxxxx" \\
   -H "Content-Type: application/json" \\
   -H "X-Request-ID: req_1ab93f" \\
   -d '{
@@ -875,11 +875,11 @@ Optional — `@Body() dto?: CancelOrderDto` (`apps/api/src/modules/orders/dto/ca
       id: "sdk",
       label: "TypeScript SDK",
       language: "typescript",
-      code: `import { OfferHubSDK } from "@offerhub/sdk";
+      code: `import { GiganchorSDK } from "@giganchor/sdk";
 
-const sdk = new OfferHubSDK({
+const sdk = new GiganchorSDK({
   apiUrl: "https://your-orchestrator.example.com",
-  apiKey: "ohk_live_xxxxxxxxxxxxxxxxxxxxxxxx",
+  apiKey: "gak_live_xxxxxxxxxxxxxxxxxxxxxxxx",
 });
 
 // reason is optional: sdk.orders.cancel(orderId, data?)
@@ -970,17 +970,17 @@ Lists the milestones of one order, ordered by creation time. Milestones belong t
       label: "cURL",
       language: "bash",
       code: `curl "http://localhost:4000/api/v1/orders/ord_xyz789/milestones" \\
-  -H "Authorization: Bearer ohk_live_xxxxxxxxxxxxxxxxxxxxxxxx"`
+  -H "Authorization: Bearer gak_live_xxxxxxxxxxxxxxxxxxxxxxxx"`
     },
     {
       id: "sdk",
       label: "TypeScript SDK",
       language: "typescript",
-      code: `import { OfferHubSDK } from "@offerhub/sdk";
+      code: `import { GiganchorSDK } from "@giganchor/sdk";
 
-const sdk = new OfferHubSDK({
+const sdk = new GiganchorSDK({
   apiUrl: "https://your-orchestrator.example.com",
-  apiKey: "ohk_live_xxxxxxxxxxxxxxxxxxxxxxxx",
+  apiKey: "gak_live_xxxxxxxxxxxxxxxxxxxxxxxx",
 });
 
 const result = await sdk.orders.getMilestones("ord_xyz789");
@@ -1095,18 +1095,18 @@ Marks one milestone `COMPLETED`. This is a bookkeeping write on the order's mile
       language: "bash",
       code: `# No request body. The order must be IN_PROGRESS.
 curl -X POST "http://localhost:4000/api/v1/orders/ord_xyz789/milestones/design/complete" \\
-  -H "Authorization: Bearer ohk_live_xxxxxxxxxxxxxxxxxxxxxxxx" \\
+  -H "Authorization: Bearer gak_live_xxxxxxxxxxxxxxxxxxxxxxxx" \\
   -H "X-Request-ID: req_1ab951"`
     },
     {
       id: "sdk",
       label: "TypeScript SDK",
       language: "typescript",
-      code: `import { OfferHubSDK, InvalidTransitionError } from "@offerhub/sdk";
+      code: `import { GiganchorSDK, InvalidTransitionError } from "@giganchor/sdk";
 
-const sdk = new OfferHubSDK({
+const sdk = new GiganchorSDK({
   apiUrl: "https://your-orchestrator.example.com",
-  apiKey: "ohk_live_xxxxxxxxxxxxxxxxxxxxxxxx",
+  apiKey: "gak_live_xxxxxxxxxxxxxxxxxxxxxxxx",
 });
 
 // sdk.orders.completeMilestone(orderId, milestoneRef)

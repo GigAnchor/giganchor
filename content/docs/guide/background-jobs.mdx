@@ -1,11 +1,11 @@
 ---
 title: Background Jobs and Reconciliation
-description: BullMQ queues, retry behaviour, reconciliation schedules, and operational checks in the OFFER-HUB Orchestrator.
+description: BullMQ queues, retry behaviour, reconciliation schedules, and operational checks in the GIGANCHOR Orchestrator.
 order: 29
 section: Guides
 ---
 
-The API process runs the Orchestrator's BullMQ processors. Redis stores the queue state; PostgreSQL remains the source of truth for balances, payouts, escrows, and audit records. The queue names and job types below are taken from `apps/api/src/modules/queues/queue.constants.ts`, `queue.module.ts`, and `queue.service.ts` in the [OFFER-HUB Orchestrator](https://github.com/OFFER-HUB/OFFER-HUB).
+The API process runs the Orchestrator's BullMQ processors. Redis stores the queue state; PostgreSQL remains the source of truth for balances, payouts, escrows, and audit records. The queue names and job types below are taken from `apps/api/src/modules/queues/queue.constants.ts`, `queue.module.ts`, and `queue.service.ts` in the [GIGANCHOR Orchestrator](https://github.com/GigAnchor/giganchor).
 
 ## Queues
 

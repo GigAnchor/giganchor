@@ -20,7 +20,7 @@ const docSections = [
   {
     icon: <Book />,
     title: "Getting Started",
-    description: "Learn what OFFER-HUB is, how to install it, and make your first API call.",
+    description: "Learn what GIGANCHOR is, how to install it, and make your first API call.",
     link: "/docs/getting-started",
     count: "3 articles",
     highlight: false,
@@ -56,7 +56,7 @@ const docSections = [
   {
     icon: <Code />,
     title: "TypeScript SDK",
-    description: "Install and use the official SDK to integrate OFFER-HUB into your app.",
+    description: "Install and use the official SDK to integrate GIGANCHOR into your app.",
     link: "/docs/sdk/quick-start",
     count: "1 article",
     highlight: false,
@@ -65,7 +65,7 @@ const docSections = [
   {
     icon: <LifeBuoy />,
     title: "Self-Hosting",
-    description: "Deploy OFFER-HUB on your own infrastructure with Docker and configure it.",
+    description: "Deploy GIGANCHOR on your own infrastructure with Docker and configure it.",
     link: "/docs/guide/self-hosting",
     count: "2 articles",
     highlight: false,
@@ -155,11 +155,11 @@ export default function DocsPage() {
                 willChange: "background-image",
               }}
             >
-              OFFER HUB
+              GIGANCHOR
             </h1>
 
             <p className="text-base md:text-lg mb-10 max-w-xl mx-auto leading-relaxed font-medium animate-fadeInUp text-content-secondary" style={{ animationDelay: "200ms" }}>
-              Explore the core architecture, integration guides, and <span className="text-content-primary font-bold">standard practices</span> for the Offer Hub ecosystem.
+              Explore the core architecture, integration guides, and <span className="text-content-primary font-bold">standard practices</span> for the Giganchor ecosystem.
             </p>
 
             <div className="max-w-xl mx-auto animate-fadeInUp" style={{ animationDelay: "400ms" }}>

@@ -1,6 +1,6 @@
 ---
 title: Disputes SDK Reference
-description: Method-by-method reference for sdk.disputes — opening, listing, assigning, and resolving disputes on OFFER-HUB orders.
+description: Method-by-method reference for sdk.disputes — opening, listing, assigning, and resolving disputes on GIGANCHOR orders.
 order: 38
 section: SDK
 ---
@@ -189,7 +189,7 @@ All methods throw typed SDK errors. The most relevant for disputes:
 | `InvalidTransitionError` | 409 | Dispute/order in a state that does not allow the operation |
 
 ```typescript
-import { InvalidTransitionError, NotFoundError } from '@offerhub/sdk';
+import { InvalidTransitionError, NotFoundError } from '@giganchor/sdk';
 
 try {
   await sdk.disputes.resolve('dsp_abc123', { decision: 'FULL_RELEASE' });
@@ -204,7 +204,7 @@ try {
 
 ## Sources
 
-All behavior on this page was verified against the orchestrator repository (`OFFER-HUB/OFFER-HUB`), not inferred:
+All behavior on this page was verified against the orchestrator repository (`GigAnchor/giganchor`), not inferred:
 
 - SDK client: `packages/sdk/src/resources/disputes.ts`
 - Controllers: `apps/api/src/modules/disputes/disputes.controller.ts`, `apps/api/src/modules/resolution/resolution.controller.ts`

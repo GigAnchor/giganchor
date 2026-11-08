@@ -11,7 +11,7 @@ export const heroData: UseCaseHeroProps = {
   subheadline:
     "A deep dive into escrow-secured e-commerce: automatic delivery escrow, buyer-protection windows, dispute handling, and instant seller payouts on Stellar — without custodial risk.",
   docsUrl:
-    "https://github.com/OFFER-HUB/offer-hub-monorepo/blob/main/docs/business/use-cases.md#use-case-2-e-commerce-marketplace",
+    "https://github.com/GigAnchor/giganchor/blob/main/docs/business/use-cases.md#use-case-2-e-commerce-marketplace",
   footerIcon: ShoppingCart,
   footerLabel: "Trustless commerce infrastructure",
   stats: [
@@ -66,7 +66,7 @@ export const stellarImpactCardsData: DetailedMetricCard[] = [
     id: "chargeback",
     label: "Chargeback Risk",
     icon: ShieldCheck,
-    offerHub: {
+    giganchor: {
       value: "0",
       unit: "%",
       sublabel: "No chargebacks ever",
@@ -86,7 +86,7 @@ export const stellarImpactCardsData: DetailedMetricCard[] = [
     id: "settlement",
     label: "Seller Settlement",
     icon: Zap,
-    offerHub: {
+    giganchor: {
       value: "3.2",
       unit: "sec",
       sublabel: "Stellar average finality",
@@ -106,7 +106,7 @@ export const stellarImpactCardsData: DetailedMetricCard[] = [
     id: "buyer-protection",
     label: "Buyer Protection",
     icon: PackageCheck,
-    offerHub: {
+    giganchor: {
       value: "100",
       unit: "%",
       sublabel: "Escrow-backed guarantee",
@@ -128,7 +128,7 @@ export const stellarImpactSummary = {
   icon: ShieldCheck,
   text: (
     <>
-      OFFER-HUB eliminates chargebacks,{" "}
+      GIGANCHOR eliminates chargebacks,{" "}
       <span className="text-theme-primary">100% buyer protection</span>, and
       settles sellers{" "}
       <span className="text-theme-primary">50,000× faster</span> than

@@ -7,7 +7,7 @@ describe("docs/guide/scaffolder", () => {
   it("is a real doc page resolvable through the docs pipeline", () => {
     const doc = getDocBySlug("guide/scaffolder");
     expect(doc).not.toBeNull();
-    expect(doc!.frontmatter.title).toBe("Scaffolder (create-offer-hub-orchestrator)");
+    expect(doc!.frontmatter.title).toBe("Scaffolder (create-giganchor-orchestrator)");
     expect(doc!.frontmatter.section).toBe("Guides");
     expect(doc!.frontmatter.order).toBe(27);
     expect(doc!.content.length).toBeGreaterThan(500);
@@ -20,7 +20,7 @@ describe("docs/guide/scaffolder", () => {
     expect(guides!.links.map((l) => l.slug)).toContain("guide/scaffolder");
   });
 
-  it("documents every interactive prompt from packages/create-offerhub", () => {
+  it("documents every interactive prompt from packages/create-giganchor", () => {
     const doc = getDocBySlug("guide/scaffolder")!;
     const expectedPrompts = [
       "API Port",
@@ -45,7 +45,7 @@ describe("docs/guide/scaffolder", () => {
 
   it("documents automated secret generation for master key and wallet encryption key", () => {
     const doc = getDocBySlug("guide/scaffolder")!;
-    expect(doc.content).toContain("OFFERHUB_MASTER_KEY");
+    expect(doc.content).toContain("GIGANCHOR_MASTER_KEY");
     expect(doc.content).toContain("WALLET_ENCRYPTION_KEY");
     expect(doc.content).toContain("AES-256-GCM");
   });
@@ -65,7 +65,7 @@ describe("docs/guide/scaffolder", () => {
     expect(doc.content).toContain("prisma generate");
     expect(doc.content).toContain("prisma migrate deploy");
     expect(doc.content).toContain("npm run bootstrap");
-    expect(doc.content).toContain("offerhub-platform");
+    expect(doc.content).toContain("giganchor-platform");
   });
 
   it("includes a valid mermaid diagram visualizing the scaffolding lifecycle", () => {
@@ -74,7 +74,7 @@ describe("docs/guide/scaffolder", () => {
     expect(match).not.toBeNull();
     const diagram = match![1];
     expect(diagram).toContain("flowchart");
-    expect(diagram).toContain("npx create-offer-hub-orchestrator");
+    expect(diagram).toContain("npx create-giganchor-orchestrator");
     expect(diagram).toContain("npm run bootstrap");
   });
 

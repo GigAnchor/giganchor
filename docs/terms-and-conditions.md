@@ -1,4 +1,4 @@
-# Terms and Conditions — OFFER-HUB
+# Terms and Conditions — GIGANCHOR
 
 **Effective Date:** March 28, 2026
 **Last Updated:** April 29, 2026
@@ -7,9 +7,9 @@
 
 ## 1. Acceptance of Terms
 
-By accessing or using the OFFER-HUB platform, website, or any related services (collectively, the "Platform"), you ("User", "you", "your") agree to be bound by these Terms and Conditions ("Terms"). If you do not agree to these Terms in their entirety, you must immediately cease using the Platform.
+By accessing or using the GIGANCHOR platform, website, or any related services (collectively, the "Platform"), you ("User", "you", "your") agree to be bound by these Terms and Conditions ("Terms"). If you do not agree to these Terms in their entirety, you must immediately cease using the Platform.
 
-These Terms constitute a legally binding agreement between you and OFFER-HUB ("Company", "we", "us", "our"). By registering an account, browsing the Platform, or engaging in any transaction, you confirm that:
+These Terms constitute a legally binding agreement between you and GIGANCHOR ("Company", "we", "us", "our"). By registering an account, browsing the Platform, or engaging in any transaction, you confirm that:
 
 - You are at least 18 years of age or the age of legal majority in your jurisdiction.
 - You have the legal capacity to enter into binding contracts.
@@ -19,7 +19,7 @@ These Terms constitute a legally binding agreement between you and OFFER-HUB ("C
 
 ## 2. Description of Service
 
-OFFER-HUB is a decentralized-friendly marketplace platform that connects **Clients** (individuals or organizations seeking services) with **Freelancers** (independent professionals offering services). The Platform provides:
+GIGANCHOR is a decentralized-friendly marketplace platform that connects **Clients** (individuals or organizations seeking services) with **Freelancers** (independent professionals offering services). The Platform provides:
 
 - A discovery layer for posting and finding service opportunities.
 - Escrow-based payment protection powered by the Stellar blockchain network through Trustless Work.
@@ -27,7 +27,7 @@ OFFER-HUB is a decentralized-friendly marketplace platform that connects **Clien
 - Messaging, contract management, and project tracking tools.
 - Analytics and reporting for marketplace activity.
 
-OFFER-HUB acts solely as an intermediary technology platform. We do **not** employ, supervise, direct, or control freelancers or the work they perform. We do not act as an employer, staffing agency, or labor broker.
+GIGANCHOR acts solely as an intermediary technology platform. We do **not** employ, supervise, direct, or control freelancers or the work they perform. We do not act as an employer, staffing agency, or labor broker.
 
 ---
 
@@ -40,11 +40,11 @@ To access most features of the Platform, you must create an account. You agree t
 - Provide accurate, complete, and current information during registration.
 - Keep your account information up to date at all times.
 - Maintain the security and confidentiality of your credentials (password, wallet keys, or third-party authentication tokens).
-- Immediately notify us at **support@offerhub.io** of any unauthorized access or suspected breach of your account.
+- Immediately notify us at **support@giganchor.tech** of any unauthorized access or suspected breach of your account.
 
 ### 3.2 Account Responsibility
 
-You are solely responsible for all activity that occurs under your account. OFFER-HUB shall not be liable for any loss or damage arising from your failure to protect your account credentials.
+You are solely responsible for all activity that occurs under your account. GIGANCHOR shall not be liable for any loss or damage arising from your failure to protect your account credentials.
 
 ### 3.3 One Account Per User
 
@@ -87,7 +87,7 @@ You agree not to use the Platform for any of the following:
 
 - **Fraud and Misrepresentation:** Providing false information, impersonating others, or misrepresenting qualifications or deliverables.
 - **Money Laundering:** Using the Platform to process funds derived from illegal activity or to obscure the origin of funds.
-- **Harassment and Abuse:** Engaging in threatening, harassing, discriminatory, or abusive behavior toward any user or OFFER-HUB staff.
+- **Harassment and Abuse:** Engaging in threatening, harassing, discriminatory, or abusive behavior toward any user or GIGANCHOR staff.
 - **Unauthorized Access:** Attempting to access systems, data, or accounts you are not authorized to access.
 - **Malware and Exploits:** Uploading or transmitting malicious code, viruses, or scripts designed to compromise the Platform or other users' systems.
 - **Spam and Unsolicited Communications:** Sending unsolicited messages, promotional content, or communications to other users outside the intended platform flows.
@@ -104,11 +104,11 @@ Violation of these prohibitions may result in immediate account termination, wit
 
 ### 6.1 Escrow Protection
 
-OFFER-HUB integrates with **Trustless Work** smart contracts on the **Stellar blockchain** to provide non-custodial escrow for transactions. When a Client engages a Freelancer:
+GIGANCHOR integrates with **Trustless Work** smart contracts on the **Stellar blockchain** to provide non-custodial escrow for transactions. When a Client engages a Freelancer:
 
 - The Client deposits funds into a smart contract escrow prior to work commencement.
 - Funds are released to the Freelancer upon Client approval of deliverables.
-- OFFER-HUB does not directly hold, control, or take custody of escrowed funds. The smart contract governs fund release.
+- GIGANCHOR does not directly hold, control, or take custody of escrowed funds. The smart contract governs fund release.
 
 ### 6.1.1 Auto-Release Conditions
 
@@ -122,30 +122,30 @@ Users should carefully review the specific timeout periods and auto-release term
 
 ### 6.2 Platform Fees
 
-OFFER-HUB charges service fees for facilitating transactions. Current fee structures are published on the Platform and may be updated with notice. Fees are non-refundable except where required by applicable law or as specified in a dispute resolution outcome.
+GIGANCHOR charges service fees for facilitating transactions. Current fee structures are published on the Platform and may be updated with notice. Fees are non-refundable except where required by applicable law or as specified in a dispute resolution outcome.
 
 ### 6.3 Currency and Conversion
 
-Transactions on OFFER-HUB may involve digital assets and fiat currencies. Conversion rates and associated costs are determined by integrated service providers (e.g., Airtm). OFFER-HUB is not responsible for exchange rate fluctuations or third-party conversion fees.
+Transactions on GIGANCHOR may involve digital assets and fiat currencies. Conversion rates and associated costs are determined by integrated service providers (e.g., Airtm). GIGANCHOR is not responsible for exchange rate fluctuations or third-party conversion fees.
 
 ### 6.4 Taxes
 
-You are solely responsible for determining and fulfilling your tax obligations arising from transactions conducted through the Platform. OFFER-HUB does not withhold taxes on your behalf unless required by applicable law. We may report transaction data to tax authorities as required by law.
+You are solely responsible for determining and fulfilling your tax obligations arising from transactions conducted through the Platform. GIGANCHOR does not withhold taxes on your behalf unless required by applicable law. We may report transaction data to tax authorities as required by law.
 
 ### 6.5 Refunds and Disputes
 
-Refund eligibility is determined by the escrow contract terms and the Platform's dispute resolution process. OFFER-HUB does not guarantee refunds for completed transactions outside of a formally adjudicated dispute.
+Refund eligibility is determined by the escrow contract terms and the Platform's dispute resolution process. GIGANCHOR does not guarantee refunds for completed transactions outside of a formally adjudicated dispute.
 
 ---
 
 ## 7. Blockchain and Smart Contract Disclaimer
 
-The OFFER-HUB Platform utilizes blockchain technology and smart contracts for certain payment functions. You acknowledge and agree that:
+The GIGANCHOR Platform utilizes blockchain technology and smart contracts for certain payment functions. You acknowledge and agree that:
 
-- **Irreversibility:** Blockchain transactions are generally irreversible once confirmed. OFFER-HUB cannot reverse or cancel confirmed on-chain transactions.
-- **Smart Contract Risk:** Smart contracts may contain bugs or vulnerabilities despite security audits. OFFER-HUB is not liable for losses arising from smart contract exploits beyond our reasonable control.
-- **Network Risk:** Blockchain network congestion, forks, or outages may delay or affect transactions. OFFER-HUB is not responsible for delays caused by network-level events.
-- **Wallet Responsibility:** You are solely responsible for securing your blockchain wallet and private keys. Loss of keys may result in permanent loss of funds. OFFER-HUB cannot recover lost private keys.
+- **Irreversibility:** Blockchain transactions are generally irreversible once confirmed. GIGANCHOR cannot reverse or cancel confirmed on-chain transactions.
+- **Smart Contract Risk:** Smart contracts may contain bugs or vulnerabilities despite security audits. GIGANCHOR is not liable for losses arising from smart contract exploits beyond our reasonable control.
+- **Network Risk:** Blockchain network congestion, forks, or outages may delay or affect transactions. GIGANCHOR is not responsible for delays caused by network-level events.
+- **Wallet Responsibility:** You are solely responsible for securing your blockchain wallet and private keys. Loss of keys may result in permanent loss of funds. GIGANCHOR cannot recover lost private keys.
 - **Regulatory Risk:** The regulatory status of digital assets varies by jurisdiction and may change. You are responsible for complying with applicable laws in your jurisdiction regarding digital asset use.
 
 ---
@@ -154,11 +154,11 @@ The OFFER-HUB Platform utilizes blockchain technology and smart contracts for ce
 
 ### 8.1 Platform Ownership
 
-The OFFER-HUB Platform, including but not limited to its software, design, branding, algorithms, databases, and documentation, is owned by OFFER-HUB or its licensors and is protected by copyright, trademark, patent, and other applicable intellectual property laws.
+The GIGANCHOR Platform, including but not limited to its software, design, branding, algorithms, databases, and documentation, is owned by GIGANCHOR or its licensors and is protected by copyright, trademark, patent, and other applicable intellectual property laws.
 
 ### 8.2 User Content License
 
-By submitting, uploading, or publishing any content on the Platform (including profiles, project descriptions, messages, and deliverables), you grant OFFER-HUB a non-exclusive, worldwide, royalty-free, sublicensable license to host, store, display, reproduce, and transmit such content solely for the purpose of operating and improving the Platform.
+By submitting, uploading, or publishing any content on the Platform (including profiles, project descriptions, messages, and deliverables), you grant GIGANCHOR a non-exclusive, worldwide, royalty-free, sublicensable license to host, store, display, reproduce, and transmit such content solely for the purpose of operating and improving the Platform.
 
 ### 8.3 Deliverable Ownership
 
@@ -169,7 +169,7 @@ Unless otherwise agreed in writing between Client and Freelancer:
 
 ### 8.4 DMCA / Copyright Infringement
 
-If you believe that content on the Platform infringes your copyright, please notify us at **legal@offerhub.io** with the following information:
+If you believe that content on the Platform infringes your copyright, please notify us at **legal@giganchor.tech** with the following information:
 
 - A description of the copyrighted work.
 - The URL or location of the allegedly infringing content.
@@ -181,7 +181,7 @@ If you believe that content on the Platform infringes your copyright, please not
 
 ## 9. Privacy and Data Protection
 
-Your use of the Platform is also governed by our [Privacy Policy](https://offer-hub.tech/privacy), which is incorporated into these Terms by reference. By using the Platform, you consent to our data practices as described in the Privacy Policy.
+Your use of the Platform is also governed by our [Privacy Policy](https://giganchor.tech/privacy), which is incorporated into these Terms by reference. By using the Platform, you consent to our data practices as described in the Privacy Policy.
 
 We collect and process personal data to operate the Platform, improve services, prevent fraud, and comply with legal obligations. We do not sell personal data to third parties.
 
@@ -195,7 +195,7 @@ In compliance with GDPR Articles 17 (right to erasure) and 20 (data portability)
 - **EXPORT — `POST /api/privacy/export`**
   Accepts a JSON body `{ "email": "user@example.com" }`. Returns a JSON object containing all stored personal data for that email address. Returns `200` with `{ "data": { ... } }` on success, `404` if no record exists, or the appropriate error code otherwise.
 
-Both endpoints validate the email format and respond with structured error messages. They are also accessible via the self-service form at [/privacy](https://offer-hub.tech/privacy) under the "Your Data Rights" section.
+Both endpoints validate the email format and respond with structured error messages. They are also accessible via the self-service form at [/privacy](https://giganchor.tech/privacy) under the "Your Data Rights" section.
 
 ---
 
@@ -207,7 +207,7 @@ During the course of a project, Clients and Freelancers may exchange confidentia
 - Use confidential information only for the purpose of completing the relevant project.
 - This obligation survives termination of any individual engagement or these Terms.
 
-OFFER-HUB is not a party to confidentiality obligations between Clients and Freelancers. We recommend formalizing confidentiality terms in your project contracts.
+GIGANCHOR is not a party to confidentiality obligations between Clients and Freelancers. We recommend formalizing confidentiality terms in your project contracts.
 
 ---
 
@@ -219,20 +219,20 @@ THE PLATFORM IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KI
 
 ### 11.2 No Liability for User Conduct
 
-OFFER-HUB is not responsible for the conduct, actions, or omissions of any user on or off the Platform. We do not vet, verify, or endorse any Freelancer or Client beyond the information provided during registration.
+GIGANCHOR is not responsible for the conduct, actions, or omissions of any user on or off the Platform. We do not vet, verify, or endorse any Freelancer or Client beyond the information provided during registration.
 
 ### 11.3 Limitation of Liability
 
-TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, OFFER-HUB'S TOTAL LIABILITY TO YOU FOR ANY CLAIM ARISING OUT OF OR RELATED TO THESE TERMS OR YOUR USE OF THE PLATFORM SHALL NOT EXCEED THE GREATER OF:
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, GIGANCHOR'S TOTAL LIABILITY TO YOU FOR ANY CLAIM ARISING OUT OF OR RELATED TO THESE TERMS OR YOUR USE OF THE PLATFORM SHALL NOT EXCEED THE GREATER OF:
 
-(a) THE TOTAL FEES PAID BY YOU TO OFFER-HUB IN THE THREE (3) MONTHS PRECEDING THE CLAIM; OR
+(a) THE TOTAL FEES PAID BY YOU TO GIGANCHOR IN THE THREE (3) MONTHS PRECEDING THE CLAIM; OR
 (b) ONE HUNDRED US DOLLARS (USD $100).
 
-IN NO EVENT SHALL OFFER-HUB BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING LOSS OF PROFITS, DATA, GOODWILL, OR BUSINESS OPPORTUNITIES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+IN NO EVENT SHALL GIGANCHOR BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING LOSS OF PROFITS, DATA, GOODWILL, OR BUSINESS OPPORTUNITIES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 
 ### 11.4 Indemnification
 
-You agree to indemnify, defend, and hold harmless OFFER-HUB and its officers, directors, employees, and agents from and against any claims, liabilities, damages, losses, and expenses (including reasonable attorneys' fees) arising out of or in any way connected with:
+You agree to indemnify, defend, and hold harmless GIGANCHOR and its officers, directors, employees, and agents from and against any claims, liabilities, damages, losses, and expenses (including reasonable attorneys' fees) arising out of or in any way connected with:
 
 - Your use of or inability to use the Platform.
 - Your violation of these Terms.
@@ -245,7 +245,7 @@ You agree to indemnify, defend, and hold harmless OFFER-HUB and its officers, di
 
 ### 12.1 Platform Disputes
 
-For disputes between Clients and Freelancers regarding deliverables, payments, or project conduct, OFFER-HUB may offer a mediation process. Both parties agree to participate in good faith before escalating to external legal remedies.
+For disputes between Clients and Freelancers regarding deliverables, payments, or project conduct, GIGANCHOR may offer a mediation process. Both parties agree to participate in good faith before escalating to external legal remedies.
 
 ### 12.2 Arbitration
 
@@ -259,7 +259,7 @@ These Terms are governed by and construed in accordance with the laws of the Sta
 
 - GDPR applies to EU users and their rights under Articles 15–22 are preserved.
 - EU users may lodge complaints with their national Data Protection Authority.
-- The platform's Data Protection contact is legal@offerhub.io.
+- The platform's Data Protection contact is legal@giganchor.tech.
 - EU users have the right to withdraw consent for data processing at any time.
 
 ### 12.5 Jurisdiction
@@ -270,7 +270,7 @@ For any disputes not subject to arbitration, you consent to the exclusive jurisd
 
 ## 13. Service Availability and Modifications
 
-OFFER-HUB reserves the right to:
+GIGANCHOR reserves the right to:
 
 - Modify, suspend, or discontinue any feature or the entire Platform at any time, with or without notice.
 - Perform scheduled or emergency maintenance that may result in temporary unavailability.
@@ -290,13 +290,13 @@ The Platform integrates with third-party services to provide essential functiona
 - **Airtm:** For fiat-to-crypto payment processing, currency conversion, and balance management.
 - **Trustless Work / Stellar:** For executing and settling blockchain-based escrow transactions on the Stellar network.
 
-Your use of these third-party services is subject to their respective terms of service and privacy policies. OFFER-HUB is not responsible for the practices, data handling, or content of any third-party service. For a detailed list of data shared and purposes, please refer to our [Privacy Policy](https://offer-hub.tech/privacy).
+Your use of these third-party services is subject to their respective terms of service and privacy policies. GIGANCHOR is not responsible for the practices, data handling, or content of any third-party service. For a detailed list of data shared and purposes, please refer to our [Privacy Policy](https://giganchor.tech/privacy).
 
 ---
 
 ## 15. Open Source and Developer Contributions
 
-The OFFER-HUB platform is an open-source project. Contributions to the codebase are governed by the project's Contributing Guidelines available in the repository. By contributing code, you agree that your contributions may be incorporated into the Platform and licensed under the project's open-source license.
+The GIGANCHOR platform is an open-source project. Contributions to the codebase are governed by the project's Contributing Guidelines available in the repository. By contributing code, you agree that your contributions may be incorporated into the Platform and licensed under the project's open-source license.
 
 ---
 
@@ -319,7 +319,7 @@ If any provision of these Terms is held to be invalid, illegal, or unenforceable
 
 ## 18. Entire Agreement
 
-These Terms, together with the Privacy Policy and any additional agreements you enter into on the Platform, constitute the entire agreement between you and OFFER-HUB regarding your use of the Platform, and supersede all prior communications, proposals, or representations.
+These Terms, together with the Privacy Policy and any additional agreements you enter into on the Platform, constitute the entire agreement between you and GIGANCHOR regarding your use of the Platform, and supersede all prior communications, proposals, or representations.
 
 ---
 
@@ -327,10 +327,10 @@ These Terms, together with the Privacy Policy and any additional agreements you 
 
 For questions, concerns, or legal notices regarding these Terms, please contact us:
 
-- **General Support:** support@offerhub.io
-- **Legal & Compliance:** legal@offerhub.io
-- **Website:** https://offer-hub.tech
+- **General Support:** support@giganchor.tech
+- **Legal & Compliance:** legal@giganchor.tech
+- **Website:** https://giganchor.tech
 
 ---
 
-*This document was drafted for the OFFER-HUB open-source project and should be reviewed by a licensed attorney before publication in a production environment. It is intended as a comprehensive starting point covering the platform's key legal exposure areas.*
+*This document was drafted for the GIGANCHOR open-source project and should be reviewed by a licensed attorney before publication in a production environment. It is intended as a comprehensive starting point covering the platform's key legal exposure areas.*

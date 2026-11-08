@@ -13,9 +13,9 @@ export function SystemArchitectureDiagram() {
       infoClassName="rounded-2xl bg-bg-base shadow-neu-sunken-subtle px-5 py-4 mb-6 flex gap-3 items-start"
       eyebrowClassName="inline-block rounded-full bg-bg-base shadow-neu-sunken px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-theme-primary mb-6"
       eyebrow="Architecture Overview"
-      heading="OfferHub System Architecture"
-      description="A comprehensive view of the OfferHub platform, showing the flow between our modern frontend, NestJS orchestrator, and external integrations."
-      infoText="This flowchart maps every layer of the OfferHub stack — from the browser and Stellar Wallets Kit on the client side, through the NestJS orchestration API and PostgreSQL/Redis data layer, down to Soroban smart contracts on Stellar and the BlindPay off-ramp provider. Arrows show the protocol or method used at each boundary. Teal nodes are the two SCF Integration Track building blocks."
+      heading="Giganchor System Architecture"
+      description="A comprehensive view of the Giganchor platform, showing the flow between our modern frontend, NestJS orchestrator, and external integrations."
+      infoText="This flowchart maps every layer of the Giganchor stack — from the browser and Stellar Wallets Kit on the client side, through the NestJS orchestration API and PostgreSQL/Redis data layer, down to Soroban smart contracts on Stellar and the BlindPay off-ramp provider. Arrows show the protocol or method used at each boundary. Teal nodes are the two SCF Integration Track building blocks."
     >
       <ZoomableDiagram chart={SYSTEM_ARCHITECTURE_CHART} title="System Architecture" className="w-full min-w-[600px]" />
 

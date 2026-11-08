@@ -1,6 +1,6 @@
 # API Contract Standard
 
-This document defines the mandatory API response structure for all OFFER-HUB endpoints. Consistency in API responses ensures predictable client behavior and simplified error handling.
+This document defines the mandatory API response structure for all GIGANCHOR endpoints. Consistency in API responses ensures predictable client behavior and simplified error handling.
 
 ## Core Principle
 

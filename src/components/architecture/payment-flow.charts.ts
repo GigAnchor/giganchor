@@ -3,7 +3,7 @@ export const PAYMENT_SEQUENCE_CHART = `
 sequenceDiagram
     participant Client as Client (buyer)
     participant SWK as SWK
-    participant NestJS as NestJS (OfferHub API)
+    participant NestJS as NestJS (Giganchor API)
     participant TW as TrustlessWork (escrow)
     participant Offramp as BlindPay
 
