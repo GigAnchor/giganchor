@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { LucideIcon } from "lucide-react";
 import {
   Bot,
@@ -74,6 +74,73 @@ type DocPageMenuItem = ButtonMenuItem | LinkMenuItem;
 
 type CopiedItem = "page" | "claude" | "codex" | null;
 
+/**
+ * One entry of the page-actions menu. Kept as its own component so the list
+ * markup does not share a render scope with the handlers that touch refs.
+ */
+function PageActionMenuList({
+  items,
+  onExternalLinkClick,
+}: {
+  items: DocPageMenuItem[];
+  onExternalLinkClick: () => void;
+}) {
+  return (
+    <>
+      {items.map((item, index) => (
+        <PageActionMenuItem
+          key={item.id}
+          item={item}
+          showDivider={index > 0 && items[index - 1].group !== item.group}
+          onExternalLinkClick={onExternalLinkClick}
+        />
+      ))}
+    </>
+  );
+}
+
+function PageActionMenuItem({
+  item,
+  showDivider,
+  onExternalLinkClick,
+}: {
+  item: DocPageMenuItem;
+  showDivider: boolean;
+  onExternalLinkClick: () => void;
+}) {
+  const Icon = item.icon;
+
+  return (
+    <>
+      {showDivider && <div role="separator" className="my-1 h-px bg-theme-border/40" />}
+      {item.kind === "button" ? (
+        <button
+          type="button"
+          role="menuitem"
+          aria-busy={item.busy || undefined}
+          onClick={item.onSelect}
+          className={MENU_ITEM_CLASS}
+        >
+          <Icon size={16} className={item.busy ? "animate-spin" : undefined} />
+          <span>{item.label}</span>
+        </button>
+      ) : (
+        <a
+          href={item.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          role="menuitem"
+          onClick={onExternalLinkClick}
+          className={MENU_ITEM_CLASS}
+        >
+          <Icon size={16} />
+          <span>{item.label}</span>
+        </a>
+      )}
+    </>
+  );
+}
+
 export function PageActionsMenu({ slug, title, description, markdownContent }: PageActionsMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isMcpDialogOpen, setIsMcpDialogOpen] = useState(false);
@@ -81,7 +148,7 @@ export function PageActionsMenu({ slug, title, description, markdownContent }: P
   const [isExportingPdf, setIsExportingPdf] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
-  const itemRefs = useRef<Array<HTMLButtonElement | HTMLAnchorElement | null>>([]);
+  const menuRef = useRef<HTMLDivElement>(null);
   const copyResetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const rawMarkdownUrl = `/docs/${slug}/raw`;
@@ -106,7 +173,7 @@ export function PageActionsMenu({ slug, title, description, markdownContent }: P
 
   useEffect(() => {
     if (isOpen) {
-      itemRefs.current[0]?.focus();
+      menuRef.current?.querySelector<HTMLElement>('[role="menuitem"]')?.focus();
     }
   }, [isOpen]);
 
@@ -124,7 +191,9 @@ export function PageActionsMenu({ slug, title, description, markdownContent }: P
   }
 
   function handleMenuKeyDown(event: React.KeyboardEvent) {
-    const items = itemRefs.current.filter((item): item is HTMLButtonElement | HTMLAnchorElement => item !== null);
+    const items = Array.from(
+      menuRef.current?.querySelectorAll<HTMLElement>('[role="menuitem"]') ?? [],
+    );
     const currentIndex = items.findIndex((item) => item === document.activeElement);
 
     if (event.key === "Escape") {
@@ -215,7 +284,7 @@ export function PageActionsMenu({ slug, title, description, markdownContent }: P
     void copyToClipboard(buildCodexMcpConfigSnippet(), "codex");
   }
 
-  const items: DocPageMenuItem[] = [
+  const items: DocPageMenuItem[] = useMemo(() => [
     {
       id: "copy-page",
       kind: "button",
@@ -313,7 +382,8 @@ export function PageActionsMenu({ slug, title, description, markdownContent }: P
       label: copiedItem === "codex" ? "Copied!" : "Connect to Codex",
       onSelect: handleCopyCodexConfig,
     },
-  ];
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- handlers are recreated per render and read latest state through closures
+  ], [copiedItem, isExportingPdf, rawMarkdownUrl, chatGptUrl, claudeUrl, githubEditUrl]);
 
   return (
     <div className="relative" ref={containerRef} data-pdf-exclude="true">
@@ -333,52 +403,14 @@ export function PageActionsMenu({ slug, title, description, markdownContent }: P
 
       {isOpen && (
         <div
+          ref={menuRef}
           id="page-actions-menu"
           role="menu"
           aria-label="Page actions"
           onKeyDown={handleMenuKeyDown}
           className="absolute right-0 top-full mt-2 w-64 rounded-xl z-[100] bg-bg-elevated border border-theme-border/40 shadow-2xl shadow-black/10 py-2 animate-dropdownIn"
         >
-          {items.map((item, index) => {
-            const Icon = item.icon;
-            const showsDivider = index > 0 && items[index - 1].group !== item.group;
-
-            return (
-              <Fragment key={item.id}>
-                {showsDivider && <div role="separator" className="my-1 h-px bg-theme-border/40" />}
-                {item.kind === "button" ? (
-                  <button
-                    ref={(el) => {
-                      itemRefs.current[index] = el;
-                    }}
-                    type="button"
-                    role="menuitem"
-                    aria-busy={item.busy || undefined}
-                    onClick={item.onSelect}
-                    className={MENU_ITEM_CLASS}
-                  >
-                    <Icon size={16} className={item.busy ? "animate-spin" : undefined} />
-                    <span>{item.label}</span>
-                  </button>
-                ) : (
-                  <a
-                    ref={(el) => {
-                      itemRefs.current[index] = el;
-                    }}
-                    href={item.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    role="menuitem"
-                    onClick={handleExternalLinkClick}
-                    className={MENU_ITEM_CLASS}
-                  >
-                    <Icon size={16} />
-                    <span>{item.label}</span>
-                  </a>
-                )}
-              </Fragment>
-            );
-          })}
+          <PageActionMenuList items={items} onExternalLinkClick={handleExternalLinkClick} />
         </div>
       )}
 

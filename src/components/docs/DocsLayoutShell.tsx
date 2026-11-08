@@ -34,38 +34,41 @@ function collectHeadingsFromPage(): Heading[] {
 
 export function DocsLayoutShell({ nav, children }: DocsLayoutShellProps) {
   const pathname = usePathname();
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  // The drawer is scoped to the route it was opened on, so navigating closes
+  // it without an effect that writes state on every pathname change.
+  const [drawerPath, setDrawerPath] = useState<string | null>(null);
+  const isDrawerOpen = drawerPath === pathname;
   const [headings, setHeadings] = useState<Heading[]>([]);
   const drawerRef = useRef<HTMLElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
 
   const isHub = pathname === "/docs" || pathname === "/docs/";
 
-  useEffect(() => {
-    setIsDrawerOpen(false);
-  }, [pathname]);
-
   useFocusTrap({
     containerRef: drawerRef,
     isActive: isDrawerOpen,
-    onEscape: () => setIsDrawerOpen(false),
+    onEscape: () => setDrawerPath(null),
     restoreFocusRef: menuButtonRef,
   });
 
   useEffect(() => {
     if (isHub) return;
-    // Collect headings immediately
-    setHeadings(collectHeadingsFromPage());
 
-    // Watch for content changes (e.g. lazy-loaded MDX)
     const root = document.getElementById("doc-page-export-content");
     if (!root) return;
 
-    const observer = new MutationObserver(() => {
-      setHeadings(collectHeadingsFromPage());
-    });
+    const collect = () => setHeadings(collectHeadingsFromPage());
+
+    // Watch for content changes (e.g. lazy-loaded MDX), and collect the first
+    // set after the browser has laid the page out.
+    const observer = new MutationObserver(collect);
     observer.observe(root, { childList: true, subtree: true });
-    return () => observer.disconnect();
+    const frame = requestAnimationFrame(collect);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
   }, [pathname, isHub]);
 
   // No early return for isHub to allow sidebar on the hub page
@@ -85,7 +88,7 @@ export function DocsLayoutShell({ nav, children }: DocsLayoutShellProps) {
               <button
                 ref={menuButtonRef}
                 type="button"
-                onClick={() => setIsDrawerOpen(true)}
+                onClick={() => setDrawerPath(pathname)}
                 className="lg:hidden inline-flex items-center justify-center min-w-11 min-h-11 p-2 rounded-lg text-content-secondary hover:bg-theme-primary/5 hover:text-theme-primary transition-colors"
                 aria-label="Open docs navigation"
                 aria-expanded={isDrawerOpen}
@@ -145,7 +148,7 @@ export function DocsLayoutShell({ nav, children }: DocsLayoutShellProps) {
             type="button"
             className="absolute inset-0 bg-black/40 backdrop-blur-sm print:hidden"
             aria-label="Close docs navigation overlay"
-            onClick={() => setIsDrawerOpen(false)}
+            onClick={() => setDrawerPath(null)}
           />
           <aside
             ref={drawerRef}
@@ -161,7 +164,7 @@ export function DocsLayoutShell({ nav, children }: DocsLayoutShellProps) {
               </p>
               <button
                 type="button"
-                onClick={() => setIsDrawerOpen(false)}
+                onClick={() => setDrawerPath(null)}
                 className="inline-flex items-center justify-center min-w-11 min-h-11 p-2 rounded-lg text-content-secondary hover:bg-bg-elevated hover:text-content-primary transition-colors"
                 aria-label="Close docs navigation"
               >

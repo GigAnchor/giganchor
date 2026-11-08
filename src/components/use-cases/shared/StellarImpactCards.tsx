@@ -61,13 +61,12 @@ function isDetailed(card: MetricCard): card is DetailedMetricCard {
 
 function AnimatedNumberDetailed({ value, suffix }: { value: string; suffix: string }) {
   const [displayed, setDisplayed] = useState("0");
+  const animatable = !isNaN(parseFloat(value.replace(/[^0-9.]/g, "")));
 
   useEffect(() => {
+    if (!animatable) return;
+
     const numeric = parseFloat(value.replace(/[^0-9.]/g, ""));
-    if (isNaN(numeric)) {
-      setDisplayed(value);
-      return;
-    }
 
     const duration = 1200;
     const steps = 40;
@@ -96,11 +95,11 @@ function AnimatedNumberDetailed({ value, suffix }: { value: string; suffix: stri
     }, stepMs);
 
     return () => clearInterval(timer);
-  }, [value]);
+  }, [value, animatable]);
 
   return (
     <span>
-      {displayed}
+      {animatable ? displayed : value}
       <span className="ml-1">{suffix}</span>
     </span>
   );

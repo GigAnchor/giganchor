@@ -122,10 +122,11 @@ function CodePanel({ tab }: { tab: CodeTab }) {
 
   useEffect(() => {
     const cacheKey = `github-dark:${tab.lang}:${tab.code}`;
+    // Apply the cached markup after paint rather than inside the effect body.
     const cached = highlightCache.get(cacheKey);
     if (cached) {
-      setHighlightedHtml(cached);
-      return;
+      const frame = requestAnimationFrame(() => setHighlightedHtml(cached));
+      return () => cancelAnimationFrame(frame);
     }
 
     let isMounted = true;

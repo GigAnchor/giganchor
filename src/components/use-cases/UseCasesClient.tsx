@@ -5,7 +5,6 @@ import {
   useState,
   useEffect,
   useRef,
-  useMemo,
   type ComponentType,
   type ReactNode,
 } from "react";
@@ -13,7 +12,6 @@ import {
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { cn } from "@/lib/cn";
-import { useScrollProgress } from "@/hooks/useScrollProgress";
 import { useScrollSpy } from "@/hooks/useScrollSpy";
 import { usePillIndicator } from "@/hooks/usePillIndicator";
 
@@ -94,12 +92,21 @@ export function UseCasesClient() {
     },
   });
 
-  const scrollY = useScrollProgress();
-  const isNavPinned = useMemo(
-    () => (navRef.current ? navRef.current.getBoundingClientRect().top <= 81 : false),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [scrollY],
-  );
+  // Pinned once the nav's top edge scrolls above the fixed navbar (81px).
+  // Tracked with an observer rather than a ref read during render.
+  const [isNavPinned, setIsNavPinned] = useState(false);
+
+  useEffect(() => {
+    const nav = navRef.current;
+    if (!nav) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsNavPinned(!entry.isIntersecting),
+      { rootMargin: "-81px 0px 0px 0px", threshold: 0 },
+    );
+    observer.observe(nav);
+    return () => observer.disconnect();
+  }, []);
 
   const { containerRef: pillContainerRef, setItemRef: setLinkRef, pillStyle } =
     usePillIndicator(activeSection);

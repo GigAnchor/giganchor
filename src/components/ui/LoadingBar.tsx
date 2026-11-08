@@ -4,24 +4,44 @@ import { useEffect, useState } from "react";
 import { useScrollProgress } from "@/hooks/useScrollProgress";
 
 export function LoadingBar() {
-    const [progress, setProgress] = useState(0);
+    // The bar starts at 30% (the pre-existing "loading" state) and fills in when
+    // the page settles; progress is derived from state during render instead of
+    // being written back from an effect.
+    const [loadProgress, setLoadProgress] = useState(0.3);
     const [isLoading, setIsLoading] = useState(true);
+    const [scrollableHeight, setScrollableHeight] = useState(0);
     const scrollY = useScrollProgress(!isLoading);
 
     useEffect(() => {
-        setProgress(0.3);
         const timer = setTimeout(() => {
-            setProgress(1);
+            setLoadProgress(1);
             setTimeout(() => setIsLoading(false), 500);
         }, 800);
         return () => clearTimeout(timer);
     }, []);
 
     useEffect(() => {
-        if (isLoading) return;
-        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-        setProgress(docHeight > 0 ? scrollY / docHeight : 0);
-    }, [isLoading, scrollY]);
+        const measure = () =>
+            setScrollableHeight(document.documentElement.scrollHeight - window.innerHeight);
+
+        const observer = new ResizeObserver(measure);
+        observer.observe(document.documentElement);
+        window.addEventListener("resize", measure);
+
+        const frame = requestAnimationFrame(measure);
+
+        return () => {
+            cancelAnimationFrame(frame);
+            observer.disconnect();
+            window.removeEventListener("resize", measure);
+        };
+    }, []);
+
+    const progress = isLoading
+        ? loadProgress
+        : scrollableHeight > 0
+            ? Math.min(scrollY / scrollableHeight, 1)
+            : 0;
 
     return (
         <div

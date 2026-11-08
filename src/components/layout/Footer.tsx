@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Github, MessageSquare } from "lucide-react";
@@ -46,11 +46,9 @@ export function Footer() {
   const wrapRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
   const { resolvedTheme } = useTheme();
-  const [year, setYear] = useState<number | null>(null);
-
-  useEffect(() => {
-    setYear(new Date().getFullYear());
-  }, []);
+  // Rendered at request/build time; suppressing the hydration warning covers
+  // the one edge case where the build and the visit fall in different years.
+  const year = new Date().getFullYear();
 
   useEffect(() => {
     const wrap = wrapRef.current;
@@ -160,7 +158,7 @@ export function Footer() {
 
           <div className="mt-10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-theme-border">
             <p className="text-xs text-content-muted">
-              © {year ?? ""} GIGANCHOR. All rights reserved.
+              <span suppressHydrationWarning>© {year} GIGANCHOR. All rights reserved.</span>
             </p>
 
             <p className="text-xs text-content-muted">

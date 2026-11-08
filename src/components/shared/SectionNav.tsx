@@ -1,9 +1,8 @@
 "use client";
 
-import { useMemo, useRef, type MouseEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type MouseEvent } from "react";
 import { motion, LayoutGroup } from "framer-motion";
 import { cn } from "@/lib/cn";
-import { useScrollProgress } from "@/hooks/useScrollProgress";
 import { useScrollSpy } from "@/hooks/useScrollSpy";
 
 export type SectionNavItem = { id: string; label: string };
@@ -33,12 +32,22 @@ export function SectionNav({
     initialId: sections[0]?.id ?? "",
   });
 
-  const scrollY = useScrollProgress();
-  const isNavPinned = useMemo(
-    () => (navRef.current ? navRef.current.getBoundingClientRect().top <= 81 : false),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [scrollY]
-  );
+  // Pinned once the nav's top edge scrolls above the fixed navbar (81px).
+  // An IntersectionObserver tracks that instead of reading the ref during
+  // render, which is both cheaper and safe for concurrent rendering.
+  const [isNavPinned, setIsNavPinned] = useState(false);
+
+  useEffect(() => {
+    const nav = navRef.current;
+    if (!nav) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsNavPinned(!entry.isIntersecting),
+      { rootMargin: "-81px 0px 0px 0px", threshold: 0 }
+    );
+    observer.observe(nav);
+    return () => observer.disconnect();
+  }, []);
 
   const scrollToId = (e: MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault();
