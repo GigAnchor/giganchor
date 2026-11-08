@@ -1,11 +1,11 @@
 # Giganchor
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Node.js-20.x-green?style=for-the-badge&logo=node.js" alt="Node.js 20" />
-  <img src="https://img.shields.io/badge/TypeScript-5.4-blue?style=for-the-badge&logo=typescript" alt="TS 5.4" />
-  <img src="https://img.shields.io/badge/NestJS-10.x-red?style=for-the-badge&logo=nestjs" alt="NestJS 10" />
-  <img src="https://img.shields.io/badge/Prisma-5.x-teal?style=for-the-badge&logo=prisma" alt="Prisma 5" />
-  <img src="https://img.shields.io/badge/Stellar-Wallet-black?style=for-the-badge&logo=stellar" alt="Stellar" />
+  <img src="https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js" alt="Next.js 16" />
+  <img src="https://img.shields.io/badge/TypeScript-5.x-blue?style=for-the-badge&logo=typescript" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Stellar-Network-black?style=for-the-badge&logo=stellar" alt="Stellar" />
+  <img src="https://img.shields.io/badge/MCP-Server-purple?style=for-the-badge" alt="MCP server" />
+  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="MIT license" />
 </p>
 
 ```
@@ -15,187 +15,167 @@
 ██║   ██║ ██║ ██║   ██║ ██╔══██║ ██║╚██╗██║ ██║      ██╔══██║ ██║   ██║ ██╔══██╗
 ╚██████╔╝ ██║ ╚██████╔╝ ██║  ██║ ██║ ╚████║ ╚██████╗ ██║  ██║ ╚██████╔╝ ██║  ██║
  ╚═════╝  ╚═╝  ╚═════╝  ╚═╝  ╚═╝ ╚═╝  ╚═══╝  ╚═════╝ ╚═╝  ╚═╝  ╚═════╝  ╚═╝  ╚═╝
-
---------------- Marketplaces Orchestrator & Freelance Platform ---------------
+------------------- The open record for escrow-anchored work -------------------
 ```
 
-**Giganchor** is a self-hosted payments orchestration system designed for Marketplaces. It manages a Web2-like experience (balances, top-ups, payments with escrow, and withdrawals) using **Airtm** for fund management and **Trustless Work** for non-custodial escrows on the Stellar network.
+**Giganchor turns a handshake into a record.** A gig — a freelance sprint, a delivery, a bounty, a payroll stream — becomes an *anchored agreement*: the scope, its milestones, the conditions that release money, the dispute path, and the closing record. Funds sit in escrow on Stellar (Trustless Work) or move through AirTM; Giganchor itself never holds them.
 
-##  Features
+The unit of the system is the **agreement**, not the wallet. Balances, orders and top-ups are plumbing underneath; what people come back for is a shared, auditable answer to *what was agreed, what was delivered, and what was paid*.
 
-- 💰 **User Balances**: Internal management of available and reserved balances.
-- ⚡ **Top-ups**: Fast reloads via Airtm.
-- 🤝 **Smart Escrow**: Secure checkout with non-custodial escrow via TW.
-- 💸 **Withdrawals**: Direct withdrawals to Airtm accounts.
-- 🔐 **Secure & Audited**: Native idempotency, audit logs, and modular architecture.
+> **One-line description for GitHub About**
+> Open source infrastructure for escrow-anchored work: milestone agreements, dispute paths and settlement on Stellar — documented for humans and AI agents.
 
-## 🛠️ Tech Stack
+## Why it exists
 
-- **Framework**: [NestJS](https://nestjs.com/) (API Server)
-- **Runtime**: Node.js 20 LTS
-- **Database**: PostgreSQL (via Prisma ORM)
-- **Cache & Queues**: Redis + [BullMQ](https://docs.bullmq.io/)
-- **Monorepo**: npm Workspaces
+Most gig work is agreed in a chat thread and remembered in screenshots. When the work is delivered and the money does not follow, there is nothing to appeal to: no milestone list, no release condition, no shared timeline. Payment tools assume the agreement already exists; marketplaces assume the money is the hard part.
 
-## 🏁 Quick Start
+Giganchor treats the agreement as the product surface:
 
-1. **Clone and Prepare**:
-   ```bash
-   git clone https://github.com/GigAnchor/giganchor.git
-   cd giganchor
-   ```
+- **Milestones are first-class.** Every agreement is a sequence of deliverables with amounts attached, not one lump sum behind a button.
+- **Release is a rule, not a favour.** Time-based, milestone-based or dispute-driven conditions are declared up front and evaluated by the same code path that stores the agreement.
+- **Disputes have a shape.** Escalation, evidence and resolution are modelled, so a disagreement is a state transition instead of a support ticket.
+- **The record is addressable.** Every agreement has a stable id and closed agreements stay readable, so history survives a dashboard redesign instead of disappearing with it.
 
-2. **Install Dependencies**:
-   ```bash
-   npm ci
-   ```
+## How it works
 
-3. **Run the Docs Site in Development**:
-   ```bash
-   npm run dev
-   ```
-   The site is served at <http://localhost:3000>. No database, Docker or
-   credentials are needed for the docs site; every page is built from
-   `content/docs/` and the local `src/` code.
+```
+1. Anchor      the parties agree on scope, milestones and release conditions
+2. Fund        the payer locks the amount in escrow (never with Giganchor)
+3. Deliver     the worker submits each milestone against the anchored record
+4. Release     conditions pass → escrow releases; conditions fail → dispute path
+5. Attest      the closed agreement stays readable as a portable receipt
+```
 
-4. **Run the Tests** (optional but recommended before a PR):
-   ```bash
-   npm test
-   ```
+The reference API in [`backend/`](./backend) and the documented flows in [`content/docs/`](./content/docs) implement this lifecycle end to end.
 
-To work on the standalone API instead, install its dependencies inside
-`backend/` and start it separately — `npm run dev` from the repository root
-only starts the Next.js app:
+## What makes this repository different
+
+| | Typical payment integration | Giganchor |
+| --- | --- | --- |
+| Primary object | Transaction | Agreement with milestones |
+| Where the rules live | Product code and support macros | Declared on the agreement, evaluated by the API |
+| Who holds funds | The platform | Escrow contract (Trustless Work) or the payment provider (AirTM) |
+| Disputes | Email thread | Modelled state with evidence and resolution |
+| History | Dashboard rows you lose access to | Readable, addressable record |
+| Documentation | A PDF and a stale wiki | The product itself — versioned, searchable, machine-readable |
+
+Two more deliberate choices:
+
+- **Documentation is a first-class surface.** This repository is the docs site as much as it is the API. Every endpoint, error code and flow is written in MDX, built into a searchable site, an OpenAPI file and an MCP server from the same source.
+- **AI agents are readers too.** [`mcp/`](./mcp) exposes the entire documentation set over the Model Context Protocol, so an assistant can answer "how do milestones release?" from the same text a developer reads — not from a guess.
+
+## What is in the repository
+
+```
+giganchor/
+├── src/                # Next.js app: marketing site + documentation website
+├── content/docs/       # Public docs (MDX) rendered under /docs and indexed for search
+├── backend/            # Standalone Express API (own package.json, installed separately)
+├── mcp/                # MCP server exposing content/docs/ to AI assistants
+├── docs/               # Internal engineering documentation (read on GitHub)
+├── config/             # Shared app config (security headers)
+└── scripts/            # Codegen: OpenAPI spec, docs search index, class checks
+```
+
+- **Site + docs:** Next.js 16 (App Router, Turbopack), React 19, TypeScript, Tailwind CSS.
+- **API:** Express, runnable on its own, with strict JSON handling, configurable CORS and graceful shutdown.
+- **MCP server:** TypeScript, published from `mcp/` as an npm workspace of the root package.
+- **Tests:** Vitest + Testing Library for the frontend, Node's test runner for the API, Playwright for route-level accessibility.
+
+## Quick start
+
+```bash
+git clone https://github.com/GigAnchor/giganchor.git
+cd giganchor
+npm ci
+npm run dev          # http://localhost:3000
+```
+
+No database, Docker or credentials are needed for the site: every page is built from `content/docs/` and the local `src/` code.
+
+```bash
+npm test             # frontend suite
+npm run test:coverage
+npm run typecheck
+npm run lint
+npm run build
+```
+
+To work on the API instead, install it inside its own folder — the root dev script only starts the site:
 
 ```bash
 cd backend
 npm ci
-npm run dev      # http://localhost:4000
+npm run dev          # http://localhost:4000
+npm test
 ```
 
-Two environment variables configure the API:
+## Configuration
+
+Everything has a working default; set these only when deploying somewhere real.
 
 | Variable | Default | Purpose |
 | --- | --- | --- |
-| `PORT` | `4000` | Port to listen on. Invalid values fail at startup. |
-| `CORS_ORIGINS` | unset | Comma-separated list of browser origins allowed to call the API, e.g. `https://giganchor.tech`. Unset allows any origin outside production and none in production. |
+| `NEXT_PUBLIC_SITE_URL` | `https://giganchor.tech` | Canonical origin for metadata, sitemap, robots, `llms.txt` and absolute links. |
+| `NEXT_PUBLIC_GITHUB_REPO` | `GigAnchor/giganchor` | `owner/name` used by "Edit this page", release feed and community metrics. |
+| `NEXT_PUBLIC_API_URL` | `http://localhost:4000` | Base URL of the API when running the site locally. |
+| `PORT` | `4000` | API port. Invalid values fail at startup. |
+| `CORS_ORIGINS` | unset | Comma-separated browser origins allowed to call the API. Unset allows any origin outside production and none in production. |
+| `GIGANCHOR_API_KEY` | — | Server-side API key for the orchestrator. Never expose it to a browser. |
 
-The MCP server in `mcp/` is an npm workspace of the root package, so the root
-`npm ci` installs it too; see [`mcp/README.md`](./mcp/README.md) for its build
-and usage instructions.
+The full list, including provider credentials, lives in [`.env.example`](./.env.example).
 
-## 🏗️ Project Structure
+## Use cases
 
-```
-giganchor/
-├── src/              # Next.js app: marketing site + docs website
-├── backend/          # Standalone Express API (own package.json, installed separately)
-├── mcp/              # MCP server exposing content/docs/ to AI assistants
-│                     # (npm workspace of the root package)
-├── content/docs/     # Public docs website content (MDX, rendered under /docs)
-├── docs/             # Internal engineering documentation (Markdown, read on GitHub)
-├── config/           # Shared app-level config (e.g. security headers)
-└── scripts/          # Build/codegen scripts (OpenAPI, docs search index)
-```
+The docs ship a walkthrough for each of these, with the API calls and the escrow behaviour spelled out:
 
-The root `package.json` declares `mcp` as a workspace, so `npm ci` at the
-repository root installs the docs site and the MCP server. `backend/` is not
-a workspace: it has its own `package.json` and lockfile and must be installed
-separately.
+- **Freelance marketplaces** — milestone escrow from brief to final delivery.
+- **E-commerce** — buyer protection with delivery-confirmed release.
+- **Service platforms** — bookings held until the service is completed.
+- **DAO payroll** — streaming or milestone-based contributor payouts.
+- **Real estate** — staged payments tied to inspection checkpoints.
 
-## 📚 Documentation
+Start with [Build your first marketplace](./content/docs/guide/build-your-first-marketplace.mdx) or the [use case library](./src/components/use-cases).
 
-Comprehensive documentation is available in the [`/docs`](./docs/) folder:
+## Documentation
 
-### Quick Start
-- 🧠 **[AI Context](./docs/ai-context.md)** - Development guide for AI assistants (Read first!)
-- 📖 **[Main Documentation](./docs/README.md)** - Complete documentation index
+| Start here | Then |
+| --- | --- |
+| [Getting started](./content/docs/getting-started.mdx) | [Quick start](./content/docs/guide/quick-start.mdx) |
+| [Architecture overview](./docs/architecture/overview.md) | [Data model](./docs/architecture/data-model.md) |
+| [Payment flows](./docs/architecture/payment-flows.md) | [Provider integration](./docs/architecture/provider-integration.md) |
+| [API reference](./content/docs/api-reference/overview.mdx) | [Error codes](./content/docs/api-reference/errors.mdx) |
+| [SDK reference](./content/docs/sdk/quick-start.mdx) | [Self-hosting](./content/docs/guide/self-hosting.mdx) |
+| [Contributing](./docs/CONTRIBUTING.md) | [AI context](./docs/ai-context.md) |
 
-### Core Documentation
-- 📐 [Architecture Overview](./docs/architecture/overview.md) - System architecture
-- 📋 [Product Overview](./docs/business/product-overview.md) - Vision, goals, and value proposition
-- 📚 [Use Cases](./docs/business/use-cases.md) - Common marketplace scenarios
+The same content is available three ways: the rendered site (`/docs`), the OpenAPI file at [`public/openapi.json`](./public/openapi.json), and the MCP server in [`mcp/`](./mcp).
 
-### Development
-- 💻 [Naming Conventions](./docs/standards/naming-conventions.md) - File, variable, and function naming rules
-- 🔌 [API Design](./docs/backend/api-design.md) - Backend API patterns
-- 🤝 [Contributing Guide](./docs/CONTRIBUTING.md) - How to contribute
+## Contributing
 
-## 🎯 Use Cases
+1. Fork the repository and create a topic branch.
+2. Make the change with tests where behaviour changes.
+3. Run `npm run typecheck`, `npm run lint` and `npm test` before opening the PR.
+4. Describe the *why* in the PR; CI runs typecheck, lint, build, coverage and route-level accessibility.
 
-### Freelance Marketplace (Primary)
-Connect freelancers with clients using escrow protection:
-1. Client tops up balance via Airtm
-2. Client pays for project → funds go to escrow (Trustless Work)
-3. Freelancer completes work
-4. Client approves → funds released instantly to freelancer
-5. Freelancer withdraws to Airtm
+Conventions, commit style and the review checklist are in [docs/CONTRIBUTING.md](./docs/CONTRIBUTING.md).
 
-### Other Marketplaces
-- **E-commerce**: Buyer/seller escrow with delivery confirmation
-- **Service Marketplaces**: Service booking with payment protection
-- **Digital Goods**: Instant or escrow-based delivery
-- **Gig Economy**: Worker/client escrow with job completion
+## Maintainer
 
-## 🤝 Contributing
+- **Emmanuel Itighise** — [@EmeditWeb](https://github.com/EmeditWeb) — maintainer and full-stack developer.
 
-We welcome contributions! Please see [CONTRIBUTING.md](./docs/CONTRIBUTING.md) for detailed guidelines.
+## Acknowledgments
 
-### Quick Contribution Guide
+- [Stellar](https://stellar.org/) — the settlement network.
+- [Trustless Work](https://trustlesswork.com/) — non-custodial escrow contracts.
+- [AirTM](https://www.airtm.com/) — fiat on/off ramps for balances.
+- [Next.js](https://nextjs.org/) and [Model Context Protocol](https://modelcontextprotocol.io/) — the site and the AI-readable docs layer.
 
-1. Fork the repository
-2. Create your feature branch: `git checkout -b feature/amazing-feature`
-3. Commit your changes: `git commit -m 'feat: add amazing feature'`
-4. Push to the branch: `git push origin feature/amazing-feature`
-5. Open a Pull Request
+## License
 
-### 🧪 Tests
-
-The frontend suite runs on Vitest. A plain `npm ci` is enough — no `.env` file,
-no credentials, and no network access are required.
-
-```bash
-npm run test          # run the suite once
-npm run test:watch    # re-run affected tests as you edit
-npm run test:coverage # run the suite and enforce coverage thresholds
-```
-
-Tests live in `__tests__/` folders beside the code they cover. CI runs
-`npm run typecheck`, `npm run lint`, `npm run build` and
-`npm run test:coverage`, and fails when coverage drops below the thresholds
-in `vitest.config.ts`. See the
-[Testing section of the contribution guide](./docs/CONTRIBUTING.md#testing)
-for conventions and what is expected of a PR.
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
-
-## 🆘 Support
-
-- **Documentation**: [/docs](./docs/)
-- **Issues**: [GitHub Issues](https://github.com/GigAnchor/giganchor/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/GigAnchor/giganchor/discussions)
-
-## 👥 Maintainers
-
-- [@Josue19-08](https://github.com/Josue19-08) - Project Lead & Full-Stack Developer
-- [@KevinMB0220](https://github.com/KevinMB0220) - Core Contributor & Developer
-
-## 🙏 Acknowledgments
-
-Built with ❤️ for the decentralized marketplace future.
-
-- [NestJS](https://nestjs.com/) - Progressive Node.js framework
-- [Prisma](https://www.prisma.io/) - Next-generation ORM
-- [BullMQ](https://docs.bullmq.io/) - Premium message queue
-- [Airtm](https://www.airtm.com/) - Payment infrastructure
-- [Trustless Work](https://trustlesswork.com/) - Non-custodial escrow on Stellar
+MIT — see [LICENSE](./LICENSE).
 
 ---
 
 <p align="center">
-  <i>🚀 Empowering marketplaces with trustless payments 🚀</i>
+  <i>Anchor the work. Settle it fairly.</i>
 </p>
-
----
