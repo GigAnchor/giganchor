@@ -1,41 +1,47 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { COOKIE_CONSENT_KEY } from "@/constants/storage";
 import { COOKIE_PREFERENCES_EVENT } from "@/constants/events";
 
+const CONSENT_CHANGED_EVENT = "giganchor-cookie-consent-changed";
+
+function subscribeToConsent(onStoreChange: () => void) {
+  window.addEventListener("storage", onStoreChange);
+  window.addEventListener(CONSENT_CHANGED_EVENT, onStoreChange);
+  return () => {
+    window.removeEventListener("storage", onStoreChange);
+    window.removeEventListener(CONSENT_CHANGED_EVENT, onStoreChange);
+  };
+}
+
+function readConsent() {
+  return Boolean(localStorage.getItem(COOKIE_CONSENT_KEY));
+}
+
 export function CookieConsentBanner() {
-  const [visible, setVisible] = useState(false);
+  // The stored decision is the source of truth; `useSyncExternalStore` keeps
+  // it in sync without a state update from an effect on mount.
+  const hasDecided = useSyncExternalStore(subscribeToConsent, readConsent, () => true);
+  const [reopened, setReopened] = useState(false);
 
   useEffect(() => {
-    if (!localStorage.getItem(COOKIE_CONSENT_KEY)) {
-      setVisible(true);
-    }
-
-    const handleOpenPreferences = () => {
-      setVisible(true);
-    };
-
+    const handleOpenPreferences = () => setReopened(true);
     window.addEventListener(COOKIE_PREFERENCES_EVENT, handleOpenPreferences);
-
-    return () => {
-      window.removeEventListener(
-        COOKIE_PREFERENCES_EVENT,
-        handleOpenPreferences
-      );
-    };
+    return () => window.removeEventListener(COOKIE_PREFERENCES_EVENT, handleOpenPreferences);
   }, []);
 
-  const accept = () => {
-    localStorage.setItem(COOKIE_CONSENT_KEY, "accepted");
-    setVisible(false);
-  };
+  const decide = useCallback((value: "accepted" | "rejected") => {
+    localStorage.setItem(COOKIE_CONSENT_KEY, value);
+    window.dispatchEvent(new Event(CONSENT_CHANGED_EVENT));
+    setReopened(false);
+  }, []);
 
-  const reject = () => {
-    localStorage.setItem(COOKIE_CONSENT_KEY, "rejected");
-    setVisible(false);
-  };
+  const accept = useCallback(() => decide("accepted"), [decide]);
+  const reject = useCallback(() => decide("rejected"), [decide]);
+
+  const visible = reopened || !hasDecided;
 
   if (!visible) return null;
 

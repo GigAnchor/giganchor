@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo, useSyncExternalStore } from "react";
 import { Search, FileText, ChevronRight, X } from "lucide-react";
 import Fuse, { type FuseResult, type FuseResultMatch } from "fuse.js";
 import { useRouter } from "next/navigation";
@@ -18,10 +18,8 @@ interface SearchResult {
 export function DocsSearchBar() {
     const [query, setQuery] = useState("");
     const debounceQuery = useDebounce(query, 300);
-    const [results, setResults] = useState<FuseResult<SearchResult>[]>([]);
-    const [isOpen, setIsOpen] = useState(false);
+    const [dismissed, setDismissed] = useState(false);
     const [activeIndex, setActiveIndex] = useState(-1);
-    const [isMac, setIsMac] = useState<boolean | null>(null);
     const [inputFocused, setInputFocused] = useState(false);
     const searchRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -34,22 +32,24 @@ export function DocsSearchBar() {
         minMatchCharLength: 2,
     }), []);
 
-    useEffect(() => {
-        if (debounceQuery.length > 1) {
-            const searchResults = fuse.search(debounceQuery);
-            setResults(searchResults.slice(0, 8));
-            setIsOpen(true);
-            setActiveIndex(-1);
-        } else {
-            setResults([]);
-            setIsOpen(false);
-        }
-    }, [debounceQuery, fuse]);
+    // Results are derived from the debounced query, so typing never needs a
+    // state write from an effect; `dismissed` only tracks explicit closes.
+    const results = useMemo<FuseResult<SearchResult>[]>(
+        () => (debounceQuery.length > 1 ? fuse.search(debounceQuery).slice(0, 8) : []),
+        [debounceQuery, fuse],
+    );
+    const isOpen = debounceQuery.length > 1 && !dismissed;
+
+    const isMac = useSyncExternalStore<boolean | null>(
+        () => () => {},
+        () => /Mac|iPhone|iPad|iPod/.test(navigator.userAgent || navigator.platform),
+        () => null,
+    );
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
-                setIsOpen(false);
+                setDismissed(true);
             }
         };
 
@@ -71,13 +71,6 @@ export function DocsSearchBar() {
         return () => document.removeEventListener("keydown", handleKeyDown);
     }, []);
 
-    // Detect OS for keyboard shortcut display
-    useEffect(() => {
-        const userAgent = navigator.userAgent || navigator.platform;
-        const isMacOS = /Mac|iPhone|iPad|iPod/.test(userAgent);
-        setIsMac(isMacOS);
-    }, []);
-
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === "ArrowDown") {
             e.preventDefault();
@@ -88,11 +81,11 @@ export function DocsSearchBar() {
         } else if (e.key === "Enter") {
             if (activeIndex >= 0) {
                 router.push(results[activeIndex].item.link);
-                setIsOpen(false);
+                setDismissed(true);
                 setQuery("");
             }
         } else if (e.key === "Escape") {
-            setIsOpen(false);
+            setDismissed(true);
         }
     };
 
@@ -129,7 +122,7 @@ export function DocsSearchBar() {
                         type="text"
                         placeholder="Ask or search..."
                         value={query}
-                        onChange={(e) => setQuery(e.target.value)}
+                        onChange={(e) => { setQuery(e.target.value); setDismissed(false); setActiveIndex(-1); }}
                         onKeyDown={handleKeyDown}
                         onFocus={() => setInputFocused(true)}
                         onBlur={() => setInputFocused(false)}
@@ -144,7 +137,7 @@ export function DocsSearchBar() {
                     />
                     {query ? (
                         <button
-                            onClick={() => { setQuery(""); setResults([]); setIsOpen(false); }}
+                            onClick={() => { setQuery(""); setDismissed(true); }}
                             className="text-content-secondary hover:text-content-primary transition-colors inline-flex items-center justify-center min-w-11 min-h-11 px-1"
                         >
                             <X size={18} />
@@ -176,7 +169,7 @@ export function DocsSearchBar() {
                                 onMouseEnter={() => setActiveIndex(idx)}
                                 onClick={() => {
                                     router.push(result.item.link);
-                                    setIsOpen(false);
+                                    setDismissed(true);
                                     setQuery("");
                                 }}
                                 className={`w-full p-4 flex items-start gap-4 cursor-pointer transition-colors text-left appearance-none border-0 ${

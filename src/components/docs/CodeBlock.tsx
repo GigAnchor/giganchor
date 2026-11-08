@@ -47,11 +47,12 @@ export function CodeBlock({
   const cacheKey = `${shikiTheme}:${normalizedLang}:${rawCode}`;
 
   useEffect(() => {
-    // Return cached result immediately — no Shiki load needed
+    // Return cached result immediately — no Shiki load needed. Applied on the
+    // next frame so highlighting is not written from the effect's sync phase.
     const cached = highlightCache.get(cacheKey);
     if (cached) {
-      setHighlightedCode(cached);
-      return;
+      const frame = requestAnimationFrame(() => setHighlightedCode(cached));
+      return () => cancelAnimationFrame(frame);
     }
 
     let isMounted = true;

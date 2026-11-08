@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export interface UseScrollSpyOptions {
   /** Element ids to observe, in document order. */
@@ -81,16 +81,21 @@ export function useScrollSpy({
   waitForElements = false,
   resetKey,
 }: UseScrollSpyOptions): string {
-  const [activeId, setActiveId] = useState<string>(initialId);
+  // Whenever the observer is torn down and re-created (new ids, or a resetKey
+  // change), snap back to initialId immediately rather than waiting for the
+  // new observer to fire. Consumers rely on that eager reset (e.g.
+  // UseCasesClient returning to its first section when the tab changes), so the
+  // fallback is derived during render instead of written from the effect.
+  const signature = `${resetKey ?? ""}|${ids.join(",")}`;
+  const [selection, setSelection] = useState<{ signature: string; id: string } | null>(null);
+  const activeId = selection?.signature === signature ? selection.id : initialId;
+
+  const updateActiveId = useCallback(
+    (id: string) => setSelection({ signature, id }),
+    [signature],
+  );
 
   useEffect(() => {
-    // Whenever the observer is torn down and re-created (new ids, or a
-    // resetKey change), snap back to initialId immediately rather than
-    // waiting for the new observer to fire. Matches consumers that need an
-    // eager reset on external changes (e.g. UseCasesClient resetting to its
-    // first section the instant the active tab changes).
-    setActiveId(initialId);
-
     let raf = 0;
     let observer: IntersectionObserver | null = null;
 
@@ -98,7 +103,7 @@ export function useScrollSpy({
       observer = new IntersectionObserver(
         (entries) => {
           const nextId = pickActiveId(entries);
-          if (nextId) setActiveId(nextId);
+          if (nextId) updateActiveId(nextId);
         },
         { rootMargin, threshold }
       );
@@ -132,7 +137,7 @@ export function useScrollSpy({
           window.innerHeight + window.scrollY >=
           document.documentElement.scrollHeight - bottomOffsetPx;
         const lastId = ids[ids.length - 1];
-        if (isAtBottom && lastId) setActiveId(lastId);
+        if (isAtBottom && lastId) updateActiveId(lastId);
       }, bottomCheckDebounceMs);
     };
 
@@ -158,6 +163,7 @@ export function useScrollSpy({
     bottomCheckDebounceMs,
     waitForElements,
     resetKey,
+    updateActiveId,
   ]);
 
   return activeId;

@@ -40,13 +40,22 @@ export function CodeTabs({ tabs, label = "Code examples", className }: CodeTabsP
   const panelId = (index: number) => `${baseId}-panel-${items[index]?.id ?? index}`;
 
   useEffect(() => {
+    let frame: number | undefined;
+
     try {
       const savedLabel = window.localStorage.getItem(CODE_TAB_STORAGE_KEY);
       const savedIndex = items.findIndex((tab) => tab.label === savedLabel);
-      if (savedIndex >= 0) setActiveIndex(savedIndex);
+      if (savedIndex < 0) return;
+
+      // Restore after paint so the stored tab is not written during the
+      // effect's synchronous phase (the server render has no storage).
+      frame = requestAnimationFrame(() => setActiveIndex(savedIndex));
     } catch {
       // Storage may be unavailable; the first tab remains selected.
     }
+    return () => {
+      if (frame) cancelAnimationFrame(frame);
+    };
   }, [items]);
 
   useEffect(() => {

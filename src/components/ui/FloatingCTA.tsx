@@ -32,30 +32,22 @@ export function FloatingCTA() {
       }
     }
 
-    // Show CTA after a delay for better UX
-    const timer = setTimeout(() => {
-      if (!isExcludedPage) {
-        setIsAnimating(true);
-        setTimeout(() => setIsVisible(true), 50);
-      }
-    }, 2000);
+    // Animate in shortly after the page settles. Both writes are scheduled,
+    // which keeps the effect free of synchronous state updates.
+    if (isExcludedPage) return;
 
-    return () => clearTimeout(timer);
+    const enter = setTimeout(() => setIsAnimating(true), 0);
+    const reveal = setTimeout(() => setIsVisible(true), 50);
+
+    return () => {
+      clearTimeout(enter);
+      clearTimeout(reveal);
+    };
   }, [isExcludedPage]);
 
-  // Hide when navigating to excluded pages
-  useEffect(() => {
-    if (isExcludedPage && isVisible) {
-      setIsVisible(false);
-      setTimeout(() => setIsAnimating(false), 300);
-    } else if (!isExcludedPage && !isVisible) {
-      const dismissedAt = localStorage.getItem(CTA_DISMISSED_KEY);
-      if (!dismissedAt) {
-        setIsAnimating(true);
-        setTimeout(() => setIsVisible(true), 50);
-      }
-    }
-  }, [pathname, isExcludedPage, isVisible]);
+  // Navigating to an excluded page hides the CTA by derivation instead of
+  // writing state from an effect; the first effect re-arms it on the way back.
+  const visible = isVisible && !isExcludedPage;
 
   const handleDismiss = () => {
     setIsVisible(false);
@@ -74,9 +66,10 @@ export function FloatingCTA() {
 
   return (
     <div
-        className={`fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 transition-[opacity,transform] duration-300 ease-out print:hidden ${isVisible
+        aria-hidden={!visible}
+        className={`fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 transition-[opacity,transform] duration-300 ease-out print:hidden ${visible
           ? "opacity-100 translate-y-0 scale-100"
-          : "opacity-0 translate-y-4 scale-95"
+          : "pointer-events-none opacity-0 translate-y-4 scale-95"
           }`}
       >
         {/* Main CTA Card */}

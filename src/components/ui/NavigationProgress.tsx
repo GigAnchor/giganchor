@@ -52,9 +52,11 @@ export function NavigationProgress() {
     };
   }, []);
 
-  // Listen for route changes
+  // Listen for route changes. The completion runs on the next frame so it is
+  // not a state write during the effect's synchronous phase.
   useEffect(() => {
-    completeLoading();
+    const frame = requestAnimationFrame(completeLoading);
+    return () => cancelAnimationFrame(frame);
   }, [pathname, searchParams, completeLoading]);
 
   // Listen for click events on links
